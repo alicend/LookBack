@@ -37,6 +37,11 @@ jspm_packages
 .node_repl_history
 .next
 
+# go binary file
 api/tmp/main
 
+# vscode setting
 .vscode/
+
+# Mac OS X
+.DS_Store
