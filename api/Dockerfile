@@ -1,7 +1,7 @@
 FROM golang:1.18-alpine
 
 
-WORKDIR /go/src/app/
+WORKDIR /go/src/
 COPY . .
 
 RUN apk upgrade --update && \

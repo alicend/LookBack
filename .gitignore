@@ -46,5 +46,7 @@ api/tmp/main
 # Mac OS X
 .DS_Store
 
-# client environmental variables
+#environmental variables
+.env
+.env.mysql
 .env.local

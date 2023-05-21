@@ -1,27 +1,9 @@
+version: '3.8'
+
 services:
-  api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    links:
-      - db
-    tty: true
-    volumes:
-      - ./api:/go/src/app
-  db:
-    image: mysql:5.7
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: app_development
-      MYSQL_PASSWORD: password
-    ports:
-      - 3306:3306
-    volumes:
-      - mysql-db:/var/lib/mysql
-  client: 
+
+  client:
+    container_name: client
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -30,6 +12,42 @@ services:
     command: 'npx next dev'
     ports:
       - "3000:3000"
+
+  database:
+    container_name: database
+    image: mysql:8.0
+    volumes:
+      - mysql-db:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: loolback_development
+      MYSQL_USER: alicend
+      MYSQL_PASSWORD: password
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 20s
+      timeout: 100s
+      retries: 100
+    ports:
+      - 3306:3306
+    networks:
+      - default
+
+  api:
+    container_name: api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      database:
+        condition: service_healthy
+    tty: true
+    volumes:
+      - ./api:/go/arc
+
 volumes:
   mysql-db:
     driver: local
