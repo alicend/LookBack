@@ -1,16 +1,32 @@
 import { Layout } from "@/components/Layout"
 import Cookies from "universal-cookie"
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import { useRouter } from "next/router"; 
 
 const cookie = new Cookies();
 
+interface ResponseData {
+  access: string;
+}
+
 export default function MainPage() {
   const router = useRouter();
 
-  const logout = () => {
-    // access-tokenは認証時に決めた任意の値
-    cookie.remove("access-token");
-    router.push("/");
+  const logout = async () => {
+    try {
+      const response: AxiosResponse<ResponseData> = await axios.get(
+          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
+          { headers: {
+              "Content-Type": "application/json"
+            }
+          }
+      );
+      console.log(response);
+      router.push("/");
+    } catch (err: any) {
+        const error: AxiosError = err;
+        alert(error);
+    }
   };
 
   return (

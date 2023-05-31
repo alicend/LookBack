@@ -16,14 +16,15 @@ services:
   database:
     container_name: database
     image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - mysql-db:/var/lib/mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: loolback_development
-      MYSQL_USER: alicend
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 20s
@@ -46,7 +47,7 @@ services:
         condition: service_healthy
     tty: true
     volumes:
-      - ./api:/go/arc
+      - ./api:/go/src
 
 volumes:
   mysql-db:

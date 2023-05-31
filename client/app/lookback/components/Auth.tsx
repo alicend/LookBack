@@ -11,6 +11,7 @@ interface ResponseData {
 
 export const Auth = () => {
   const router = useRouter();
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
@@ -18,7 +19,7 @@ export const Auth = () => {
   const login = async () => {
     try {
       const response: AxiosResponse<ResponseData> = await axios.post(
-          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/jwt/create/`,
+          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/login`,
           { email: email, password: password },
           { headers: {
               "Content-Type": "application/json"
@@ -31,11 +32,13 @@ export const Auth = () => {
       // the data property will contain the parsed JSON response body
 
       // ログインに成功すればcookieをセットする
-      const options = { path: "/"};
+      console.log(response);
+      // const options = { path: "/"};
       // access_tokenは任意の名称
-      cookie.set("access_token", response.data.access, options);
+      // cookie.set("access_token", response.data.access, options);
       router.push("/main-page");
-  } catch (err: any) {
+    } catch (err: any) {
+      console.log(err);
       // if the request is made and the server responds with a 
       // status code that falls out of the range of 2xx an error is thrown
       const error: AxiosError = err;
@@ -44,7 +47,7 @@ export const Auth = () => {
       } else {
           alert(error);
       }
-  }
+    }
   };
 
   const authUser = async (e: FormEvent) => {
@@ -56,8 +59,8 @@ export const Auth = () => {
     } else {
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/jwt/register/`,
-          { email: email, password: password },
+          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
+          { name: userName, email: email, password: password },
           { headers: {
               "Content-Type": "application/json"
             }
@@ -65,6 +68,7 @@ export const Auth = () => {
         );
         login();
       } catch (err) {
+        console.log(err);
         alert(err);
       }
     }
@@ -81,6 +85,24 @@ export const Auth = () => {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={authUser}>
+        <div>
+            <label htmlFor="userName" className="block text-sm font-medium leading-6 text-white">User Name</label>
+            <div className="mt-2">
+              <input
+                id="userName"
+                name="userName"
+                type="text"
+                autoComplete="name"
+                required
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                value={userName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUserName(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">Email</label>
             <div className="mt-2">
@@ -90,7 +112,7 @@ export const Auth = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setEmail(e.target.value);

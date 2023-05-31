@@ -1,14 +1,21 @@
-package database
+package config
 
 import (
 	"fmt"
 	"log"
-	// "os"
+	"os"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func DBConnect() *gorm.DB {
+func DBConnect() (*gorm.DB, error) {
+
+	// 環境変数の読み込み
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local",
@@ -19,10 +26,5 @@ func DBConnect() *gorm.DB {
 	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("データベースへの接続に失敗しました: %v", err)
-	}
-
-	log.Printf("データベースに接続しました: %v", db)
-	return db
+	return db, err
 }
