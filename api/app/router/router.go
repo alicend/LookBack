@@ -30,13 +30,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		}
 	}
 
-	api.Use(middleware.AuthMiddleware)
+	todo := api.Group("/todo")
 	{
-		api.GET("/logintest", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "login test",
-			})
-		})
+		todo.POST("/", handler.CreateTaskHandler)
+		todo.GET("/", handler.GetTaskHandler)
+		todo.DELETE("/:taskId", handler.DeleteTaskHandler)
 	}
 
 	return r

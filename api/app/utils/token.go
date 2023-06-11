@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 
@@ -41,5 +42,7 @@ func ParseToken(tokenString string) (*jwt.Token, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println(token)
 	return token, nil
 }

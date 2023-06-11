@@ -9,33 +9,43 @@ import (
 	"github.com/alicend/LookBack/app/utils"
 )
 
-func (handler *Handler) SignUpHandler(c *gin.Context) {
+func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 
-	var signUpInput models.SignUpInput
-	if err := c.ShouldBindJSON(&signUpInput); err != nil {
+	// Taskを取得
+	var createTaskInput models.CreateTaskInput
+	if err := c.ShouldBindJSON(&createTaskInput); err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
 		return
 	}
 
-	newUser := &models.User{
-		Name:     signUpInput.Name,
-		Email:    signUpInput.Email,
-		Password: signUpInput.Password,
-	}
-
-	user, err := newUser.CreateUser(handler.DB)
+	// ユーザIDをCookieから取得
+	tokenString, err := c.Cookie(constant.JWT_TOKEN_NAME)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to create user")
+		respondWithErrAndMsg(c, http.StatusUnauthorized, err.Error(), "Unauthorized")
 		return
 	}
 
+	// token, _ := utils.ParseToken(tokenString)
+	_, _ = utils.ParseToken(tokenString)
+	
+	// newTask := &models.Task{
+	// 	Task:   createTaskInput.Task,
+	// 	UserID: userID,
+	// }
+
+	// task, err := newTask.CreateTask(handler.DB)
+	// if err != nil {
+	// 	respondWithError(c, http.StatusBadRequest, "Failed to create task")
+	// 	return
+	// }
+
 	c.JSON(http.StatusOK, gin.H{
-		"user_id": user.ID,
-		"message": "Successfully created user",
+		"message": "Successfully created task",
+		// "task"   : task,
 	})
 }
 
-func (handler *Handler) LoginHandler(c *gin.Context) {
+func (handler *Handler) GetTaskHandler(c *gin.Context) {
 	var loginInput models.LoginInput
 	if err := c.ShouldBind(&loginInput); err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
@@ -66,32 +76,16 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", "localhost", false, true)
 	
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully logged in",
+		"message": "Successfully got task",
 	})
 }
 
-func (handler *Handler) LogoutHandler(c *gin.Context) {
+func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 	// Clear the cookie named "access_token"
 	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
 
+	// Return success message
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully logged out",
-	})
-}
-
-
-// ==================================================================
-// 以下はプライベート関数
-// ==================================================================
-func respondWithError(c *gin.Context, status int, err string) {
-	c.JSON(status, gin.H{
-		"error": err,
-	})
-}
-
-func respondWithErrAndMsg(c *gin.Context, status int, err string, msg string) {
-	c.JSON(status, gin.H{
-		"error"  : err,
-		"message": msg,
+		"message": "Successfully deleted task",
 	})
 }
