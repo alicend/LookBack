@@ -31,11 +31,7 @@ export const Auth = () => {
       // so there is no need to check for 400 specifically
       // the data property will contain the parsed JSON response body
 
-      // ログインに成功すればcookieをセットする
       console.log(response);
-      // const options = { path: "/"};
-      // access_tokenは任意の名称
-      // cookie.set("access_token", response.data.access, options);
       router.push("/main-page");
     } catch (err: any) {
       console.log(err);
@@ -85,23 +81,28 @@ export const Auth = () => {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={authUser}>
+        {isLogin ?
+          ""
+        : 
         <div>
-            <label htmlFor="userName" className="block text-sm font-medium leading-6 text-white">User Name</label>
-            <div className="mt-2">
-              <input
-                id="userName"
-                name="userName"
-                type="text"
-                autoComplete="name"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={userName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserName(e.target.value);
-                }}
-              />
-            </div>
+          <label htmlFor="userName" className="block text-sm font-medium leading-6 text-white">User Name</label>
+          <div className="mt-2">
+            <input
+              id="userName"
+              name="userName"
+              type="text"
+              autoComplete="name"
+              required
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={userName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setUserName(e.target.value);
+              }}
+            />
           </div>
+        </div>
+        }
+          
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">Email</label>

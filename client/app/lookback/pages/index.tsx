@@ -1,10 +1,10 @@
 import { Auth } from "@/components/Auth"
-import { Layout } from "@/components/Layout"
+import { HomeLayout } from "@/components/HomeLayout"
 
 export default function Home() {
   return (
-    <Layout title="Login">
+    <HomeLayout title="Login">
       <Auth />
-    </Layout>
+    </HomeLayout>
   )
 }
