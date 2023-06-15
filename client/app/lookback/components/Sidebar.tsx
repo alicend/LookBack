@@ -1,68 +1,51 @@
-import React, { useState, FC } from "react";
-import { HiMenuAlt3 } from "react-icons/hi";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import { SortableContext, arrayMove, verticalListSortingStrategy} from "@dnd-kit/sortable";
-import { Card, CardType } from "./Card";
-
+import React, { FC } from "react";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useTaskGroups } from "@/hooks/useTaskGroups";
+import { Column } from "./Column";
 
 export const Sidebar: FC = () => {
 
-  // 仮データを定義
-  const cards_sample: CardType[] = [
-    { id: "card1", title: "Card 1" },
-    { id: "card2", title: "Card 2" },
-    { id: "card3", title: "Card 3" }
-  ];
+  const [
+    tasks,
+    updateTasks,
+    swapTasks,
+    deleteTasks,
+  ] = useTaskGroups();
 
-  const [open, setOpen] = useState(true);
-  const [cards, setCards] = useState(cards_sample);
-  
+  const taskGroupsNames = ["TODO", "作業中", "完了"];
+
+  let index = 0;
+
   return (
-    <section className="flex gap-6">
-      <div
-        className={`bg-black min-h-screen ${
-          open ? "w-72" : "w-16"
-        } duration-500 text-gray-100 px-4`}
-      >
-        <div className="py-3 flex justify-end">
-          <HiMenuAlt3
-            size={26}
-            className="cursor-pointer"
-            onClick={() => setOpen(!open)}
-          />
-        </div>
-
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="p-3">
-            <h3>TODO</h3>
-            <SortableContext
-              items={cards}
-              strategy={verticalListSortingStrategy}
-            >
-              {/* We need components that use the useSortable hook */}
-              {cards.map(card => <Card key={card.id} id={card.id} title={card.title}/>)}
-            </SortableContext>
+    <DndProvider backend={HTML5Backend}>
+      <div className="h-screen">
+        <div className="mt-8 h-full">
+          <div className="m-4 h-full">
+            <div className="flex h-full gap-4">
+              {taskGroupsNames.map((taskGroupName, columnIndex) => {
+                const groupedTasks = tasks.filter((task) => {
+                  return task.groupName === taskGroupName;
+                });
+                const firstIndex = index;
+                index += groupedTasks.length;
+                return (
+                  <li key={taskGroupName} className="list-none">
+                    <Column
+                      columnName={taskGroupName}
+                      firstIndex={firstIndex}
+                      tasks={groupedTasks}
+                      updateTasks={updateTasks}
+                      deleteTasks={deleteTasks}
+                      swapTasks={swapTasks}
+                    ></Column>
+                  </li>
+                );
+              })}
+            </div>
           </div>
-        </DndContext>
+        </div>
       </div>
-    </section>
+    </DndProvider>
   );
-
-  // D&G終了後に配列の順番を変更する
-  function handleDragEnd(event: { active: any; over: any; }) {
-    console.log("Drag end called");
-    const {active, over} = event;
-
-    if (active.id !== over.id) {
-      setCards((items) => {
-        const activeIndex = items.findIndex((item) => item.id === active.id);
-        const overIndex = items.findIndex((item) => item.id === over.id);
-        console.log(arrayMove(items, activeIndex, overIndex));
-        return arrayMove(items, activeIndex, overIndex);
-      });
-    }
-  }
 };
