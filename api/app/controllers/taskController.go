@@ -19,6 +19,7 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 		return
 	}
 
+	// Cookie内のjwtからUSER_IDを取得
 	userID, err := extractUserID(c)
 	if err != nil {
 		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
@@ -26,9 +27,10 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	}
 	
 	newTask := &models.Task{
-		Content:   createTaskInput.Content,
-		UserID:    userID,
-		GroupName: createTaskInput.GroupName,
+		Content: createTaskInput.Content,
+		UserID:  userID,
+		Status:  createTaskInput.Status,
+		Index:   createTaskInput.Index,
 	}
 
 	task, err := newTask.CreateTask(handler.DB)

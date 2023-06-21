@@ -22,11 +22,11 @@ export default function MainPage() {
           }
       );
       console.log(response);
-      router.push("/");
     } catch (err: any) {
         const error: AxiosError = err;
         alert(error);
     }
+    router.push("/");
   };
 
   return (

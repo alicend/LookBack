@@ -10,21 +10,23 @@ import (
 
 type Task struct {
 	gorm.Model
-	Content   string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	UserID    uint   `gorm:"not null"`
-	User      User   `gorm:"foreignKey:UserID;"`
-	GroupName string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Content string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	UserID  uint   `gorm:"not null"`
+	User    User   `gorm:"foreignKey:UserID;"`
+	Status  string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Index   uint   `gorm:"not null"`
 	CompletedAt *time.Time
 }
 
 type CreateTaskInput struct {
-	Content   string `json:"task" binding:"required,min=1,max=255"`
-	GroupName string `json:"groupName" binding:"required,min=1,max=255"`
+	Content string `json:"task" binding:"required,min=1,max=255"`
+	Status  string `json:"status" binding:"required,min=1,max=255"`
+	Index   uint   `json:"index" binding:"required`
 }
 
 func (task *Task) CreateTask(db *gorm.DB) (*Task, error) {
 	// 自動マイグレーション(Userテーブルを作成)
-	migrateErr := db.AutoMigrate(&User{})
+	migrateErr := db.AutoMigrate(&Task{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
 	}

@@ -4,7 +4,6 @@ import { ItemTypes } from "@/types/ItemTypes";
 import { v4 as uuidv4 } from "uuid";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ResponseData } from "@/types/ResponseData";
-import router from "next/router";
 
 type AddTaskProps = {
   closeAddTaskForm: () => void;
@@ -31,7 +30,7 @@ export const AddTask: React.FC<AddTaskProps> = ({
     try {
       const response: AxiosResponse<ResponseData> = await axios.post(
           `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
-          { task: text, groupName: groupName },
+          { task: text, status: groupName, index: index },
           { headers: {
               "Content-Type": "application/json"
             }
