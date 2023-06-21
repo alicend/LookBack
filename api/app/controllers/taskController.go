@@ -27,10 +27,10 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	}
 	
 	newTask := &models.Task{
-		Content: createTaskInput.Content,
-		UserID:  userID,
-		Status:  createTaskInput.Status,
-		Index:   createTaskInput.Index,
+		Content:   createTaskInput.Content,
+		UserID:    userID,
+		Status:    createTaskInput.Status,
+		TaskIndex: createTaskInput.TaskIndex,
 	}
 
 	task, err := newTask.CreateTask(handler.DB)
@@ -46,33 +46,23 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 }
 
 func (handler *Handler) GetTaskHandler(c *gin.Context) {
-	var loginInput models.LoginInput
-	if err := c.ShouldBind(&loginInput); err != nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
-		return
-	}
-
-	user, err := models.FindUserByEmail(handler.DB, loginInput.Email)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
 	if err != nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Failed to find user")
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
 		return
 	}
 
-	if !user.VerifyPassword(loginInput.Password) {
-		respondWithError(c, http.StatusUnauthorized, "Password is invalid")
-		return
-	}
-
-	token, err := utils.GenerateToken(user.ID)
+	tasks, err := models.FetchTasksByUserID(handler.DB, userID)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to sign up")
+		respondWithError(c, http.StatusBadRequest, "Failed to fetch task")
 		return
 	}
 
-	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", "localhost", false, true)
 	
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully got task",
+		"tasks"   : tasks,  // tasksをレスポンスとして返す
 	})
 }
 

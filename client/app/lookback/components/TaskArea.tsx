@@ -8,19 +8,19 @@ import { ResponseData } from "@/types/ResponseData";
 
 const fetchUserTasks = async () => {
   try {
-    // const response: AxiosResponse<ResponseData> = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
-    //     { headers: {
-    //         "Content-Type": "application/json"
-    //       }
-    //     }
-    // );
+    const response: AxiosResponse<ResponseData> = await axios.get(
+        `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
+        { headers: {
+            "Content-Type": "application/json"
+          }
+        }
+    );
 
     // axios will throw an error when the status is not in the range of 2xx
     // so there is no need to check for 400 specifically
     // the data property will contain the parsed JSON response body
 
-    // console.log(response);
+    console.log(response);
     console.log("fetchUserTasks");
   } catch (err: any) {
     console.log(err);
@@ -28,9 +28,10 @@ const fetchUserTasks = async () => {
     // status code that falls out of the range of 2xx an error is thrown
     const error: AxiosError = err;
     if (error.response && error.response.status === 400) {
-        alert("authentication failed");
+      console.log(error.response);
+      alert("authentication failed");
     } else {
-        alert(error);
+      alert(error.response);
     }
   }
 };
@@ -43,6 +44,7 @@ export const TaskArea: FC = () => {
     swapTasks,
     deleteTasks,
   ] = useTaskGroups();
+  fetchUserTasks();
 
   const taskGroupsNames = ["TODO", "作業中", "完了"];
 

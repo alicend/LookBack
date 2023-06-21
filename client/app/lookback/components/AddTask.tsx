@@ -30,7 +30,7 @@ export const AddTask: React.FC<AddTaskProps> = ({
     try {
       const response: AxiosResponse<ResponseData> = await axios.post(
           `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
-          { task: text, status: groupName, index: index },
+          { task: text, status: groupName, task_index: index },
           { headers: {
               "Content-Type": "application/json"
             }
