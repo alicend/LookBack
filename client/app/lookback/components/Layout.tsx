@@ -1,6 +1,6 @@
 import Head from "next/head";
 import type { ReactNode } from 'react';
-import { Sidebar } from "./Sidebar";
+import { TaskArea } from "./TaskArea";
 import { Header } from "./Header";
 
 type Props = {
@@ -16,7 +16,7 @@ export const Layout = ({children, title = "Default title"}: Props) => {
       </Head>
       <Header></Header>
       <div className="flex flex-1 w-screen">
-        <Sidebar></Sidebar>
+        <TaskArea></TaskArea>
         <main className="flex flex-1 justify-center items-center flex-col">
           {children}
         </main>
