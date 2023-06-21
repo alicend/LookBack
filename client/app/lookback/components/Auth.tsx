@@ -2,12 +2,9 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/router"; 
 import Cookie from "universal-cookie";
 import axios, { AxiosResponse, AxiosError } from 'axios';
+import { ResponseData } from "@/types/ResponseData";
 
 const cookie = new Cookie();
-
-interface ResponseData {
-  access: string;
-}
 
 export const Auth = () => {
   const router = useRouter();

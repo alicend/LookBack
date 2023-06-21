@@ -2,6 +2,9 @@ import React, { useState, useCallback } from "react";
 import { DraggableItem } from "@/types/DraggableItem";
 import { ItemTypes } from "@/types/ItemTypes";
 import { v4 as uuidv4 } from "uuid";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { ResponseData } from "@/types/ResponseData";
+import router from "next/router";
 
 type AddTaskProps = {
   closeAddTaskForm: () => void;
@@ -22,19 +25,43 @@ export const AddTask: React.FC<AddTaskProps> = ({
     setText(e.target.value);
   }, []);
 
-  const handleOnSubmit = useCallback(() => {
+  const handleOnSubmit = useCallback(async () => {
     if (!text) return;
-    updateTasks(
-      {
-        key: uuidv4(),
-        groupName: groupName,
-        contents: text,
-        type: ItemTypes.card,
-      },
-      index
-    );
-    setText("");
-    closeAddTaskForm();
+
+    try {
+      const response: AxiosResponse<ResponseData> = await axios.post(
+          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
+          { task: text, groupName: groupName },
+          { headers: {
+              "Content-Type": "application/json"
+            }
+          }
+      );
+
+      console.log(response);
+
+      updateTasks(
+        {
+          key: uuidv4(),
+          groupName: groupName,
+          contents: text,
+          type: ItemTypes.card,
+        },
+        index
+      );
+  
+      setText("");
+      closeAddTaskForm();
+    } catch (err: any) {
+      const error: AxiosError = err;
+      if (error.response && error.response.status === 400) {
+          alert("authentication failed");
+      } else {
+          alert(error);
+      }
+    }
+
+    
   }, [text, updateTasks, groupName, index, closeAddTaskForm]);
 
   const handleCancel = useCallback(() => {
