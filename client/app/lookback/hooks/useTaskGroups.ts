@@ -5,15 +5,17 @@ export const useTaskGroups = (): [
   DraggableItem[],
   (newTask: DraggableItem, index: number) => void,
   (dragIndex: number, hoverIndex: number, groupName: string) => void,
-  (target: DraggableItem) => void
+  (target: DraggableItem) => void,
+  (newTasks: DraggableItem[]) => void
 ] => {
   
-  const [tasks, updateTasks, swapTasks, deleteTasks] = useTasks();
+  const [tasks, updateTasks, swapTasks, deleteTasks, setTasks] = useTasks();
 
   return [
     tasks ?? [],
     updateTasks,
     swapTasks,
     deleteTasks,
+    setTasks,
   ];
 };

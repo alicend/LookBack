@@ -1,12 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTaskGroups } from "@/hooks/useTaskGroups";
 import { Column } from "./Column";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ResponseData } from "@/types/ResponseData";
+import { DraggableItem } from "@/types/DraggableItem";
+import { ItemTypes } from "@/types/ItemTypes";
+import { ResponseTask } from "@/types/ResponseTask";
 
-const fetchUserTasks = async () => {
+const fetchUserTasks = async (): Promise<DraggableItem[]> => {
   try {
     const response: AxiosResponse<ResponseData> = await axios.get(
         `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
@@ -16,16 +19,18 @@ const fetchUserTasks = async () => {
         }
     );
 
-    // axios will throw an error when the status is not in the range of 2xx
-    // so there is no need to check for 400 specifically
-    // the data property will contain the parsed JSON response body
+    let responseData = response.data;
 
-    console.log(response);
-    console.log("fetchUserTasks");
+    console.log(response.data);
+    let tasks = responseData.tasks.map((task: ResponseTask) => ({
+      key: String(task.TaskIndex), 
+      groupName: task.Status,
+      contents: task.Content,
+      type: ItemTypes.card,
+    }));
+    return tasks;
   } catch (err: any) {
     console.log(err);
-    // if the request is made and the server responds with a 
-    // status code that falls out of the range of 2xx an error is thrown
     const error: AxiosError = err;
     if (error.response && error.response.status === 400) {
       console.log(error.response);
@@ -33,6 +38,8 @@ const fetchUserTasks = async () => {
     } else {
       alert(error.response);
     }
+    // エラーの場合は空の配列を返す
+    return [];
   }
 };
 
@@ -43,8 +50,15 @@ export const TaskArea: FC = () => {
     updateTasks,
     swapTasks,
     deleteTasks,
+    setTasks,
   ] = useTaskGroups();
-  fetchUserTasks();
+
+  useEffect(() => {
+    (async () => {
+      const fetchedTasks = await fetchUserTasks();
+      if (fetchedTasks) setTasks(fetchedTasks);
+    })();
+  }, []);
 
   const taskGroupsNames = ["TODO", "作業中", "完了"];
 

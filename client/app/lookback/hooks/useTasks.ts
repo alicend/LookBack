@@ -5,7 +5,8 @@ export const useTasks = (): [
   DraggableItem[],
   (newTask: DraggableItem, index: number) => void,
   (dragIndex: number, hoverIndex: number, groupName: string) => void,
-  (target: DraggableItem) => void
+  (target: DraggableItem) => void,
+  (newTasks: DraggableItem[]) => void
 ] => {
   const [tasks, setTasks] = useState<DraggableItem[]>();
 
@@ -44,5 +45,5 @@ export const useTasks = (): [
     [tasks, setTasks]
   );
 
-  return [tasks ?? [], updateTasks, swapTasks, deleteTasks];
+  return [tasks ?? [], updateTasks, swapTasks, deleteTasks, setTasks];
 };
