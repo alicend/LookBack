@@ -1,4 +1,4 @@
-import { Auth } from "@/components/Auth"
+import Auth from "@/components/Auth"
 import { HomeLayout } from "@/components/HomeLayout"
 
 export default function Home() {

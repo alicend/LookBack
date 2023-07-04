@@ -30,11 +30,13 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		}
 	}
 
-	todo := api.Group("/tasks")
+	tasks := api.Group("/tasks")
+	tasks.Use(middleware.AuthMiddleware)
 	{
-		todo.POST("", handler.CreateTaskHandler)
-		todo.GET("", handler.GetTaskHandler)
-		todo.DELETE("/:taskId", handler.DeleteTaskHandler)
+		tasks.POST("", handler.CreateTaskHandler)
+		tasks.GET("", handler.GetTaskHandler)
+		tasks.DELETE("/:taskId", handler.DeleteTaskHandler)
+		tasks.POST("/moveCard", handler.MoveCardHandler)
 	}
 
 	return r

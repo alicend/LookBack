@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.6",
+    "@reduxjs/toolkit": "^1.9.5",
     "@types/node": "20.1.5",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
@@ -22,13 +27,13 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.2.0",
     "react-icons": "^4.9.0",
+    "react-redux": "^8.1.1",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
-    "@types/react-beautiful-dnd": "^13.1.4",
     "@types/uuid": "^9.0.2",
     "axios": "^1.4.0",
     "swr": "^2.1.5",

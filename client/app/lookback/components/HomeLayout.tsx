@@ -8,7 +8,7 @@ type Props = {
 
 export const HomeLayout = ({children, title = "Default title"}: Props) => {
   return(
-    <div className="flex justify-center items-center flex-col min-h-screen text-white font-mono bg-gray-800">
+    <div className="flex justify-center items-center flex-col min-h-screen">
       <Head>
         <title>{title}</title>
       </Head>

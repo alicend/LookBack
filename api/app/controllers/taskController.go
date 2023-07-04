@@ -74,7 +74,34 @@ func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 	})
 }
 
-// Extracts the user ID from the JWT in the cookie
+func (handler *Handler) MoveCardHandler(c *gin.Context) {
+	var move models.Move
+	if err := c.ShouldBindJSON(&move); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	err = move.UpdateTaskForMove(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Failed to update tasks")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": "success",
+	})
+}
+
+// ==================================================================
+// 以下はプライベート関数
+// ==================================================================
 func extractUserID(c *gin.Context) (uint, error) {
 	tokenString, err := c.Cookie(constant.JWT_TOKEN_NAME)
 	if err != nil {
