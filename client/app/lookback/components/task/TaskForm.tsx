@@ -24,9 +24,9 @@ import {
   selectCategory,
   editTask,
   selectTask,
-} from "@/features/taskSlice";
+} from "@/reducer/taskSlice";
 import { AppDispatch } from "@/utils/store";
-import { initialState } from "@/features/taskSlice";
+import { initialState } from "@/reducer/taskSlice";
 
 function getModalStyle() {
   const top = 50;

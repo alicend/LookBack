@@ -15,13 +15,13 @@ import {
   fetchAsyncGetMyProf,
   fetchAsyncGetProfs,
   fetchAsyncUpdateProf,
-} from "@/features/authSlice";
+} from "@/reducer/authSlice";
 import {
   fetchAsyncGetTasks,
   fetchAsyncGetUsers,
   fetchAsyncGetCategory,
   selectEditedTask
-} from "@/features/taskSlice";
+} from "@/reducer/taskSlice";
 
 import TaskList from '@/components/task/TaskList';
 import TaskForm from "@/components/task/TaskForm";

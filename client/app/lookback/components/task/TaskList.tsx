@@ -22,10 +22,10 @@ import {
   selectTasks,
   editTask,
   selectTask,
-} from "@/features/taskSlice";
-import { selectLoginUser, selectProfiles } from "@/features/authSlice";
+} from "@/reducer/taskSlice";
+import { selectLoginUser, selectProfiles } from "@/reducer/authSlice";
 import { AppDispatch } from "@/utils/store";
-import { initialState } from "@/features/taskSlice";
+import { initialState } from "@/reducer/taskSlice";
 import { SORT_STATE, READ_TASK } from "@/types/type";
 
 const StyledButton = styled(Button)(({ theme }) => ({

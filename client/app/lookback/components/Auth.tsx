@@ -10,7 +10,7 @@ import {
   fetchAsyncRegister,
   fetchAsyncCreateProf,
   selectIsLoginView,
-} from "@/features/authSlice";
+} from "@/reducer/authSlice";
 
 const StyledContainer = styled('div')`
   font-family: serif;
