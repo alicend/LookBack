@@ -82,7 +82,7 @@ export default function MainPage() {
 
   const Logout = () => {
     localStorage.removeItem("localJWT");
-    window.location.href = "/";
+    router.push("/");
   };
 
   const handlerEditPicture = () => {

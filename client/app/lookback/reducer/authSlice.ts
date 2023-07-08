@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "../utils/store";
+import { RootState } from "./../utils/store";
 import axios from "axios";
 import {
   AUTH_STATE,
@@ -10,12 +10,13 @@ import {
   JWT,
   USER,
 } from "@/types/type";
+import router from "next/router";
 
 export const fetchAsyncLogin = createAsyncThunk(
   "auth/login",
   async (auth: CRED) => {
     const res = await axios.post<JWT>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/authen/jwt/create`,
+      `${process.env.REACT_APP_API_URL}/authen/jwt/create`,
       auth,
       {
         headers: {
@@ -31,7 +32,7 @@ export const fetchAsyncRegister = createAsyncThunk(
   "auth/register",
   async (auth: CRED) => {
     const res = await axios.post<USER>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/create/`,
+      `${process.env.REACT_APP_API_URL}/api/create/`,
       auth,
       {
         headers: {
@@ -47,7 +48,7 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
   "auth/loginuser",
   async () => {
     const res = await axios.get<LOGIN_USER>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/loginuser/`,
+      `${process.env.REACT_APP_API_URL}/api/loginuser/`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -62,7 +63,7 @@ export const fetchAsyncCreateProf = createAsyncThunk(
   "auth/createProfile",
   async () => {
     const res = await axios.post<PROFILE>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/profile/`,
+      `${process.env.REACT_APP_API_URL}/api/profile/`,
       { img: null },
       {
         headers: {
@@ -79,7 +80,7 @@ export const fetchAsyncGetProfs = createAsyncThunk(
   "auth/getProfiles",
   async () => {
     const res = await axios.get<PROFILE[]>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/profile/`,
+      `${process.env.REACT_APP_API_URL}/api/profile/`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -96,7 +97,7 @@ export const fetchAsyncUpdateProf = createAsyncThunk(
     const uploadData = new FormData();
     profile.img && uploadData.append("img", profile.img, profile.img.name);
     const res = await axios.put<PROFILE>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/profile/${profile.id}/`,
+      `${process.env.REACT_APP_API_URL}/api/profile/${profile.id}/`,
       uploadData,
       {
         headers: {
@@ -131,7 +132,7 @@ export const authSlice = createSlice({
       fetchAsyncLogin.fulfilled,
       (state, action: PayloadAction<JWT>) => {
         localStorage.setItem("localJWT", action.payload.access);
-        action.payload.access && (window.location.href = "/tasks");
+        action.payload.access && (router.push("/tasks"));
       }
     );
     builder.addCase(

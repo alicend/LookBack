@@ -2,6 +2,7 @@ import { RootState } from '../utils/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY } from "@/types/type";
+import router from 'next/router';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
   const res = await axios.get<READ_TASK[]>(
@@ -191,7 +192,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncGetTasks.rejected, () => {
-      window.location.href = "/";
+      router.push("/");
     });
     builder.addCase(
       fetchAsyncGetUsers.fulfilled,
@@ -221,7 +222,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateCategory.rejected, () => {
-      window.location.href = "/";
+      router.push("/");
     });
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
@@ -234,7 +235,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateTask.rejected, () => {
-      window.location.href = "/";
+      router.push("/");
     });
     builder.addCase(
       fetchAsyncUpdateTask.fulfilled,
@@ -250,7 +251,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncUpdateTask.rejected, () => {
-      window.location.href = "/";
+      router.push("/");
     });
     builder.addCase(
       fetchAsyncDeleteTask.fulfilled,
@@ -264,7 +265,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncDeleteTask.rejected, () => {
-      window.location.href = "/";
+      router.push("/");
     });
   },
 });
