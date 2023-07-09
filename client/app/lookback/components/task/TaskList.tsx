@@ -30,8 +30,12 @@ import { SORT_STATE, READ_TASK } from "@/types/type";
 
 const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3),
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#2196f3 !important',
+  },
   '&:disabled': {
-    color: '#ccc',
+    backgroundColor: '#ccc !important',
     cursor: 'not-allowed'
   },
 }));
@@ -122,7 +126,6 @@ const TaskList: React.FC = () => {
     <>
       <StyledButton
         variant="contained"
-        color="primary"
         size="small"
         startIcon={<AddCircleOutlineIcon />}
         onClick={() => {
