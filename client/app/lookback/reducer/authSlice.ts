@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "./../utils/store";
+import { RootState } from "../store/store";
 import axios from "axios";
 import {
   AUTH_STATE,
@@ -15,8 +15,9 @@ import router from "next/router";
 export const fetchAsyncLogin = createAsyncThunk(
   "auth/login",
   async (auth: CRED) => {
-    const res = await axios.post<JWT>(
-      `${process.env.REACT_APP_API_URL}/authen/jwt/create`,
+    console.log(auth);
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/login`,
       auth,
       {
         headers: {
@@ -24,15 +25,16 @@ export const fetchAsyncLogin = createAsyncThunk(
         },
       }
     );
-    return res.data;
+    return { data: res.data, status: res.status };
   }
 );
 
 export const fetchAsyncRegister = createAsyncThunk(
   "auth/register",
   async (auth: CRED) => {
-    const res = await axios.post<USER>(
-      `${process.env.REACT_APP_API_URL}/api/create/`,
+    console.log(auth);
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
       auth,
       {
         headers: {
@@ -48,7 +50,7 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
   "auth/loginuser",
   async () => {
     const res = await axios.get<LOGIN_USER>(
-      `${process.env.REACT_APP_API_URL}/api/loginuser/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/loginuser/`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -63,7 +65,7 @@ export const fetchAsyncCreateProf = createAsyncThunk(
   "auth/createProfile",
   async () => {
     const res = await axios.post<PROFILE>(
-      `${process.env.REACT_APP_API_URL}/api/profile/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/profile/`,
       { img: null },
       {
         headers: {
@@ -80,7 +82,7 @@ export const fetchAsyncGetProfs = createAsyncThunk(
   "auth/getProfiles",
   async () => {
     const res = await axios.get<PROFILE[]>(
-      `${process.env.REACT_APP_API_URL}/api/profile/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/profile/`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -97,7 +99,7 @@ export const fetchAsyncUpdateProf = createAsyncThunk(
     const uploadData = new FormData();
     profile.img && uploadData.append("img", profile.img, profile.img.name);
     const res = await axios.put<PROFILE>(
-      `${process.env.REACT_APP_API_URL}/api/profile/${profile.id}/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/profile/${profile.id}/`,
       uploadData,
       {
         headers: {
@@ -130,9 +132,10 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       fetchAsyncLogin.fulfilled,
-      (state, action: PayloadAction<JWT>) => {
-        localStorage.setItem("localJWT", action.payload.access);
-        action.payload.access && (router.push("/tasks"));
+      (state, action: PayloadAction<{ data: JWT; status: number }>) => {
+        if (action.payload.status === 200) {
+          router.push("/main-page");
+        }
       }
     );
     builder.addCase(

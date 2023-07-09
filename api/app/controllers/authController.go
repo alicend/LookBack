@@ -10,8 +10,7 @@ import (
 )
 
 func (handler *Handler) SignUpHandler(c *gin.Context) {
-
-	var signUpInput models.SignUpInput
+	var signUpInput models.UserInput
 	if err := c.ShouldBindJSON(&signUpInput); err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
 		return
@@ -19,7 +18,6 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 
 	newUser := &models.User{
 		Name:     signUpInput.Name,
-		Email:    signUpInput.Email,
 		Password: signUpInput.Password,
 	}
 
@@ -36,14 +34,14 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 }
 
 func (handler *Handler) LoginHandler(c *gin.Context) {
-	var loginInput models.LoginInput
+	var loginInput models.UserInput
 	if err := c.ShouldBind(&loginInput); err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
 		return
 	}
 
 	// メールアドレスでユーザを取得
-	user, err := models.FindUserByEmail(handler.DB, loginInput.Email)
+	user, err := models.FindUserByName(handler.DB, loginInput.Name)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Failed to find user")
 		return

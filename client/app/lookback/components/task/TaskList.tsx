@@ -24,7 +24,7 @@ import {
   selectTask,
 } from "@/reducer/taskSlice";
 import { selectLoginUser, selectProfiles } from "@/reducer/authSlice";
-import { AppDispatch } from "@/utils/store";
+import { AppDispatch } from "@/store/store";
 import { initialState } from "@/reducer/taskSlice";
 import { SORT_STATE, READ_TASK } from "@/types/type";
 

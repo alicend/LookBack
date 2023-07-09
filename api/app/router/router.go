@@ -6,6 +6,7 @@ import (
 	"github.com/alicend/LookBack/app/config"
 	"github.com/alicend/LookBack/app/controllers"
 	"github.com/alicend/LookBack/app/middleware"
+	"log"
 )
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
@@ -17,17 +18,14 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	handler := controllers.Handler{
 		DB: db,
 	}
-
+	log.Println("This is a simple log.")
 	// ルーティング設定
 	api := r.Group("/api")
 	auth := api.Group("/auth")
 	{
 		auth.POST("/signup", handler.SignUpHandler)
 		auth.POST("/login", handler.LoginHandler)
-		auth.Use(middleware.AuthMiddleware)
-		{
-			auth.GET("/logout", handler.LogoutHandler)
-		}
+		auth.GET("/logout", handler.LogoutHandler)
 	}
 
 	tasks := api.Group("/tasks")

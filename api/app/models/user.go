@@ -10,18 +10,11 @@ import (
 type User struct {
 	gorm.Model
 	Name     string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Email    string `gorm:"size:255;not null" validate:"required,email"`
 	Password string `gorm:"size:255;not null" validate:"required,min=8,max=255"`
 }
 
-type SignUpInput struct {
-	Name     string `json:"name" binding:"required,min=1,max=255"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8,max=255"`
-}
-
-type LoginInput struct {
-	Email    string `json:"email" binding:"required,email"`
+type UserInput struct {
+	Name     string `json:"username" binding:"required,min=1,max=255"`
 	Password string `json:"password" binding:"required,min=8,max=255"`
 }
 
@@ -35,7 +28,6 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 
 	user = &User{
 		Name:     user.Name,
-		Email:    user.Email,
 		Password: encrypt(user.Password),
 	}
 	result := db.Create(user)
@@ -47,9 +39,9 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	return user, nil
 }
 
-func FindUserByEmail(db *gorm.DB, email string) (User, error) {
+func FindUserByName(db *gorm.DB, email string) (User, error) {
 	var user User
-	result := db.Where("email = ?", email).First(&user)
+	result := db.Where("name = ?", email).First(&user)
 
 	return user, result.Error
 }

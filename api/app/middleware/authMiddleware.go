@@ -11,7 +11,6 @@ import (
 
 func AuthMiddleware(c *gin.Context) {
 	// トークンが含まれているか確認
-	// JWT_TOKEN_NAMEはクライアントで設定した名称
 	tokenString, err := c.Cookie(constant.JWT_TOKEN_NAME)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{

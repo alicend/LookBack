@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import { TextField, Button } from "@mui/material";
 
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch } from "./../utils/store";
+import { AppDispatch } from "../store/store";
 import {
   toggleMode,
   fetchAsyncLogin,
@@ -51,9 +51,10 @@ const Auth: React.FC = () => {
       await dispatch(fetchAsyncLogin(credential));
     } else {
       const result = await dispatch(fetchAsyncRegister(credential));
+      console.log(result);
       if (fetchAsyncRegister.fulfilled.match(result)) {
         await dispatch(fetchAsyncLogin(credential));
-        await dispatch(fetchAsyncCreateProf());
+        //await dispatch(fetchAsyncCreateProf());
       }
     }
   };

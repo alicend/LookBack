@@ -25,7 +25,7 @@ import {
   editTask,
   selectTask,
 } from "@/reducer/taskSlice";
-import { AppDispatch } from "@/utils/store";
+import { AppDispatch } from "@/store/store";
 import { initialState } from "@/reducer/taskSlice";
 
 function getModalStyle() {

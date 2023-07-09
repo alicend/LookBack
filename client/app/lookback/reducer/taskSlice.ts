@@ -1,4 +1,4 @@
-import { RootState } from '../utils/store';
+import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY } from "@/types/type";

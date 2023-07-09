@@ -27,7 +27,7 @@ import TaskList from '@/components/task/TaskList';
 import TaskForm from "@/components/task/TaskForm";
 import TaskDisplay from "@/components/task/TaskDisplay";
 
-import { AppDispatch } from "@/utils/store";
+import { AppDispatch } from "@/store/store";
 
 interface ResponseData {
   access: string;

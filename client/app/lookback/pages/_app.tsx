@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Provider } from "react-redux";
-import { store } from "@/utils/store";
+import { store } from "@/store/store";
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
