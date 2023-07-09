@@ -51,24 +51,6 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 export default function MainPage() {
-  const router = useRouter();
-
-  // const logout = async () => {
-  //   try {
-  //     const response: AxiosResponse<ResponseData> = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
-  //         { headers: {
-  //             "Content-Type": "application/json"
-  //           }
-  //         }
-  //     );
-  //     console.log(response);
-  //   } catch (err: any) {
-  //       const error: AxiosError = err;
-  //       alert(error);
-  //   }
-  //   router.push("/");
-  // };
 
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
@@ -80,14 +62,26 @@ export default function MainPage() {
     (prof) => prof.user_profile === loginUser.id
   )[0];
 
-  const Logout = () => {
-    localStorage.removeItem("localJWT");
-    router.push("/");
-  };
-
   const handlerEditPicture = () => {
     const fileInput = document.getElementById("imageInput");
     fileInput?.click();
+  };
+
+  const router = useRouter();
+  const Logout = async () => {
+    try {
+      const res: AxiosResponse<ResponseData> = await axios.get(
+          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
+          { headers: {
+              "Content-Type": "application/json"
+            }
+          }
+      );
+      console.log(res);
+    } catch (err: any) {
+      console.log(err);
+    }
+    router.push("/");
   };
 
   // useEffect(() => {
