@@ -72,10 +72,7 @@ export default function MainPage() {
     try {
       const res: AxiosResponse<ResponseData> = await axios.get(
           `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
-          { headers: {
-              "Content-Type": "application/json"
-            }
-          }
+          { headers: { "Content-Type": "application/json" } }
       );
       console.log(res);
     } catch (err: any) {

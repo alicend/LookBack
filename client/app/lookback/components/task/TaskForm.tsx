@@ -39,6 +39,39 @@ function getModalStyle() {
   };
 }
 
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  margin: theme.spacing(2),
+  minWidth: 240,
+}));
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  margin: theme.spacing(2),
+  minWidth: 240,
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  margin: theme.spacing(3),
+}));
+
+const StyledFab = styled(Fab)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+  marginLeft: theme.spacing(2),
+}));
+
+const SaveButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  marginLeft: theme.spacing(2),
+}));
+
+const StyledPaper = styled('div')(({ theme }) => ({
+  position: "absolute",
+  textAlign: "center",
+  width: 400,
+  backgroundColor: theme.palette.background.paper,
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
+  padding: theme.spacing(2, 4, 3),
+}));
+
 const TaskForm: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
@@ -49,39 +82,6 @@ const TaskForm: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
   const [inputText, setInputText] = useState("");
-
-  const StyledTextField = styled(TextField)(({ theme }) => ({
-    margin: theme.spacing(2),
-    minWidth: 240,
-  }));
-
-  const StyledFormControl = styled(FormControl)(({ theme }) => ({
-    margin: theme.spacing(2),
-    minWidth: 240,
-  }));
-  
-  const StyledButton = styled(Button)(({ theme }) => ({
-    margin: theme.spacing(3),
-  }));
-  
-  const StyledFab = styled(Fab)(({ theme }) => ({
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(2),
-  }));
-  
-  const SaveButton = styled(Button)(({ theme }) => ({
-    marginTop: theme.spacing(4),
-    marginLeft: theme.spacing(2),
-  }));
-  
-  const StyledPaper = styled('div')(({ theme }) => ({
-    position: "absolute",
-    textAlign: "center",
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
-    padding: theme.spacing(2, 4, 3),
-  }));
 
   const handleOpen = () => {
     setOpen(true);
