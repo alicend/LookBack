@@ -32,7 +32,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
-    backgroundColor: '#2196f3 !important',
+    backgroundColor: '#1976d2 !important',
   },
   '&:disabled': {
     backgroundColor: '#ccc !important',

@@ -2,22 +2,22 @@ package controllers
 
 import (
 	"net/http"
-	"errors"
+	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/alicend/LookBack/app/constant"
 	"github.com/alicend/LookBack/app/models"
-	"github.com/alicend/LookBack/app/utils"
 )
 
 func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
+	log.Println("This is a simple log.1")
 	var createCategoryInput models.CreateCategoryInput
 	if err := c.ShouldBindJSON(&createCategoryInput); err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
 		return
 	}
+	log.Println("This is a simple log.2")
 	
 	newCategory := &models.Category{
 		Category:   createCategoryInput.Category,
@@ -67,22 +67,3 @@ func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================
-func extractUserID(c *gin.Context) (uint, error) {
-	tokenString, err := c.Cookie(constant.JWT_TOKEN_NAME)
-	if err != nil {
-		return 0, err
-	}
-
-	token, _ := utils.ParseToken(tokenString)
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return 0, errors.New("failed to parse claims")
-	}
-
-	userIDFloat, ok := claims["user_id"].(float64)
-	if !ok {
-		return 0, errors.New("failed to parse user ID")
-	}
-
-	return uint(userIDFloat), nil
-}

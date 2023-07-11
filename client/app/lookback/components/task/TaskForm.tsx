@@ -56,11 +56,27 @@ const StyledButton = styled(Button)(({ theme }) => ({
 const StyledFab = styled(Fab)(({ theme }) => ({
   marginTop: theme.spacing(3),
   marginLeft: theme.spacing(2),
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#1976d2 !important',
+  },
+  '&:disabled': {
+    backgroundColor: '#ccc !important',
+    cursor: 'not-allowed'
+  },
 }));
 
 const SaveButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(4),
   marginLeft: theme.spacing(2),
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#1976d2 !important',
+  },
+  '&:disabled': {
+    backgroundColor: '#ccc !important',
+    cursor: 'not-allowed'
+  },
 }));
 
 const StyledPaper = styled('div')(({ theme }) => ({

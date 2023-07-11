@@ -6,7 +6,7 @@ import router from 'next/router';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
   const res = await axios.get<READ_TASK[]>(
-    `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/tasks/`,
+    `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
     {
       headers: {
         Authorization: `JWT ${localStorage.localJWT}`,
@@ -20,7 +20,7 @@ export const fetchAsyncGetUsers = createAsyncThunk(
   "task/getUsers",
   async () => {
     const res = await axios.get<USER[]>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/users/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -35,7 +35,7 @@ export const fetchAsyncGetCategory = createAsyncThunk(
   "task/getCategory",
   async () => {
     const res = await axios.get<CATEGORY[]>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/category/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -50,14 +50,15 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
   "task/createCategory",
   async (item: string) => {
     const res = await axios.post<CATEGORY>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/category/`,
-      { item: item },
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
+      { category: item },
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
+    console.log(res);
     return res.data;
   }
 );
@@ -66,7 +67,7 @@ export const fetchAsyncCreateTask = createAsyncThunk(
   "task/createTask",
   async (task: POST_TASK) => {
     const res = await axios.post<READ_TASK>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/tasks/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/`,
       task,
       {
         headers: {
@@ -83,7 +84,7 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
   "task/updateTask",
   async (task: POST_TASK) => {
     const res = await axios.put<READ_TASK>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/tasks/${task.id}/`,
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${task.id}`,
       task,
       {
         headers: {
@@ -99,7 +100,7 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
 export const fetchAsyncDeleteTask = createAsyncThunk(
   "task/deleteTask",
   async (id: number) => {
-    await axios.delete(`${process.env.NEXT_PUBLIC_RESTAPI_URL}/api/tasks/${id}/`, {
+    await axios.delete(`${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `JWT ${localStorage.localJWT}`,
@@ -222,7 +223,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateCategory.rejected, () => {
-      router.push("/");
+      //router.push("/");
     });
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
