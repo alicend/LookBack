@@ -216,12 +216,15 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncCreateCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY>) => {
-        //　カテゴリーをアルファベット順にソート
-        let updatedCategory = [...state.category, action.payload];
-        updatedCategory.sort((a, b) => a.Category.localeCompare(b.Category));
+        let updatedCategory;
+        if (state.category) {
+          updatedCategory = [...state.category, action.payload];
+        } else {
+          updatedCategory = [action.payload];
+        }
         return {
           ...state,
-          category: updatedCategory,
+          category: updatedCategory.sort((a, b) => a.Category.localeCompare(b.Category)),
         };
       }
     );
