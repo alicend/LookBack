@@ -2,8 +2,8 @@ package models
 
 import (
 	// "time"
-	"fmt"
 	"log"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -20,13 +20,13 @@ type CreateCategoryInput struct {
 }
 
 // カテゴリー一覧取得
-type GetCategory struct {
+type CategoryResponse struct {
 	ID       uint
 	Category string
 }
 
-// TableName メソッドを追加して、この構造体がカテゴリーテーブルに対応する指定する
-func (GetCategory) TableName() string {
+// TableName メソッドを追加して、この構造体がカテゴリーテーブルに対応することを指定する
+func (CategoryResponse) TableName() string {
 	return "categories"
 }
 
@@ -38,23 +38,31 @@ func (category *Category) CreateCategory(db *gorm.DB) (*Category, error) {
 	}
 
 	result := db.Create(category)
+	log.Printf("Category: %v", category)
+	log.Printf("result: %v", result)
 
 	if result.Error != nil {
-		fmt.Printf("Error creating category: %v\n", result.Error)
-		fmt.Printf("Category: %+v\n", category)
+		log.Printf("Error creating category: %v\n", result.Error)
+		log.Printf("Category: %v", category)
 		return nil, result.Error
 	}
 
-	return category, nil
+	// CategoryオブジェクトをCategoryResponseオブジェクトに変換
+	categoryResponse := &CategoryResponse{
+		ID:       category.ID,
+		Category: category.Category,
+	}
+
+	return categoryResponse, nil
 }
 
-func FetchCategory(db *gorm.DB) ([]GetCategory, error) {
-	var categories []GetCategory
+func FetchCategory(db *gorm.DB) ([]CategoryResponse, error) {
+	var categories []CategoryResponse
 
 	result := db.Select("ID", "Category").Order("Category asc").Find(&categories)
 
 	if result.Error != nil {
-		log.Printf("Error fetching categories: %v\n", result.Error)
+		log.Printf("Error fetching categories: %v", result.Error)
 		return nil, result.Error
 	}
 	log.Printf("カテゴリーの取得に成功")

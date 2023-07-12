@@ -58,7 +58,6 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
         },
       }
     );
-    console.log(res);
     return res.data;
   }
 );
@@ -217,6 +216,7 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncCreateCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY>) => {
+        console.log(action.payload)
         return {
           ...state,
           category: [...state.category, action.payload],
