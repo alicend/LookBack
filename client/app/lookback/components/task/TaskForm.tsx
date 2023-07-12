@@ -144,7 +144,7 @@ const TaskForm: React.FC = () => {
       {user.username}
     </MenuItem>
   ));
-  let categoryOptions = [{ ID: '', Category: '' }, ...category].map((cat) => (
+  let categoryOptions = [{ ID: 0, Category: '' }, ...category].map((cat) => (
     <MenuItem key={cat.ID} value={cat.ID}>
       {cat.Category}
     </MenuItem>

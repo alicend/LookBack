@@ -137,7 +137,7 @@ const TaskList: React.FC = () => {
               criteria: "",
               responsible: loginUser.id,
               status: "1",
-              category: 1,
+              category: 0,
               estimate: 0,
             })
           );
