@@ -145,7 +145,7 @@ const TaskForm: React.FC = () => {
     </MenuItem>
   ));
   let categoryOptions = [{ ID: 0, Category: '' }, ...category].map((cat) => (
-    <MenuItem key={cat.ID} value={cat.ID}>
+    <MenuItem key={cat.ID} value={cat.ID} style={{ minHeight: '36px'}}>
       {cat.Category}
     </MenuItem>
   ));
