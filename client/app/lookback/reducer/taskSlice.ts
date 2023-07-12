@@ -1,7 +1,7 @@
 import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY } from "@/types/type";
+import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY, CategoryResponse } from "@/types/type";
 import router from 'next/router';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
@@ -34,7 +34,7 @@ export const fetchAsyncGetUsers = createAsyncThunk(
 export const fetchAsyncGetCategory = createAsyncThunk(
   "task/getCategory",
   async () => {
-    const res = await axios.get<CATEGORY[]>(
+    const res = await axios.get<CategoryResponse>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       {
         headers: {
@@ -42,7 +42,7 @@ export const fetchAsyncGetCategory = createAsyncThunk(
         },
       }
     );
-    return res.data;
+    return res.data.categories;
   }
 );
 
@@ -165,8 +165,8 @@ export const initialState: TASK_STATE = {
   ],
   category: [
     {
-      id: 0,
-      item: "",
+      ID: 0,
+      Category: "",
     },
   ],
 };
@@ -207,6 +207,7 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncGetCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY[]>) => {
+        console.log(action.payload)
         return {
           ...state,
           category: action.payload,

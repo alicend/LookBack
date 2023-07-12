@@ -11,13 +11,13 @@ import (
 )
 
 func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
-	log.Println("This is a simple log.1")
 	var createCategoryInput models.CreateCategoryInput
 	if err := c.ShouldBindJSON(&createCategoryInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
 		return
 	}
-	log.Println("This is a simple log.2")
 	
 	newCategory := &models.Category{
 		Category:   createCategoryInput.Category,
@@ -25,6 +25,8 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 
 	category, err := newCategory.CreateCategory(handler.DB)
 	if err != nil {
+		log.Printf("Failed to create category: %v", err)
+		log.Printf("カテゴリーの生成に失敗しました")
 		respondWithError(c, http.StatusBadRequest, "Failed to create category")
 		return
 	}
@@ -36,23 +38,17 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 }
 
 func (handler *Handler) GetCategoryHandler(c *gin.Context) {
-	// Cookie内のjwtからUSER_IDを取得
-	userID, err := extractUserID(c)
+
+	categories, err := models.FetchCategory(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		log.Printf("Failed to fetch categories: %v", err)
+		log.Printf("カテゴリーの取得に失敗しました")
+		respondWithError(c, http.StatusBadRequest, "Failed to fetch categories")
 		return
 	}
 
-	tasks, err := models.FetchTasksByUserID(handler.DB, userID)
-	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch task")
-		return
-	}
-
-	
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully got task",
-		"tasks"   : tasks,  // tasksをレスポンスとして返す
+		"categories" : categories,  // categoriesをレスポンスとして返す
 	})
 }
 

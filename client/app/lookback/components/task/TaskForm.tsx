@@ -144,9 +144,9 @@ const TaskForm: React.FC = () => {
       {user.username}
     </MenuItem>
   ));
-  let catOptions = category.map((cat) => (
-    <MenuItem key={cat.id} value={cat.id}>
-      {cat.item}
+  let categoryOptions = category.map((cat) => (
+    <MenuItem key={cat.ID} value={cat.ID}>
+      {cat.Category}
     </MenuItem>
   ));
   return (
@@ -226,7 +226,7 @@ const TaskForm: React.FC = () => {
             value={editedTask.category}
             onChange={handleSelectCatChange}
           >
-            {catOptions}
+            {categoryOptions}
           </Select>
         </StyledFormControl>
 

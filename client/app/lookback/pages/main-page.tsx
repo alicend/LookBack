@@ -81,16 +81,16 @@ export default function MainPage() {
     router.push("/");
   };
 
-  // useEffect(() => {
-  //   const fetchBootLoader = async () => {
+  useEffect(() => {
+    const fetchBootLoader = async () => {
   //     await dispatch(fetchAsyncGetTasks());
   //     await dispatch(fetchAsyncGetMyProf());
   //     await dispatch(fetchAsyncGetUsers());
-  //     await dispatch(fetchAsyncGetCategory());
+      await dispatch(fetchAsyncGetCategory());
   //     await dispatch(fetchAsyncGetProfs());
-  //   };
-  //   fetchBootLoader();
-  // }, [dispatch]);
+    };
+    fetchBootLoader();
+  }, [dispatch]);
 
   return (
     <>

@@ -62,8 +62,11 @@ export interface POST_TASK {
   responsible: number;
 }
 export interface CATEGORY {
-  id: number;
-  item: string;
+  ID: number;
+  Category: string;
+}
+export interface CategoryResponse {
+  categories: CATEGORY[];
 }
 export interface TASK_STATE {
   tasks: READ_TASK[];
@@ -72,7 +75,6 @@ export interface TASK_STATE {
   users: USER[];
   category: CATEGORY[];
 }
-/*TaskList.tsx*/
 export interface SORT_STATE {
   rows: READ_TASK[];
   order: "desc" | "asc";
