@@ -30,7 +30,7 @@ func (CategoryResponse) TableName() string {
 	return "categories"
 }
 
-func (category *Category) CreateCategory(db *gorm.DB) (*Category, error) {
+func (category *Category) CreateCategory(db *gorm.DB) (*CategoryResponse, error) {
 	// 自動マイグレーション(Categoryテーブルを作成)
 	migrateErr := db.AutoMigrate(&Category{})
 	if migrateErr != nil {

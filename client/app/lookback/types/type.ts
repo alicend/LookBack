@@ -66,6 +66,7 @@ export interface CATEGORY {
   Category: string;
 }
 export interface CategoryResponse {
+  category: CATEGORY;
   categories: CATEGORY[];
 }
 export interface TASK_STATE {

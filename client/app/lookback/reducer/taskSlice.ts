@@ -49,7 +49,7 @@ export const fetchAsyncGetCategory = createAsyncThunk(
 export const fetchAsyncCreateCategory = createAsyncThunk(
   "task/createCategory",
   async (item: string) => {
-    const res = await axios.post<CATEGORY>(
+    const res = await axios.post<CategoryResponse>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       { category: item },
       {
@@ -58,7 +58,7 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
         },
       }
     );
-    return res.data;
+    return res.data.category;
   }
 );
 
@@ -216,10 +216,12 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncCreateCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY>) => {
-        console.log(action.payload)
+        //　カテゴリーをアルファベット順にソート
+        let updatedCategory = [...state.category, action.payload];
+        updatedCategory.sort((a, b) => a.Category.localeCompare(b.Category));
         return {
           ...state,
-          category: [...state.category, action.payload],
+          category: updatedCategory,
         };
       }
     );
