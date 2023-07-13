@@ -139,9 +139,9 @@ const TaskForm: React.FC = () => {
     const value = Number(e.target.value);
     dispatch(editTask({ ...editedTask, category: value }));
   };
-  let userOptions = users.map((user) => (
-    <MenuItem key={user.id} value={user.id} style={{ minHeight: '36px'}}>
-      {user.username}
+  let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
+    <MenuItem key={user.ID} value={user.ID} style={{ minHeight: '36px'}}>
+      {user.Name}
     </MenuItem>
   ));
   let categoryOptions = [{ ID: 0, Category: '' }, ...category].map((cat) => (

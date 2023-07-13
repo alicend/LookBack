@@ -25,8 +25,11 @@ export interface JWT {
   access: string;
 }
 export interface USER {
-  id: number;
-  username: string;
+  ID: number;
+  Name: string;
+}
+export interface USER_RESPONSE {
+  users: USER[];
 }
 export interface AUTH_STATE {
   isLoginView: boolean;
@@ -65,7 +68,7 @@ export interface CATEGORY {
   ID: number;
   Category: string;
 }
-export interface CategoryResponse {
+export interface CATEGORY_RESPONSE {
   category: CATEGORY;
   categories: CATEGORY[];
 }

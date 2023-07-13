@@ -43,5 +43,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		category.POST("", handler.CreateCategoryHandler)
 	}
 
+	users := api.Group("/users")
+	users.Use(middleware.AuthMiddleware)
+	{
+		users.GET("", handler.GetUsersAllHandler)
+	}
+
 	return r
 }

@@ -85,7 +85,7 @@ export default function MainPage() {
     const fetchBootLoader = async () => {
   //     await dispatch(fetchAsyncGetTasks());
   //     await dispatch(fetchAsyncGetMyProf());
-  //     await dispatch(fetchAsyncGetUsers());
+      await dispatch(fetchAsyncGetUsers());
       await dispatch(fetchAsyncGetCategory());
   //     await dispatch(fetchAsyncGetProfs());
     };

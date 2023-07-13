@@ -1,7 +1,7 @@
 import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY, CategoryResponse } from "@/types/type";
+import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY, CATEGORY_RESPONSE, USER_RESPONSE } from "@/types/type";
 import router from 'next/router';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
@@ -19,7 +19,7 @@ export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
 export const fetchAsyncGetUsers = createAsyncThunk(
   "task/getUsers",
   async () => {
-    const res = await axios.get<USER[]>(
+    const res = await axios.get<USER_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
       {
         headers: {
@@ -27,14 +27,14 @@ export const fetchAsyncGetUsers = createAsyncThunk(
         },
       }
     );
-    return res.data;
+    return res.data.users;
   }
 );
 
 export const fetchAsyncGetCategory = createAsyncThunk(
   "task/getCategory",
   async () => {
-    const res = await axios.get<CategoryResponse>(
+    const res = await axios.get<CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       {
         headers: {
@@ -49,7 +49,7 @@ export const fetchAsyncGetCategory = createAsyncThunk(
 export const fetchAsyncCreateCategory = createAsyncThunk(
   "task/createCategory",
   async (item: string) => {
-    const res = await axios.post<CategoryResponse>(
+    const res = await axios.post<CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       { category: item },
       {
@@ -156,8 +156,8 @@ export const initialState: TASK_STATE = {
   },
   users: [
     {
-      id: 0,
-      username: "",
+      ID: 0,
+      Name: "",
     },
   ],
   category: [
@@ -195,6 +195,7 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncGetUsers.fulfilled,
       (state, action: PayloadAction<USER[]>) => {
+        console.log(action.payload)
         return {
           ...state,
           users: action.payload,
