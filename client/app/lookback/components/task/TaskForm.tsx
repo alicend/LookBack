@@ -140,7 +140,7 @@ const TaskForm: React.FC = () => {
     dispatch(editTask({ ...editedTask, category: value }));
   };
   let userOptions = users.map((user) => (
-    <MenuItem key={user.id} value={user.id}>
+    <MenuItem key={user.id} value={user.id} style={{ minHeight: '36px'}}>
       {user.username}
     </MenuItem>
   ));
