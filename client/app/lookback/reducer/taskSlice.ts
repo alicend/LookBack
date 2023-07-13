@@ -9,7 +9,7 @@ export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
     `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
     {
       headers: {
-        Authorization: `JWT ${localStorage.localJWT}`,
+        "Content-Type": "application/json",
       },
     }
   );
@@ -23,7 +23,7 @@ export const fetchAsyncGetUsers = createAsyncThunk(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
       {
         headers: {
-          Authorization: `JWT ${localStorage.localJWT}`,
+          "Content-Type": "application/json",
         },
       }
     );
@@ -38,7 +38,7 @@ export const fetchAsyncGetCategory = createAsyncThunk(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       {
         headers: {
-          Authorization: `JWT ${localStorage.localJWT}`,
+          "Content-Type": "application/json",
         },
       }
     );
@@ -54,7 +54,7 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
       { category: item },
       {
         headers: {
-          Authorization: `JWT ${localStorage.localJWT}`,
+          "Content-Type": "application/json",
         },
       }
     );
@@ -71,7 +71,6 @@ export const fetchAsyncCreateTask = createAsyncThunk(
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
@@ -88,7 +87,6 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
@@ -99,10 +97,10 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
 export const fetchAsyncDeleteTask = createAsyncThunk(
   "task/deleteTask",
   async (id: number) => {
-    await axios.delete(`${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${id}`, {
+    await axios.delete(`${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${id}`,
+    {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `JWT ${localStorage.localJWT}`,
       },
     });
     return id;

@@ -53,7 +53,7 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/loginuser`,
       {
         headers: {
-          Authorization: `JWT ${localStorage.localJWT}`,
+          "Content-Type": "application/json",
         },
       }
     );
@@ -70,7 +70,6 @@ export const fetchAsyncCreateProf = createAsyncThunk(
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
@@ -85,7 +84,7 @@ export const fetchAsyncGetProfs = createAsyncThunk(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/profile`,
       {
         headers: {
-          Authorization: `JWT ${localStorage.localJWT}`,
+          "Content-Type": "application/json",
         },
       }
     );
@@ -104,7 +103,6 @@ export const fetchAsyncUpdateProf = createAsyncThunk(
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
