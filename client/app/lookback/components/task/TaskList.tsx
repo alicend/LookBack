@@ -50,6 +50,22 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
   height: theme.spacing(3),
 }));
 
+function compareValues(a: READ_TASK[keyof READ_TASK], b: READ_TASK[keyof READ_TASK]) {
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a - b;
+  }
+
+  if (a instanceof Date && b instanceof Date) {
+    return a.getTime() - b.getTime();
+  }
+
+  if (typeof a === 'string' && typeof b === 'string') {
+    return a.localeCompare(b);
+  }
+
+  return 0;
+}
+
 const TaskList: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const tasks = useSelector(selectTasks);
@@ -67,13 +83,9 @@ const TaskList: React.FC = () => {
     const isDesc = column === state.activeKey && state.order === "desc";
     const newOrder = isDesc ? "asc" : "desc";
     const sortedRows = Array.from(state.rows).sort((a, b) => {
-      if (a[column] > b[column]) {
-        return newOrder === "asc" ? 1 : -1;
-      } else if (a[column] < b[column]) {
-        return newOrder === "asc" ? -1 : 1;
-      } else {
-        return 0;
-      }
+      const comparison = compareValues(a[column], b[column]);
+  
+      return newOrder === "asc" ? comparison : -comparison;
     });
 
     setState({
