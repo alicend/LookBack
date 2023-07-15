@@ -8,9 +8,9 @@ const TaskDisplay: React.FC = () => {
   const rows = [
     { item: "Task", data: selectedTask.task },
     { item: "Description", data: selectedTask.description },
-    { item: "Criteria", data: selectedTask.criteria },
     { item: "Owner", data: selectedTask.owner_username },
     { item: "Responsible", data: selectedTask.responsible_username },
+    { item: "Start_Date", data: selectedTask.start_date },
     { item: "Estimate [days]", data: selectedTask.estimate },
     { item: "Category", data: selectedTask.category_item },
     { item: "Status", data: selectedTask.status_name },
@@ -32,7 +32,7 @@ const TaskDisplay: React.FC = () => {
               <TableCell align="center">
                 <strong>{row.item}</strong>
               </TableCell>
-              <TableCell align="center">{row.data}</TableCell>
+              <TableCell align="center">{row.data instanceof Date ? row.data.toLocaleDateString() : row.data}</TableCell>
             </TableRow>
           ))}
         </TableBody>

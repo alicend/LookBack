@@ -41,7 +41,7 @@ export interface READ_TASK {
   id: number;
   task: string;
   description: string;
-  criteria: string;
+  start_date: Date | null;
   status: string;
   status_name: string;
   category: number;
@@ -58,7 +58,7 @@ export interface POST_TASK {
   id: number;
   task: string;
   description: string;
-  criteria: string;
+  start_date: Date | null;
   status: string;
   category: number;
   estimate: number;

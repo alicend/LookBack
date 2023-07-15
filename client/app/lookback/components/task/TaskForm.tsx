@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs';
+import jaLocale from 'dayjs/locale/ja';
 import { styled } from '@mui/system';
 import {
   TextField,
@@ -38,6 +42,11 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`,
   };
 }
+
+const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
+  margin: theme.spacing(2),
+  minWidth: 240,
+}));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   margin: theme.spacing(2),
@@ -108,7 +117,7 @@ const TaskForm: React.FC = () => {
   const isDisabled =
     editedTask.task.length === 0 ||
     editedTask.description.length === 0 ||
-    editedTask.criteria.length === 0;
+    editedTask.start_date === null;
 
   const isCatDisabled = inputText.length === 0;
 
@@ -123,6 +132,10 @@ const TaskForm: React.FC = () => {
       value = Number(value);
     }
     dispatch(editTask({ ...editedTask, [name]: value }));
+  };
+  
+  const handleSelectDate = (date: Date) => {
+    dispatch(editTask({ ...editedTask, start_date: date }));
   };
 
   const handleSelectRespChange = (e: SelectChangeEvent<string | number>) => {
@@ -139,6 +152,7 @@ const TaskForm: React.FC = () => {
     const value = Number(e.target.value);
     dispatch(editTask({ ...editedTask, category: value }));
   };
+  
   let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
     <MenuItem key={user.ID} value={user.ID} style={{ minHeight: '36px'}}>
       {user.Name}
@@ -153,6 +167,14 @@ const TaskForm: React.FC = () => {
     <div>
       <h2>{editedTask.id ? "Update Task" : "New Task"}</h2>
       <form>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale}>
+          <StyledDatePicker
+            label="Start Date"
+            value={editedTask.start_date || dayjs()}
+            onChange={handleSelectDate}
+            format="YYYY/MM/DD"
+          />
+        </LocalizationProvider>
         <StyledTextField
           label="Estimate [days]"
           type="number"
@@ -164,6 +186,7 @@ const TaskForm: React.FC = () => {
           value={editedTask.estimate}
           onChange={handleInputChange}
         />
+        <br />
         <StyledTextField
           InputLabelProps={{
             shrink: true,
@@ -174,7 +197,6 @@ const TaskForm: React.FC = () => {
           value={editedTask.task}
           onChange={handleInputChange}
         />
-        <br />
         <StyledTextField
           InputLabelProps={{
             shrink: true,
@@ -183,16 +205,6 @@ const TaskForm: React.FC = () => {
           type="text"
           name="description"
           value={editedTask.description}
-          onChange={handleInputChange}
-        />
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Criteria"
-          type="text"
-          name="criteria"
-          value={editedTask.criteria}
           onChange={handleInputChange}
         />
         <br />

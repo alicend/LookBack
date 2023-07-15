@@ -134,7 +134,7 @@ const TaskList: React.FC = () => {
               id: 0,
               task: "",
               description: "",
-              criteria: "",
+              start_date: null,
               responsible: loginUser.id,
               status: "1",
               category: 0,
