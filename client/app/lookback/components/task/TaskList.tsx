@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import dayjs from 'dayjs';
 
 import { styled } from '@mui/system';
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -134,8 +135,8 @@ const TaskList: React.FC = () => {
               id: 0,
               task: "",
               description: "",
-              start_date: "",
-              responsible: loginUser.id,
+              start_date: dayjs().toISOString(),
+              responsible: 0,
               status: "1",
               category: 0,
               estimate: 0,

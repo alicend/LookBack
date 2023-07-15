@@ -117,6 +117,10 @@ const TaskForm: React.FC = () => {
   const [modalStyle] = useState(getModalStyle);
   const [inputText, setInputText] = useState("");
 
+  // if (editedTask.start_date === "") {
+  //   dispatch(editTask({ ...editedTask, start_date: dayjs().toISOString() }));
+  // }
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -180,7 +184,7 @@ const TaskForm: React.FC = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale}>
           <StyledDatePicker
             label="Start Date"
-            value={editedTask.start_date ? new Date(editedTask.start_date) : dayjs()}
+            value={dayjs(editedTask.start_date)}
             onChange={handleSelectDate}
             format="YYYY/MM/DD"
           />
