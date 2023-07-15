@@ -111,6 +111,7 @@ const TaskForm: React.FC = () => {
   const users = useSelector(selectUsers);
   const category = useSelector(selectCategory);
   const editedTask = useSelector(selectEditedTask);
+  console.log(editedTask);
 
   const [open, setOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
@@ -144,7 +145,7 @@ const TaskForm: React.FC = () => {
   };
   
   const handleSelectDate = (date: Date) => {
-    dispatch(editTask({ ...editedTask, start_date: date }));
+    dispatch(editTask({ ...editedTask, start_date: date.toISOString() }));
   };
 
   const handleSelectRespChange = (e: SelectChangeEvent<string | number>) => {
@@ -179,7 +180,7 @@ const TaskForm: React.FC = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale}>
           <StyledDatePicker
             label="Start Date"
-            value={editedTask.start_date || dayjs()}
+            value={editedTask.start_date ? new Date(editedTask.start_date) : dayjs()}
             onChange={handleSelectDate}
             format="YYYY/MM/DD"
           />

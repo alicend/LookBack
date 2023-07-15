@@ -32,7 +32,7 @@ const TaskDisplay: React.FC = () => {
               <TableCell align="center">
                 <strong>{row.item}</strong>
               </TableCell>
-              <TableCell align="center">{row.data instanceof Date ? row.data.toLocaleDateString() : row.data}</TableCell>
+              <TableCell align="center">{row.data}</TableCell>
             </TableRow>
           ))}
         </TableBody>
