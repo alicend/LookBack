@@ -58,8 +58,16 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 240,
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
+const TaskSaveButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3),
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#1976d2 !important',
+  },
+  '&:disabled': {
+    backgroundColor: '#ccc !important',
+    cursor: 'not-allowed'
+  },
 }));
 
 const StyledFab = styled(Fab)(({ theme }) => ({
@@ -75,7 +83,7 @@ const StyledFab = styled(Fab)(({ theme }) => ({
   },
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const CategorySaveButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(4),
   marginLeft: theme.spacing(2),
   backgroundColor: '#4dabf5 !important',
@@ -117,7 +125,8 @@ const TaskForm: React.FC = () => {
   const isDisabled =
     editedTask.task.length === 0 ||
     editedTask.description.length === 0 ||
-    editedTask.start_date === null;
+    editedTask.responsible === 0 ||
+    editedTask.category === 0;
 
   const isCatDisabled = inputText.length === 0;
 
@@ -261,7 +270,7 @@ const TaskForm: React.FC = () => {
               value={inputText}
               onChange={handleInputTextChange}
             />
-            <SaveButton
+            <CategorySaveButton
               variant="contained"
               color="primary"
               size="small"
@@ -273,11 +282,11 @@ const TaskForm: React.FC = () => {
               }}
             >
               SAVE
-            </SaveButton>
+            </CategorySaveButton>
           </StyledPaper>
         </Modal>
         <br />
-        <StyledButton
+        <TaskSaveButton
           variant="contained"
           color="primary"
           size="small"
@@ -290,7 +299,7 @@ const TaskForm: React.FC = () => {
           }
         >
           {editedTask.id !== 0 ? "Update" : "Save"}
-        </StyledButton>
+        </TaskSaveButton>
 
         <Button
           variant="contained"
