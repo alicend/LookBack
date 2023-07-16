@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 	"fmt"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -33,10 +34,11 @@ func (task *Task) CreateTask(db *gorm.DB) (*Task, error) {
 	result := db.Create(task)
 
 	if result.Error != nil {
-		fmt.Printf("Error creating task: %v\n", result.Error)
-		fmt.Printf("Task: %+v\n", task)
+		log.Printf("Error creating task: %v\n", result.Error)
+		log.Printf("Task: %+v\n", task)
 		return nil, result.Error
 	}
+	log.Printf("タスクの作成に成功")
 
 	return task, nil
 }
@@ -47,9 +49,10 @@ func FetchTasksByUserID(db *gorm.DB, userID uint) ([]Task, error) {
 	result := db.Where("user_id = ?", userID).Order("task_index asc").Find(&tasks)
 
 	if result.Error != nil {
-		fmt.Printf("Error fetching tasks: %v\n", result.Error)
+		log.Printf("Error fetching tasks: %v\n", result.Error)
 		return nil, result.Error
 	}
+	log.Printf("タスクの取得に成功")
 
 	return tasks, nil
 }

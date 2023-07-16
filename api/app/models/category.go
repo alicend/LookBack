@@ -46,6 +46,7 @@ func (category *Category) CreateCategory(db *gorm.DB) (*CategoryResponse, error)
 		log.Printf("Category: %v", category)
 		return nil, result.Error
 	}
+	log.Printf("カテゴリーの作成に成功")
 
 	// CategoryオブジェクトをCategoryResponseオブジェクトに変換
 	categoryResponse := &CategoryResponse{

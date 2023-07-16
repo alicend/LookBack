@@ -45,8 +45,10 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	result := db.Create(user)
 
 	if result.Error != nil {
+		log.Printf("Error creating users: %v", result.Error)
 		return nil, result.Error
 	}
+	log.Printf("ユーザーの作成に成功")
 
 	return user, nil
 }
