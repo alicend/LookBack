@@ -94,12 +94,17 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 	log.Printf("updateTaskInput: %v", updateTaskInput)
 
 	// StartDateをstring型から*time.Time型に変換
-	layout := "2006-01-02T15:04:05Z07:00"
-	startDate, err := time.Parse(layout, updateTaskInput.StartDate)
-	if err != nil {
-		log.Printf("Invalid date format: %v", err)
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid date format")
-		return
+	layout1 := "2006-01-02T15:04:05Z07:00"
+	layout2 := "2006-01-02"
+
+	startDate, err := time.Parse(layout1, updateTaskInput.StartDate)
+	if err != nil { // レイアウト１での変換に失敗すれば、レイアウト２の変換にトライ
+		startDate, err = time.Parse(layout2, updateTaskInput.StartDate)
+		if err != nil { // ２種類に変換に失敗すればエラーを返す
+			log.Printf("Invalid date format: %v", err)
+			respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid date format")
+			return
+		}
 	}
 	
 	updateTask := &models.Task{
