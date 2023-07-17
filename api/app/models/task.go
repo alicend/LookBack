@@ -48,7 +48,7 @@ type TaskResponse struct {
 
 // TableName メソッドを追加して、この構造体がタスクテーブルに対応することを指定する
 func (TaskResponse) TableName() string {
-	return "Tasks"
+	return "tasks"
 }
 
 func (task *Task) CreateTask(db *gorm.DB) (*TaskResponse, error) {
@@ -87,10 +87,10 @@ func (task *Task) CreateTask(db *gorm.DB) (*TaskResponse, error) {
 	return taskResponse, nil
 }
 
-func FetchTasksByUserID(db *gorm.DB, userID uint) ([]Task, error) {
-	var tasks []Task
+func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
+	var tasks []TaskResponse
 
-	result := db.Where("user_id = ?", userID).Order("task_index asc").Find(&tasks)
+	result := db.Order("created_at asc").Find(&tasks)
 
 	if result.Error != nil {
 		log.Printf("Error fetching tasks: %v\n", result.Error)

@@ -57,6 +57,7 @@ const TaskList: React.FC = () => {
   const loginUser = useSelector(selectLoginUser);
   const profiles = useSelector(selectProfiles);
   const columns = tasks[0] && Object.keys(tasks[0]);
+  console.log(tasks);
 
   const [state, setState] = useState<SORT_STATE>({
     rows: tasks,

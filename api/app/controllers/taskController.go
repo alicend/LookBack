@@ -62,22 +62,14 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 }
 
 func (handler *Handler) GetTaskHandler(c *gin.Context) {
-	// Cookie内のjwtからUSER_IDを取得
-	userID, err := extractUserID(c)
-	if err != nil {
-		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
-		return
-	}
 
-	tasks, err := models.FetchTasksByUserID(handler.DB, userID)
+	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, "Failed to fetch task")
 		return
 	}
-
 	
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully got task",
 		"tasks"   : tasks,  // tasksをレスポンスとして返す
 	})
 }

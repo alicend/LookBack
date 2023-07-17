@@ -83,7 +83,7 @@ export default function MainPage() {
 
   useEffect(() => {
     const fetchBootLoader = async () => {
-  //     await dispatch(fetchAsyncGetTasks());
+      await dispatch(fetchAsyncGetTasks());
   //     await dispatch(fetchAsyncGetMyProf());
       await dispatch(fetchAsyncGetUsers());
       await dispatch(fetchAsyncGetCategory());
