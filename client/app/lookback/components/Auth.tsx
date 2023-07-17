@@ -8,7 +8,6 @@ import {
   toggleMode,
   fetchAsyncLogin,
   fetchAsyncRegister,
-  fetchAsyncCreateProf,
   selectIsLoginView,
 } from "@/reducer/authSlice";
 
@@ -24,6 +23,14 @@ const StyledContainer = styled('div')`
 `;
 
 const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#1769aa !important',
+  },
+  '&:disabled': {
+    backgroundColor: '#ccc !important',
+    cursor: 'not-allowed'
+  },
   margin: theme.spacing(3),
 }));
 

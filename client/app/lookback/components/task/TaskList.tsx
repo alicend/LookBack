@@ -33,7 +33,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
-    backgroundColor: '#1976d2 !important',
+    backgroundColor: '#1769aa !important',
   },
   '&:disabled': {
     backgroundColor: '#ccc !important',
@@ -54,7 +54,6 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 const TaskList: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const tasks = useSelector(selectTasks);
-  const loginUser = useSelector(selectLoginUser);
   const profiles = useSelector(selectProfiles);
   const columns = tasks[0] && Object.keys(tasks[0]);
   console.log("tasksだよ");

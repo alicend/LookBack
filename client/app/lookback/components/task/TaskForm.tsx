@@ -70,7 +70,7 @@ const ButtonGroup = styled('div')(({ theme }) => ({
 const TaskSaveButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
-    backgroundColor: '#1976d2 !important',
+    backgroundColor: '#1769aa !important',
   },
   '&:disabled': {
     backgroundColor: '#ccc !important',
@@ -80,9 +80,9 @@ const TaskSaveButton = styled(Button)(({ theme }) => ({
 
 const TaskDeleteButton = styled(Button)(({ theme }) => ({
   marginRight: theme.spacing(2),
-  backgroundColor: '#4dabf5 !important',
+  backgroundColor: '#f6685e !important',
   '&:hover': {
-    backgroundColor: '#1976d2 !important',
+    backgroundColor: '#aa2e25 !important',
   },
 }));
 
@@ -91,7 +91,7 @@ const StyledFab = styled(Fab)(({ theme }) => ({
   marginLeft: theme.spacing(2),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
-    backgroundColor: '#1976d2 !important',
+    backgroundColor: '#1769aa !important',
   },
   '&:disabled': {
     backgroundColor: '#ccc !important',
@@ -104,7 +104,7 @@ const CategorySaveButton = styled(Button)(({ theme }) => ({
   marginLeft: theme.spacing(2),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
-    backgroundColor: '#1976d2 !important',
+    backgroundColor: '#1769aa !important',
   },
   '&:disabled': {
     backgroundColor: '#ccc !important',
