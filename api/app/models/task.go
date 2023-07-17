@@ -24,10 +24,10 @@ type Task struct {
 	CompletedDate     *time.Time
 }
 
-type CreateTaskInput struct {
+type TaskInput struct {
 	Task        string `json:"Task" binding:"required,min=1,max=255"`
 	Description string `json:"Description" binding:"required,min=1,max=255"`
-	StartDate   string `json:"StartDate" binding:"required,min=24,max=24"`
+	StartDate   string `json:"StartDate" binding:"required,min=1,max=24"`
 	Estimate    uint   `json:"Estimate" binding:"required"`
 	Responsible uint   `json:"Responsible" binding:"required"`
 	Status      uint   `json:"Status" binding:"required"`
@@ -69,7 +69,6 @@ func (task *Task) CreateTask(db *gorm.DB) (error) {
 
 	if result.Error != nil {
 		log.Printf("Error creating task: %v\n", result.Error)
-		log.Printf("Task: %+v\n", task)
 		return result.Error
 	}
 	log.Printf("タスクの作成に成功")
@@ -111,6 +110,28 @@ func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 	}
 
 	return taskResponses, nil
+}
+
+func (task *Task) UpdateTask(db *gorm.DB, id int) (error) {
+
+	result := db.Model(task).Where("id = ?", id).Updates(Task{
+		Task:        task.Task,
+		Description: task.Description,
+		CategoryID:  task.CategoryID,
+		Status:      task.Status,
+		Responsible: task.Responsible,
+		Estimate:    task.Estimate,
+		StartDate:   task.StartDate,
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating task: %v\n", result.Error)
+		return result.Error
+	}
+	log.Printf("タスクの更新に成功")
+	log.Printf("更新後: %v\n", task)
+
+	return nil
 }
 
 // ==================================================================

@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"net/http"
+	"path"
+	"strconv"
 	"errors"
 	"time"
 	"log"
@@ -15,7 +17,7 @@ import (
 )
 
 func (handler *Handler) CreateTaskHandler(c *gin.Context) {
-	var createTaskInput models.CreateTaskInput
+	var createTaskInput models.TaskInput
 	if err := c.ShouldBindJSON(&createTaskInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
@@ -81,6 +83,50 @@ func (handler *Handler) GetTaskHandler(c *gin.Context) {
 }
 
 func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
+	var updateTaskInput models.TaskInput
+	if err := c.ShouldBindJSON(&updateTaskInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
+		return
+	}
+
+	log.Printf("updateTaskInput: %v", updateTaskInput)
+
+	// StartDateをstring型から*time.Time型に変換
+	layout := "2006-01-02T15:04:05Z07:00"
+	startDate, err := time.Parse(layout, updateTaskInput.StartDate)
+	if err != nil {
+		log.Printf("Invalid date format: %v", err)
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid date format")
+		return
+	}
+	
+	updateTask := &models.Task{
+		Task:        updateTaskInput.Task,
+		Description: updateTaskInput.Description,
+		CategoryID:  updateTaskInput.CategoryID,
+		Status:      updateTaskInput.Status,
+		Responsible: updateTaskInput.Responsible,
+		Estimate:    updateTaskInput.Estimate,
+		StartDate:   &startDate,
+	}
+
+	// URLからtaskのIDを取得
+	idStr := path.Base(c.Request.URL.Path)
+	id, err := strconv.Atoi(idStr)
+		if err != nil {
+			log.Printf("URLのIDのフォーマットが不正です")
+			log.Printf("Invalid date format: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+			return
+		}
+
+	err = updateTask.UpdateTask(handler.DB, id)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Failed to update task")
+		return
+	}
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {

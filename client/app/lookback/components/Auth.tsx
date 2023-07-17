@@ -61,7 +61,6 @@ const Auth: React.FC = () => {
       console.log(result);
       if (fetchAsyncRegister.fulfilled.match(result)) {
         await dispatch(fetchAsyncLogin(credential));
-        //await dispatch(fetchAsyncCreateProf());
       }
     }
   };
