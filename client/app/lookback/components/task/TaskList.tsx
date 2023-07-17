@@ -199,7 +199,7 @@ const TaskList: React.FC = () => {
                           dispatch(editTask(initialState.editedTask));
                         }}
                       >
-                        {key === "Status" ? (
+                        {key === "StatusName" ? (
                           renderSwitch(row[key])
                         ) : (
                           <span>{row[key]}</span>

@@ -147,24 +147,15 @@ const TaskForm: React.FC = () => {
     }
     dispatch(editTask({ ...editedTask, [name]: value }));
   };
-  
-  const handleSelectDate = (date: Date) => {
-    dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
-  };
 
-  const handleSelectRespChange = (e: SelectChangeEvent<string | number>) => {
+  const handleSelectChange = (e: SelectChangeEvent<string | number>) => {
     const value = Number(e.target.value);
-    dispatch(editTask({ ...editedTask, Responsible: value }));
+    const name = e.target.name;
+    dispatch(editTask({ ...editedTask, [name]: value }));
   };
   
-  const handleSelectStatusChange = (e: SelectChangeEvent<string>) => {
-    const value = e.target.value;
-    dispatch(editTask({ ...editedTask, Status: value }));
-  };
-  
-  const handleSelectCatChange = (e: SelectChangeEvent<string | number>) => {
-    const value = Number(e.target.value);
-    dispatch(editTask({ ...editedTask, Category: value }));
+  const handleSelectDateChange = (date: Date) => {
+    dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
   };
   
   let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
@@ -185,7 +176,7 @@ const TaskForm: React.FC = () => {
           <StyledDatePicker
             label="Start Date"
             value={dayjs(editedTask.StartDate)}
-            onChange={handleSelectDate}
+            onChange={handleSelectDateChange}
             format="YYYY/MM/DD"
           />
         </LocalizationProvider>
@@ -226,7 +217,7 @@ const TaskForm: React.FC = () => {
           <InputLabel>Responsible</InputLabel>
           <Select
             name="Responsible"
-            onChange={handleSelectRespChange}
+            onChange={handleSelectChange}
             value={editedTask.Responsible}
           >
             {userOptions}
@@ -235,9 +226,9 @@ const TaskForm: React.FC = () => {
         <StyledFormControl>
           <InputLabel>Status</InputLabel>
           <Select
-            name="status"
+            name="Status"
             value={editedTask.Status}
-            onChange={handleSelectStatusChange}
+            onChange={handleSelectChange}
           >
             <MenuItem value={1}>Not started</MenuItem>
             <MenuItem value={2}>On going</MenuItem>
@@ -250,7 +241,7 @@ const TaskForm: React.FC = () => {
           <Select
             name="Category"
             value={editedTask.Category}
-            onChange={handleSelectCatChange}
+            onChange={handleSelectChange}
           >
             {categoryOptions}
           </Select>

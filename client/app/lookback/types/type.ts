@@ -42,15 +42,15 @@ export interface READ_TASK {
   Task: string;
   Description: string;
   StartDate: string;
-  Status: string;
+  Status: number;
   StatusName: string;
   Category: number;
   CategoryName: string;
   Estimate: number;
   Responsible: number;
-  Responsible_UserName: string;
+  ResponsibleUserName: string;
   Creator: number;
-  Creator_UserName: string;
+  CreatorUserName: string;
   created_at: string;
   updated_at: string;
 }
@@ -59,7 +59,7 @@ export interface POST_TASK {
   Task: string;
   Description: string;
   StartDate: string;
-  Status: string;
+  Status: number;
   Category: number;
   Estimate: number;
   Responsible: number;
