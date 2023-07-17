@@ -65,7 +65,6 @@ export interface POST_TASK {
   Responsible: number;
 }
 export interface TASK_RESPONSE {
-  task: READ_TASK;
   tasks: READ_TASK[];
 }
 export interface CATEGORY {

@@ -50,14 +50,20 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 		StartDate:   &startDate,
 	}
 
-	task, err := newTask.CreateTask(handler.DB)
+	err = newTask.CreateTask(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, "Failed to create task")
 		return
 	}
 
+	tasks, err := models.FetchTasks(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"task"   : task,
+		"tasks"   : tasks,
 	})
 }
 
@@ -65,7 +71,7 @@ func (handler *Handler) GetTaskHandler(c *gin.Context) {
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch task")
+		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
 		return
 	}
 	

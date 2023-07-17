@@ -74,7 +74,7 @@ export const fetchAsyncCreateTask = createAsyncThunk(
         },
       }
     );
-    return res.data.task;
+    return res.data.tasks;
   }
 );
 
@@ -90,20 +90,22 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
         },
       }
     );
-    return res.data.task;
+    return res.data.tasks;
   }
 );
 
 export const fetchAsyncDeleteTask = createAsyncThunk(
   "task/deleteTask",
   async (id: number) => {
-    await axios.delete(`${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return id;
+    const res = await axios.delete<TASK_RESPONSE>(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.tasks;
   }
 );
 
@@ -232,10 +234,10 @@ export const taskSlice = createSlice({
     });
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
-      (state, action: PayloadAction<READ_TASK>) => {
+      (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
-          tasks: [action.payload, ...state.tasks],
+          tasks: action.payload,
           editedTask: initialState.editedTask,
         };
       }
@@ -245,12 +247,10 @@ export const taskSlice = createSlice({
     });
     builder.addCase(
       fetchAsyncUpdateTask.fulfilled,
-      (state, action: PayloadAction<READ_TASK>) => {
+      (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
-          tasks: state.tasks.map((t) =>
-            t.ID === action.payload.ID ? action.payload : t
-          ),
+          tasks: action.payload,
           editedTask: initialState.editedTask,
           selectedTask: initialState.selectedTask,
         };
@@ -261,10 +261,10 @@ export const taskSlice = createSlice({
     });
     builder.addCase(
       fetchAsyncDeleteTask.fulfilled,
-      (state, action: PayloadAction<number>) => {
+      (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
-          tasks: state.tasks.filter((t) => t.ID !== action.payload),
+          tasks: action.payload,
           editedTask: initialState.editedTask,
           selectedTask: initialState.selectedTask,
         };

@@ -10,17 +10,17 @@ import (
 
 type Task struct {
 	gorm.Model
-	Task              string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Description       string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Creator           uint     `gorm:"not null"`
-	CreatorUserID     User     `gorm:"foreignKey:Creator;"`
-	CategoryID        uint     `gorm:"not null"`
-	Category          Category `gorm:"foreignKey:CategoryID;"`
-	Status            uint     `gorm:"not null"`
-	Responsible       uint     `gorm:"not null"`
-	ResponsibleUserID User     `gorm:"foreignKey:Responsible;"`
-	Estimate          uint     `gorm:"not null"`
-	StartDate         *time.Time
+	Task              string     `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Description       string     `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Creator           uint       `gorm:"not null"`
+	CreatorUserID     User       `gorm:"foreignKey:Creator;"`
+	CategoryID        uint       `gorm:"not null"`
+	Category          Category   `gorm:"foreignKey:CategoryID;"`
+	Status            uint       `gorm:"not null"`
+	Responsible       uint       `gorm:"not null"`
+	ResponsibleUserID User       `gorm:"foreignKey:Responsible;"`
+	Estimate          uint       `gorm:"not null"`
+	StartDate         *time.Time `gorm:"not null"`
 	CompletedDate     *time.Time
 }
 
@@ -57,11 +57,12 @@ func (TaskResponse) TableName() string {
 	return "tasks"
 }
 
-func (task *Task) CreateTask(db *gorm.DB) (*TaskResponse, error) {
+func (task *Task) CreateTask(db *gorm.DB) (error) {
 	// 自動マイグレーション(Userテーブルを作成)
 	migrateErr := db.AutoMigrate(&Task{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
+		return migrateErr
 	}
 
 	result := db.Create(task)
@@ -69,28 +70,11 @@ func (task *Task) CreateTask(db *gorm.DB) (*TaskResponse, error) {
 	if result.Error != nil {
 		log.Printf("Error creating task: %v\n", result.Error)
 		log.Printf("Task: %+v\n", task)
-		return nil, result.Error
+		return result.Error
 	}
 	log.Printf("タスクの作成に成功")
 
-	// TaskオブジェクトをTaskResponseオブジェクトに変換
-	taskResponse := &TaskResponse{
-		ID:                  task.ID,
-		Task:                task.Task,
-		Description:         task.Description,
-		Status:              task.Status,
-		StatusName:          statusToString(task.Status),
-		Category:            task.Category.ID,
-		CategoryName:        task.Category.Category,
-		Estimate:            task.Estimate,
-		StartDate:           task.StartDate.String(),
-		Responsible:         task.ResponsibleUserID.ID,
-		ResponsibleUserName: task.ResponsibleUserID.Name,
-		Creator:             task.CreatorUserID.ID,
-		CreatorUserName:     task.CreatorUserID.Name,
-	}
-
-	return taskResponse, nil
+	return nil
 }
 
 func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
@@ -106,7 +90,6 @@ func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 
 	taskResponses := make([]TaskResponse, len(tasks))
 	for i, task := range tasks {
-		log.Printf("Task: %+v\n", task)
 
 		taskResponses[i] = TaskResponse{
 			ID:                  task.ID,
