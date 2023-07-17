@@ -131,7 +131,7 @@ const TaskForm: React.FC = () => {
     editedTask.Task.length === 0 ||
     editedTask.Description.length === 0 ||
     editedTask.Responsible === 0 ||
-    editedTask.CategoryID === 0;
+    editedTask.Category === 0;
 
   const isCatDisabled = inputText.length === 0;
 
@@ -164,7 +164,7 @@ const TaskForm: React.FC = () => {
   
   const handleSelectCatChange = (e: SelectChangeEvent<string | number>) => {
     const value = Number(e.target.value);
-    dispatch(editTask({ ...editedTask, CategoryID: value }));
+    dispatch(editTask({ ...editedTask, Category: value }));
   };
   
   let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
@@ -248,8 +248,8 @@ const TaskForm: React.FC = () => {
         <StyledFormControl>
           <InputLabel>Category</InputLabel>
           <Select
-            name="CategoryID"
-            value={editedTask.CategoryID}
+            name="Category"
+            value={editedTask.Category}
             onChange={handleSelectCatChange}
           >
             {categoryOptions}

@@ -10,18 +10,18 @@ import (
 
 type Task struct {
 	gorm.Model
-	Task            string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Description     string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Creator         uint     `gorm:"not null"`
-	CreatorUser     User     `gorm:"foreignKey:Creator;"`
-	CategoryID      uint     `gorm:"not null"`
-	Category        Category `gorm:"foreignKey:CategoryID;"`
-	Status          uint     `gorm:"not null"`
-	Responsible     uint     `gorm:"not null"`
-	ResponsibleUser User     `gorm:"foreignKey:Responsible;"`
-	Estimate        uint     `gorm:"not null"`
-	StartDate       *time.Time
-	CompletedDate   *time.Time
+	Task              string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Description       string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Creator           uint     `gorm:"not null"`
+	CreatorUserID     User     `gorm:"foreignKey:Creator;"`
+	CategoryID        uint     `gorm:"not null"`
+	Category          Category `gorm:"foreignKey:CategoryID;"`
+	Status            uint     `gorm:"not null"`
+	Responsible       uint     `gorm:"not null"`
+	ResponsibleUserID User     `gorm:"foreignKey:Responsible;"`
+	Estimate          uint     `gorm:"not null"`
+	StartDate         *time.Time
+	CompletedDate     *time.Time
 }
 
 type CreateTaskInput struct {
@@ -31,19 +31,23 @@ type CreateTaskInput struct {
 	Estimate    uint   `json:"Estimate" binding:"required"`
 	Responsible uint   `json:"Responsible" binding:"required"`
 	Status      uint   `json:"Status" binding:"required"`
-	CategoryID  uint   `json:"CategoryID" binding:"required"`
+	CategoryID  uint   `json:"Category" binding:"required"`
 }
 
 type TaskResponse struct {
-	ID          uint
-	Task        string
-	Description string
-	Creator     uint
-	CategoryID  uint
-	Status      uint
-	Responsible uint
-	Estimate    uint
-	StartDate   string
+	ID                  uint
+	Task                string
+	Description         string
+	Status              uint
+	StatusName          string
+	Category            uint
+	CategoryName        string
+	Estimate            uint
+	StartDate           string
+	Responsible         uint
+	ResponsibleUserName string
+	Creator             uint
+	CreatorUserName     string
 }
 
 // TableName メソッドを追加して、この構造体がタスクテーブルに対応することを指定する
@@ -67,30 +71,30 @@ func (task *Task) CreateTask(db *gorm.DB) (*TaskResponse, error) {
 	}
 	log.Printf("タスクの作成に成功")
 
-	// StartDateを*time.Time型からstring型に変換
-	layout := "2006-01-02T15:04:05Z07:00"
-	startDate := task.StartDate.Format(layout)
-
 	// TaskオブジェクトをTaskResponseオブジェクトに変換
 	taskResponse := &TaskResponse{
-		ID:          task.ID,
-		Task:        task.Task,
-		Description: task.Description,
-		Creator:     task.Creator,
-		CategoryID:  task.CategoryID,
-		Status:      task.Status,
-		Responsible: task.Responsible,
-		Estimate:    task.Estimate,
-		StartDate:   startDate,
+		ID:                  task.ID,
+		Task:                task.Task,
+		Description:         task.Description,
+		Status:              task.Status,
+		StatusName:          statusToString(task.Status),
+		Category:            task.Category.ID,
+		CategoryName:        task.Category.Category,
+		Estimate:            task.Estimate,
+		StartDate:           task.StartDate.String(),
+		Responsible:         task.ResponsibleUserID.ID,
+		ResponsibleUserName: task.ResponsibleUserID.Name,
+		Creator:             task.CreatorUserID.ID,
+		CreatorUserName:     task.CreatorUserID.Name,
 	}
 
 	return taskResponse, nil
 }
 
 func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
-	var tasks []TaskResponse
+	var tasks []Task
 
-	result := db.Order("created_at asc").Find(&tasks)
+	result := db.Preload("CreatorUserID").Preload("ResponsibleUserID").Preload("Category").Order("created_at asc").Find(&tasks)
 
 	if result.Error != nil {
 		log.Printf("Error fetching tasks: %v\n", result.Error)
@@ -98,9 +102,41 @@ func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 	}
 	log.Printf("タスクの取得に成功")
 
-	return tasks, nil
+	taskResponses := make([]TaskResponse, len(tasks))
+	for i, task := range tasks {
+
+		taskResponses[i] = TaskResponse{
+			ID:                  task.ID,
+			Task:                task.Task,
+			Description:         task.Description,
+			Status:              task.Status,
+			StatusName:          statusToString(task.Status),
+			Category:            task.Category.ID,
+			CategoryName:        task.Category.Category,
+			Estimate:            task.Estimate,
+			StartDate:           task.StartDate.String(),
+			Responsible:         task.ResponsibleUserID.ID,
+			ResponsibleUserName: task.ResponsibleUserID.Name,
+			Creator:             task.CreatorUserID.ID,
+			CreatorUserName:     task.CreatorUserID.Name,
+		}
+	}
+
+	return taskResponses, nil
 }
 
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================
+func statusToString(status uint) string {
+	switch status {
+	case 1:
+		return "Not started"
+	case 2:
+		return "On going"
+	case 3:
+		return "Done"
+	default:
+		return "Unknown status"
+	}
+}

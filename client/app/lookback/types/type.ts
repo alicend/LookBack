@@ -44,7 +44,7 @@ export interface READ_TASK {
   StartDate: string;
   Status: string;
   StatusName: string;
-  CategoryID: number;
+  Category: number;
   CategoryName: string;
   Estimate: number;
   Responsible: number;
@@ -60,7 +60,7 @@ export interface POST_TASK {
   Description: string;
   StartDate: string;
   Status: string;
-  CategoryID: number;
+  Category: number;
   Estimate: number;
   Responsible: number;
 }

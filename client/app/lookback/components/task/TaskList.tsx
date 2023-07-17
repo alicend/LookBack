@@ -57,7 +57,10 @@ const TaskList: React.FC = () => {
   const loginUser = useSelector(selectLoginUser);
   const profiles = useSelector(selectProfiles);
   const columns = tasks[0] && Object.keys(tasks[0]);
+  console.log("tasksだよ");
   console.log(tasks);
+  console.log("columnsだよ");
+  console.log(columns);
 
   const [state, setState] = useState<SORT_STATE>({
     rows: tasks,
@@ -138,8 +141,8 @@ const TaskList: React.FC = () => {
               Description: "",
               StartDate: dayjs().toISOString(),
               Responsible: 0,
-              Status: "1",
-              CategoryID: 0,
+              Status:   1,
+              Category: 0,
               Estimate: 0,
             })
           );
@@ -156,7 +159,8 @@ const TaskList: React.FC = () => {
                 (column, colIndex) =>
                   (column === "Task" ||
                     column === "Status" ||
-                    column === "CategoryID" ||
+                    column === "Category" ||
+                    column === "StartDate" ||
                     column === "Estimate" ||
                     column === "Responsible" ||
                     column === "Creator") && (
@@ -182,7 +186,10 @@ const TaskList: React.FC = () => {
                     (key === "Task" ||
                       key === "StatusName" ||
                       key === "CategoryName" ||
-                      key === "Estimate") && (
+                      key === "Estimate" ||
+                      key === "StartDate" ||
+                      key === "ResponsibleUserName" ||
+                      key === "CreatorUserName") && (
                       <TableCell
                         align="center"
                         className="cursor-pointer"
@@ -192,7 +199,7 @@ const TaskList: React.FC = () => {
                           dispatch(editTask(initialState.editedTask));
                         }}
                       >
-                        {key === "StatusName" ? (
+                        {key === "Status" ? (
                           renderSwitch(row[key])
                         ) : (
                           <span>{row[key]}</span>
@@ -200,18 +207,6 @@ const TaskList: React.FC = () => {
                       </TableCell>
                     )
                 )}
-                <TableCell>
-                  <SmallAvatar
-                    alt="resp"
-                    src={conditionalSrc(row["Responsible"])}
-                  />
-                </TableCell>
-                <TableCell>
-                  <SmallAvatar
-                    alt="owner"
-                    src={conditionalSrc(row["Creator"])}
-                  />
-                </TableCell>
 
                 <TableCell align="center">
                   <div className="text-gray-400 cursor-not-allowed">

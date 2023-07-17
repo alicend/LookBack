@@ -119,7 +119,7 @@ export const initialState: TASK_STATE = {
       Responsible: 0,
       Responsible_UserName: "",
       Estimate: 0,
-      CategoryID: 0,
+      Category: 0,
       CategoryName: "",
       Status: "",
       StatusName: "",
@@ -134,7 +134,7 @@ export const initialState: TASK_STATE = {
     StartDate: "",
     Responsible: 0,
     Estimate: 0,
-    CategoryID: 0,
+    Category: 0,
     Status: "",
   },
   selectedTask: {
@@ -147,7 +147,7 @@ export const initialState: TASK_STATE = {
     Responsible: 0,
     Responsible_UserName: "",
     Estimate: 0,
-    CategoryID: 0,
+    Category: 0,
     CategoryName: "",
     Status: "",
     StatusName: "",
@@ -183,6 +183,8 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncGetTasks.fulfilled,
       (state, action: PayloadAction<READ_TASK[]>) => {
+        console.log("action.payload")
+        console.log(action.payload)
         return {
           ...state,
           tasks: action.payload,
@@ -190,12 +192,11 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncGetTasks.rejected, () => {
-      router.push("/");
+      //router.push("/");
     });
     builder.addCase(
       fetchAsyncGetUsers.fulfilled,
       (state, action: PayloadAction<USER[]>) => {
-        console.log(action.payload)
         return {
           ...state,
           users: action.payload,
@@ -205,7 +206,6 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncGetCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY[]>) => {
-        console.log(action.payload)
         return {
           ...state,
           category: action.payload,
@@ -233,10 +233,6 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
       (state, action: PayloadAction<READ_TASK>) => {
-        console.log("stateだよ")
-        console.log(state)
-        console.log("actionだよ")
-        console.log(action)
         return {
           ...state,
           tasks: [action.payload, ...state.tasks],
