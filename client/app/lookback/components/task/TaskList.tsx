@@ -215,7 +215,6 @@ const TaskList: React.FC = () => {
                       onClick={() => {
                         dispatch(fetchAsyncDeleteTask(row.ID));
                       }}
-                      disabled={row["Creator"] !== loginUser.id}
                     >
                       <DeleteOutlineOutlinedIcon />
                     </button>
@@ -224,7 +223,6 @@ const TaskList: React.FC = () => {
                     <button
                       className="cursor-pointer bg-transparent border-none outline-none text-lg mt-2 text-gray-500"
                       onClick={() => dispatch(editTask(row))}
-                      disabled={row["Creator"] !== loginUser.id}
                     >
                       <EditOutlinedIcon />
                     </button>
