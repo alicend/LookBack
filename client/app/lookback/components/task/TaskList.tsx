@@ -211,17 +211,7 @@ const TaskList: React.FC = () => {
                 <TableCell align="center">
                   <div className="text-gray-400 cursor-not-allowed">
                     <button
-                      className="cursor-pointer bg-transparent border-none outline-none text-lg mt-2 text-gray-500"
-                      onClick={() => {
-                        dispatch(fetchAsyncDeleteTask(row.ID));
-                      }}
-                    >
-                      <DeleteOutlineOutlinedIcon />
-                    </button>
-                  </div>
-                  <div className="text-gray-400 cursor-not-allowed">
-                    <button
-                      className="cursor-pointer bg-transparent border-none outline-none text-lg mt-2 text-gray-500"
+                      className="cursor-pointer bg-transparent border-none outline-none text-lg text-gray-500"
                       onClick={() => dispatch(editTask(row))}
                     >
                       <EditOutlinedIcon />

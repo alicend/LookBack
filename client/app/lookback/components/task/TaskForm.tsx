@@ -16,6 +16,7 @@ import {
   SelectChangeEvent
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import AddIcon from "@mui/icons-material/Add";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -28,6 +29,7 @@ import {
   selectCategory,
   editTask,
   selectTask,
+  fetchAsyncDeleteTask,
 } from "@/reducer/taskSlice";
 import { AppDispatch } from "@/store/store";
 import { initialState } from "@/reducer/taskSlice";
@@ -58,8 +60,14 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 240,
 }));
 
+const ButtonGroup = styled('div')(({ theme }) => ({
+  marginLeft: theme.spacing(15),
+  marginRight: theme.spacing(15),
+  display: 'flex',
+  justifyContent: 'space-between',
+}));
+
 const TaskSaveButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(3),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
     backgroundColor: '#1976d2 !important',
@@ -67,6 +75,14 @@ const TaskSaveButton = styled(Button)(({ theme }) => ({
   '&:disabled': {
     backgroundColor: '#ccc !important',
     cursor: 'not-allowed'
+  },
+}));
+
+const TaskDeleteButton = styled(Button)(({ theme }) => ({
+  marginRight: theme.spacing(2),
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#1976d2 !important',
   },
 }));
 
@@ -116,10 +132,6 @@ const TaskForm: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
   const [inputText, setInputText] = useState("");
-
-  // if (editedTask.start_date === "") {
-  //   dispatch(editTask({ ...editedTask, start_date: dayjs().toISOString() }));
-  // }
 
   const handleOpen = () => {
     setOpen(true);
@@ -282,6 +294,7 @@ const TaskForm: React.FC = () => {
           </StyledPaper>
         </Modal>
         <br />
+        <ButtonGroup>
         <TaskSaveButton
           variant="contained"
           color="primary"
@@ -296,7 +309,22 @@ const TaskForm: React.FC = () => {
         >
           {editedTask.ID !== 0 ? "Update" : "Save"}
         </TaskSaveButton>
-
+        {editedTask.ID !== 0 ?
+          <TaskDeleteButton
+            variant="contained"
+            color="error"
+            size="small"
+            startIcon={<DeleteOutlineOutlinedIcon />}
+            onClick={() => {
+              dispatch(fetchAsyncDeleteTask(editedTask.ID));
+              dispatch(selectTask(initialState.selectedTask));
+            }}
+          >
+            DELETE
+          </TaskDeleteButton>
+          :
+          ""
+        }
         <Button
           variant="contained"
           color="inherit"
@@ -308,6 +336,7 @@ const TaskForm: React.FC = () => {
         >
           Cancel
         </Button>
+        </ButtonGroup>
       </form>
     </div>
   );

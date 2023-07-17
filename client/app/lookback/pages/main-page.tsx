@@ -12,8 +12,6 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectLoginUser,
   selectProfiles,
-  fetchAsyncGetMyProf,
-  fetchAsyncGetProfs,
   fetchAsyncUpdateProf,
 } from "@/reducer/authSlice";
 import {
@@ -84,10 +82,8 @@ export default function MainPage() {
   useEffect(() => {
     const fetchBootLoader = async () => {
       await dispatch(fetchAsyncGetTasks());
-  //     await dispatch(fetchAsyncGetMyProf());
       await dispatch(fetchAsyncGetUsers());
       await dispatch(fetchAsyncGetCategory());
-  //     await dispatch(fetchAsyncGetProfs());
     };
     fetchBootLoader();
   }, [dispatch]);

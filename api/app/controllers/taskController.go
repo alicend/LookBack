@@ -80,13 +80,31 @@ func (handler *Handler) GetTaskHandler(c *gin.Context) {
 	})
 }
 
-// func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
-// 	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
+func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"message": "Successfully deleted task",
-// 	})
-// }
+	tasks, err := models.FetchTasks(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{
+		"tasks"   : tasks,  // tasksをレスポンスとして返す
+	})
+}
+
+func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
+
+	tasks, err := models.FetchTasks(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{
+		"tasks"   : tasks,  // tasksをレスポンスとして返す
+	})
+}
 
 // ==================================================================
 // 以下はプライベート関数

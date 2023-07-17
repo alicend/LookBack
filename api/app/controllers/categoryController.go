@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/alicend/LookBack/app/constant"
 	"github.com/alicend/LookBack/app/models"
 )
 
@@ -51,8 +50,7 @@ func (handler *Handler) GetCategoryHandler(c *gin.Context) {
 	})
 }
 
-func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
+func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully deleted task",

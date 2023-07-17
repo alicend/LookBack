@@ -33,6 +33,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	{
 		tasks.GET("", handler.GetTaskHandler)
 		tasks.POST("", handler.CreateTaskHandler)
+		tasks.PUT("/:taskId", handler.UpdateTaskHandler)
 		tasks.DELETE("/:taskId", handler.DeleteTaskHandler)
 	}
 
