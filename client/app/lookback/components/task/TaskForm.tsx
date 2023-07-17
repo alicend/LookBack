@@ -128,10 +128,10 @@ const TaskForm: React.FC = () => {
     setOpen(false);
   };
   const isDisabled =
-    editedTask.task.length === 0 ||
-    editedTask.description.length === 0 ||
-    editedTask.responsible === 0 ||
-    editedTask.category === 0;
+    editedTask.Task.length === 0 ||
+    editedTask.Description.length === 0 ||
+    editedTask.Responsible === 0 ||
+    editedTask.CategoryID === 0;
 
   const isCatDisabled = inputText.length === 0;
 
@@ -142,29 +142,29 @@ const TaskForm: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value: string | number = e.target.value;
     const name = e.target.name;
-    if (name === "estimate") {
+    if (name === "Estimate") {
       value = Number(value);
     }
     dispatch(editTask({ ...editedTask, [name]: value }));
   };
   
   const handleSelectDate = (date: Date) => {
-    dispatch(editTask({ ...editedTask, start_date: date.toISOString() }));
+    dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
   };
 
   const handleSelectRespChange = (e: SelectChangeEvent<string | number>) => {
     const value = Number(e.target.value);
-    dispatch(editTask({ ...editedTask, responsible: value }));
+    dispatch(editTask({ ...editedTask, Responsible: value }));
   };
   
   const handleSelectStatusChange = (e: SelectChangeEvent<string>) => {
     const value = e.target.value;
-    dispatch(editTask({ ...editedTask, status: value }));
+    dispatch(editTask({ ...editedTask, Status: value }));
   };
   
   const handleSelectCatChange = (e: SelectChangeEvent<string | number>) => {
     const value = Number(e.target.value);
-    dispatch(editTask({ ...editedTask, category: value }));
+    dispatch(editTask({ ...editedTask, CategoryID: value }));
   };
   
   let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
@@ -179,12 +179,12 @@ const TaskForm: React.FC = () => {
   ));
   return (
     <div>
-      <h2>{editedTask.id ? "Update Task" : "New Task"}</h2>
+      <h2>{editedTask.ID ? "Update Task" : "New Task"}</h2>
       <form>
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale}>
           <StyledDatePicker
             label="Start Date"
-            value={dayjs(editedTask.start_date)}
+            value={dayjs(editedTask.StartDate)}
             onChange={handleSelectDate}
             format="YYYY/MM/DD"
           />
@@ -192,12 +192,12 @@ const TaskForm: React.FC = () => {
         <StyledTextField
           label="Estimate [days]"
           type="number"
-          name="estimate"
+          name="Estimate"
           InputProps={{ inputProps: { min: 0, max: 1000 } }}
           InputLabelProps={{
             shrink: true,
           }}
-          value={editedTask.estimate}
+          value={editedTask.Estimate}
           onChange={handleInputChange}
         />
         <br />
@@ -207,8 +207,8 @@ const TaskForm: React.FC = () => {
           }}
           label="Task"
           type="text"
-          name="task"
-          value={editedTask.task}
+          name="Task"
+          value={editedTask.Task}
           onChange={handleInputChange}
         />
         <StyledTextField
@@ -217,17 +217,17 @@ const TaskForm: React.FC = () => {
           }}
           label="Description"
           type="text"
-          name="description"
-          value={editedTask.description}
+          name="Description"
+          value={editedTask.Description}
           onChange={handleInputChange}
         />
         <br />
         <StyledFormControl>
           <InputLabel>Responsible</InputLabel>
           <Select
-            name="responsible"
+            name="Responsible"
             onChange={handleSelectRespChange}
-            value={editedTask.responsible}
+            value={editedTask.Responsible}
           >
             {userOptions}
           </Select>
@@ -236,7 +236,7 @@ const TaskForm: React.FC = () => {
           <InputLabel>Status</InputLabel>
           <Select
             name="status"
-            value={editedTask.status}
+            value={editedTask.Status}
             onChange={handleSelectStatusChange}
           >
             <MenuItem value={1}>Not started</MenuItem>
@@ -248,8 +248,8 @@ const TaskForm: React.FC = () => {
         <StyledFormControl>
           <InputLabel>Category</InputLabel>
           <Select
-            name="category"
-            value={editedTask.category}
+            name="CategoryID"
+            value={editedTask.CategoryID}
             onChange={handleSelectCatChange}
           >
             {categoryOptions}
@@ -298,12 +298,12 @@ const TaskForm: React.FC = () => {
           startIcon={<SaveIcon />}
           disabled={isDisabled}
           onClick={
-            editedTask.id !== 0
+            editedTask.ID !== 0
               ? () => dispatch(fetchAsyncUpdateTask(editedTask))
               : () => dispatch(fetchAsyncCreateTask(editedTask))
           }
         >
-          {editedTask.id !== 0 ? "Update" : "Save"}
+          {editedTask.ID !== 0 ? "Update" : "Save"}
         </TaskSaveButton>
 
         <Button

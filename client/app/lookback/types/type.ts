@@ -38,31 +38,35 @@ export interface AUTH_STATE {
 }
 /*taskSlice.ts*/
 export interface READ_TASK {
-  id: number;
-  task: string;
-  description: string;
-  start_date: string;
-  status: string;
-  status_name: string;
-  category: number;
-  category_item: string;
-  estimate: number;
-  responsible: number;
-  responsible_username: string;
-  owner: number;
-  owner_username: string;
+  ID: number;
+  Task: string;
+  Description: string;
+  StartDate: string;
+  Status: string;
+  StatusName: string;
+  CategoryID: number;
+  CategoryName: string;
+  Estimate: number;
+  Responsible: number;
+  Responsible_UserName: string;
+  Creator: number;
+  Creator_UserName: string;
   created_at: string;
   updated_at: string;
 }
 export interface POST_TASK {
-  id: number;
-  task: string;
-  description: string;
-  start_date: string;
-  status: string;
-  category: number;
-  estimate: number;
-  responsible: number;
+  ID: number;
+  Task: string;
+  Description: string;
+  StartDate: string;
+  Status: string;
+  CategoryID: number;
+  Estimate: number;
+  Responsible: number;
+}
+export interface TASK_RESPONSE {
+  task: READ_TASK;
+  tasks: READ_TASK[];
 }
 export interface CATEGORY {
   ID: number;

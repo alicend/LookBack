@@ -132,14 +132,14 @@ const TaskList: React.FC = () => {
         onClick={() => {
           dispatch(
             editTask({
-              id: 0,
-              task: "",
-              description: "",
-              start_date: dayjs().toISOString(),
-              responsible: 0,
-              status: "1",
-              category: 0,
-              estimate: 0,
+              ID: 0,
+              Task: "",
+              Description: "",
+              StartDate: dayjs().toISOString(),
+              Responsible: 0,
+              Status: "1",
+              CategoryID: 0,
+              Estimate: 0,
             })
           );
           dispatch(selectTask(initialState.selectedTask));
@@ -147,18 +147,18 @@ const TaskList: React.FC = () => {
       >
         Add new
       </StyledButton>
-      {tasks[0]?.task && (
+      {tasks[0]?.Task && (
         <StyledTable size="small" >
           <TableHead>
             <TableRow>
               {columns.map(
                 (column, colIndex) =>
-                  (column === "task" ||
-                    column === "status" ||
-                    column === "category" ||
-                    column === "estimate" ||
-                    column === "responsible" ||
-                    column === "owner") && (
+                  (column === "Task" ||
+                    column === "Status" ||
+                    column === "CategoryID" ||
+                    column === "Estimate" ||
+                    column === "Responsible" ||
+                    column === "Creator") && (
                     <TableCell align="center" key={colIndex}>
                       <TableSortLabel
                         active={state.activeKey === column}
@@ -178,10 +178,10 @@ const TaskList: React.FC = () => {
               <TableRow hover key={rowIndex}>
                 {Object.keys(row).map(
                   (key, colIndex) =>
-                    (key === "task" ||
-                      key === "status_name" ||
-                      key === "category_item" ||
-                      key === "estimate") && (
+                    (key === "Task" ||
+                      key === "StatusName" ||
+                      key === "CategoryName" ||
+                      key === "Estimate") && (
                       <TableCell
                         align="center"
                         className="cursor-pointer"
@@ -191,7 +191,7 @@ const TaskList: React.FC = () => {
                           dispatch(editTask(initialState.editedTask));
                         }}
                       >
-                        {key === "status_name" ? (
+                        {key === "StatusName" ? (
                           renderSwitch(row[key])
                         ) : (
                           <span>{row[key]}</span>
@@ -202,13 +202,13 @@ const TaskList: React.FC = () => {
                 <TableCell>
                   <SmallAvatar
                     alt="resp"
-                    src={conditionalSrc(row["responsible"])}
+                    src={conditionalSrc(row["Responsible"])}
                   />
                 </TableCell>
                 <TableCell>
                   <SmallAvatar
                     alt="owner"
-                    src={conditionalSrc(row["owner"])}
+                    src={conditionalSrc(row["Creator"])}
                   />
                 </TableCell>
 
@@ -217,9 +217,9 @@ const TaskList: React.FC = () => {
                     <button
                       className="cursor-pointer bg-transparent border-none outline-none text-lg mt-2 text-gray-500"
                       onClick={() => {
-                        dispatch(fetchAsyncDeleteTask(row.id));
+                        dispatch(fetchAsyncDeleteTask(row.ID));
                       }}
-                      disabled={row["owner"] !== loginUser.id}
+                      disabled={row["Creator"] !== loginUser.id}
                     >
                       <DeleteOutlineOutlinedIcon />
                     </button>
@@ -228,7 +228,7 @@ const TaskList: React.FC = () => {
                     <button
                       className="cursor-pointer bg-transparent border-none outline-none text-lg mt-2 text-gray-500"
                       onClick={() => dispatch(editTask(row))}
-                      disabled={row["owner"] !== loginUser.id}
+                      disabled={row["Creator"] !== loginUser.id}
                     >
                       <EditOutlinedIcon />
                     </button>

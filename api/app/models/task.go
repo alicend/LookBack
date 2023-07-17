@@ -10,21 +10,48 @@ import (
 
 type Task struct {
 	gorm.Model
-	Content   string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	UserID    uint   `gorm:"not null"`
-	User      User   `gorm:"foreignKey:UserID;"`
-	Status    string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	TaskIndex uint   `gorm:"not null"`
-	CompletedAt *time.Time
+	Task            string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Description     string   `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Creator         uint     `gorm:"not null"`
+	CreatorUser     User     `gorm:"foreignKey:Creator;"`
+	CategoryID      uint     `gorm:"not null"`
+	Category        Category `gorm:"foreignKey:CategoryID;"`
+	Status          uint     `gorm:"not null"`
+	Responsible     uint     `gorm:"not null"`
+	ResponsibleUser User     `gorm:"foreignKey:Responsible;"`
+	Estimate        uint     `gorm:"not null"`
+	StartDate       *time.Time
+	CompletedDate   *time.Time
 }
 
 type CreateTaskInput struct {
-	Content   string `json:"task" binding:"required,min=1,max=255"`
-	Status    string `json:"status" binding:"required,min=1,max=255"`
-	TaskIndex uint   `json:"task_index" binding:"required`
+	Task        string `json:"Task" binding:"required,min=1,max=255"`
+	Description string `json:"Description" binding:"required,min=1,max=255"`
+	StartDate   string `json:"StartDate" binding:"required,min=24,max=24"`
+	Estimate    uint   `json:"Estimate" binding:"required"`
+	Responsible uint   `json:"Responsible" binding:"required"`
+	Status      uint   `json:"Status" binding:"required"`
+	CategoryID  uint   `json:"CategoryID" binding:"required"`
 }
 
-func (task *Task) CreateTask(db *gorm.DB) (*Task, error) {
+type TaskResponse struct {
+	ID          uint
+	Task        string
+	Description string
+	Creator     uint
+	CategoryID  uint
+	Status      uint
+	Responsible uint
+	Estimate    uint
+	StartDate   string
+}
+
+// TableName メソッドを追加して、この構造体がタスクテーブルに対応することを指定する
+func (TaskResponse) TableName() string {
+	return "Tasks"
+}
+
+func (task *Task) CreateTask(db *gorm.DB) (*TaskResponse, error) {
 	// 自動マイグレーション(Userテーブルを作成)
 	migrateErr := db.AutoMigrate(&Task{})
 	if migrateErr != nil {
@@ -40,7 +67,24 @@ func (task *Task) CreateTask(db *gorm.DB) (*Task, error) {
 	}
 	log.Printf("タスクの作成に成功")
 
-	return task, nil
+	// StartDateを*time.Time型からstring型に変換
+	layout := "2006-01-02T15:04:05Z07:00"
+	startDate := task.StartDate.Format(layout)
+
+	// TaskオブジェクトをTaskResponseオブジェクトに変換
+	taskResponse := &TaskResponse{
+		ID:          task.ID,
+		Task:        task.Task,
+		Description: task.Description,
+		Creator:     task.Creator,
+		CategoryID:  task.CategoryID,
+		Status:      task.Status,
+		Responsible: task.Responsible,
+		Estimate:    task.Estimate,
+		StartDate:   startDate,
+	}
+
+	return taskResponse, nil
 }
 
 func FetchTasksByUserID(db *gorm.DB, userID uint) ([]Task, error) {

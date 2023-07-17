@@ -1,11 +1,11 @@
 import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY, CATEGORY_RESPONSE, USER_RESPONSE } from "@/types/type";
+import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY, CATEGORY_RESPONSE, USER_RESPONSE, TASK_RESPONSE } from "@/types/type";
 import router from 'next/router';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
-  const res = await axios.get<READ_TASK[]>(
+  const res = await axios.get<TASK_RESPONSE>(
     `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
     {
       headers: {
@@ -13,7 +13,7 @@ export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
       },
     }
   );
-  return res.data;
+  return res.data.tasks;
 });
 
 export const fetchAsyncGetUsers = createAsyncThunk(
@@ -65,8 +65,8 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
 export const fetchAsyncCreateTask = createAsyncThunk(
   "task/createTask",
   async (task: POST_TASK) => {
-    const res = await axios.post<READ_TASK>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/`,
+    const res = await axios.post<TASK_RESPONSE>(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
       task,
       {
         headers: {
@@ -74,15 +74,15 @@ export const fetchAsyncCreateTask = createAsyncThunk(
         },
       }
     );
-    return res.data;
+    return res.data.task;
   }
 );
 
 export const fetchAsyncUpdateTask = createAsyncThunk(
   "task/updateTask",
   async (task: POST_TASK) => {
-    const res = await axios.put<READ_TASK>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${task.id}`,
+    const res = await axios.put<TASK_RESPONSE>(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${task.ID}`,
       task,
       {
         headers: {
@@ -90,7 +90,7 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
         },
       }
     );
-    return res.data;
+    return res.data.task;
   }
 );
 
@@ -110,47 +110,47 @@ export const fetchAsyncDeleteTask = createAsyncThunk(
 export const initialState: TASK_STATE = {
   tasks: [
     {
-      id: 0,
-      task: "",
-      description: "",
-      start_date: "",
-      owner: 0,
-      owner_username: "",
-      responsible: 0,
-      responsible_username: "",
-      estimate: 0,
-      category: 0,
-      category_item: "",
-      status: "",
-      status_name: "",
+      ID: 0,
+      Task: "",
+      Description: "",
+      StartDate: "",
+      Creator: 0,
+      Creator_UserName: "",
+      Responsible: 0,
+      Responsible_UserName: "",
+      Estimate: 0,
+      CategoryID: 0,
+      CategoryName: "",
+      Status: "",
+      StatusName: "",
       created_at: "",
       updated_at: "",
     },
   ],
   editedTask: {
-    id: 0,
-    task: "",
-    description: "",
-    start_date: "",
-    responsible: 0,
-    estimate: 0,
-    category: 0,
-    status: "",
+    ID: 0,
+    Task: "",
+    Description: "",
+    StartDate: "",
+    Responsible: 0,
+    Estimate: 0,
+    CategoryID: 0,
+    Status: "",
   },
   selectedTask: {
-    id: 0,
-    task: "",
-    description: "",
-    start_date: "",
-    owner: 0,
-    owner_username: "",
-    responsible: 0,
-    responsible_username: "",
-    estimate: 0,
-    category: 0,
-    category_item: "",
-    status: "",
-    status_name: "",
+    ID: 0,
+    Task: "",
+    Description: "",
+    StartDate: "",
+    Creator: 0,
+    Creator_UserName: "",
+    Responsible: 0,
+    Responsible_UserName: "",
+    Estimate: 0,
+    CategoryID: 0,
+    CategoryName: "",
+    Status: "",
+    StatusName: "",
     created_at: "",
     updated_at: "",
   },
@@ -233,6 +233,10 @@ export const taskSlice = createSlice({
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
       (state, action: PayloadAction<READ_TASK>) => {
+        console.log("stateだよ")
+        console.log(state)
+        console.log("actionだよ")
+        console.log(action)
         return {
           ...state,
           tasks: [action.payload, ...state.tasks],
@@ -241,7 +245,7 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateTask.rejected, () => {
-      router.push("/");
+      //router.push("/");
     });
     builder.addCase(
       fetchAsyncUpdateTask.fulfilled,
@@ -249,7 +253,7 @@ export const taskSlice = createSlice({
         return {
           ...state,
           tasks: state.tasks.map((t) =>
-            t.id === action.payload.id ? action.payload : t
+            t.ID === action.payload.ID ? action.payload : t
           ),
           editedTask: initialState.editedTask,
           selectedTask: initialState.selectedTask,
@@ -264,7 +268,7 @@ export const taskSlice = createSlice({
       (state, action: PayloadAction<number>) => {
         return {
           ...state,
-          tasks: state.tasks.filter((t) => t.id !== action.payload),
+          tasks: state.tasks.filter((t) => t.ID !== action.payload),
           editedTask: initialState.editedTask,
           selectedTask: initialState.selectedTask,
         };

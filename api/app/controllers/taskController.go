@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 	"errors"
+	"time"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -15,6 +17,8 @@ import (
 func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	var createTaskInput models.CreateTaskInput
 	if err := c.ShouldBindJSON(&createTaskInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
 		return
 	}
@@ -25,12 +29,25 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
 		return
 	}
+
+	// StartDateをstring型から*time.Time型に変換
+	layout := "2006-01-02T15:04:05Z07:00"
+	startDate, err := time.Parse(layout, createTaskInput.StartDate)
+	if err != nil {
+		log.Printf("Invalid date format: %v", err)
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid date format")
+		return
+	}
 	
 	newTask := &models.Task{
-		Content:   createTaskInput.Content,
-		UserID:    userID,
-		Status:    createTaskInput.Status,
-		TaskIndex: createTaskInput.TaskIndex,
+		Task:        createTaskInput.Task,
+		Description: createTaskInput.Description,
+		Creator:     userID,
+		CategoryID:  createTaskInput.CategoryID,
+		Status:      createTaskInput.Status,
+		Responsible: createTaskInput.Responsible,
+		Estimate:    createTaskInput.Estimate,
+		StartDate:   &startDate,
 	}
 
 	task, err := newTask.CreateTask(handler.DB)
@@ -40,7 +57,6 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully created task",
 		"task"   : task,
 	})
 }

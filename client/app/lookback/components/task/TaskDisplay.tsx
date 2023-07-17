@@ -6,19 +6,19 @@ import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 const TaskDisplay: React.FC = () => {
   const selectedTask = useSelector(selectSelectedTask);
   const rows = [
-    { item: "Task", data: selectedTask.task },
-    { item: "Description", data: selectedTask.description },
-    { item: "Owner", data: selectedTask.owner_username },
-    { item: "Responsible", data: selectedTask.responsible_username },
-    { item: "Start_Date", data: selectedTask.start_date },
-    { item: "Estimate [days]", data: selectedTask.estimate },
-    { item: "Category", data: selectedTask.category_item },
-    { item: "Status", data: selectedTask.status_name },
+    { item: "Task", data: selectedTask.Task },
+    { item: "Description", data: selectedTask.Description },
+    { item: "Owner", data: selectedTask.StatusName },
+    { item: "Responsible", data: selectedTask.Responsible_UserName },
+    { item: "StartDate", data: selectedTask.StartDate },
+    { item: "Estimate [days]", data: selectedTask.Estimate },
+    { item: "Category", data: selectedTask.CategoryName },
+    { item: "Status", data: selectedTask.StatusName },
     { item: "Created", data: selectedTask.created_at },
     { item: "Updated", data: selectedTask.updated_at },
   ];
 
-  if (!selectedTask.task) {
+  if (!selectedTask.Task) {
     return null;
   }
 

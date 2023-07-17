@@ -143,7 +143,7 @@ export default function MainPage() {
                 style={{ minHeight: "80vh" }}
               >
                 <Grid item>
-                  {editedTask.status ? <TaskForm /> : <TaskDisplay />}
+                  {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
                 </Grid>
               </Grid>
             </Grid>
