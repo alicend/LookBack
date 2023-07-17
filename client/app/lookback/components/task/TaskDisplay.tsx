@@ -14,8 +14,8 @@ const TaskDisplay: React.FC = () => {
     { item: "Estimate [days]", data: selectedTask.Estimate },
     { item: "Category", data: selectedTask.CategoryName },
     { item: "Status", data: selectedTask.StatusName },
-    { item: "Created", data: selectedTask.created_at },
-    { item: "Updated", data: selectedTask.updated_at },
+    { item: "Created", data: selectedTask.CreatedAt },
+    { item: "Updated", data: selectedTask.UpdatedAt },
   ];
 
   if (!selectedTask.Task) {

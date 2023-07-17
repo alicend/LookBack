@@ -51,8 +51,8 @@ export interface READ_TASK {
   ResponsibleUserName: string;
   Creator: number;
   CreatorUserName: string;
-  created_at: string;
-  updated_at: string;
+  CreatedAt: string;
+  UpdatedAt: string;
 }
 export interface POST_TASK {
   ID: number;

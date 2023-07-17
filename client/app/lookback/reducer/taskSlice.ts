@@ -123,8 +123,8 @@ export const initialState: TASK_STATE = {
       CategoryName: "",
       Status: 0,
       StatusName: "",
-      created_at: "",
-      updated_at: "",
+      CreatedAt: "",
+      UpdatedAt: "",
     },
   ],
   editedTask: {
@@ -151,8 +151,8 @@ export const initialState: TASK_STATE = {
     CategoryName: "",
     Status: 0,
     StatusName: "",
-    created_at: "",
-    updated_at: "",
+    CreatedAt: "",
+    UpdatedAt: "",
   },
   users: [
     {

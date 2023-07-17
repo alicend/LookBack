@@ -48,6 +48,8 @@ type TaskResponse struct {
 	ResponsibleUserName string
 	Creator             uint
 	CreatorUserName     string
+	CreatedAt           string
+	UpdatedAt           string
 }
 
 // TableName メソッドを追加して、この構造体がタスクテーブルに対応することを指定する
@@ -104,6 +106,7 @@ func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 
 	taskResponses := make([]TaskResponse, len(tasks))
 	for i, task := range tasks {
+		log.Printf("Task: %+v\n", task)
 
 		taskResponses[i] = TaskResponse{
 			ID:                  task.ID,
@@ -114,11 +117,13 @@ func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 			Category:            task.Category.ID,
 			CategoryName:        task.Category.Category,
 			Estimate:            task.Estimate,
-			StartDate:           task.StartDate.String(),
+			StartDate:           task.StartDate.Format("2006-01-02"),
 			Responsible:         task.ResponsibleUserID.ID,
 			ResponsibleUserName: task.ResponsibleUserID.Name,
 			Creator:             task.CreatorUserID.ID,
 			CreatorUserName:     task.CreatorUserID.Name,
+			CreatedAt:           task.CreatedAt.Format("2006-01-02 15:04"),
+			UpdatedAt:           task.UpdatedAt.Format("2006-01-02 15:04"),
 		}
 	}
 
