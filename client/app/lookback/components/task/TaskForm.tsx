@@ -249,9 +249,9 @@ const TaskForm: React.FC = () => {
             value={editedTask.Status}
             onChange={handleSelectChange}
           >
-            <MenuItem value={1}>Not started</MenuItem>
-            <MenuItem value={2}>On going</MenuItem>
-            <MenuItem value={3}>Done</MenuItem>
+            <MenuItem value={1}>未着</MenuItem>
+            <MenuItem value={2}>進行中</MenuItem>
+            <MenuItem value={3}>完了</MenuItem>
           </Select>
         </StyledFormControl>
         <br />

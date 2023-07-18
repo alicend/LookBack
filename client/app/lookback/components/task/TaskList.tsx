@@ -92,19 +92,19 @@ const TaskList: React.FC = () => {
 
   const renderSwitch = (statusName: string) => {
     switch (statusName) {
-      case "Not started":
+      case "未着":
         return (
           <Badge variant="dot" color="error">
             {statusName}
           </Badge>
         );
-      case "On going":
+      case "進行中":
         return (
           <Badge variant="dot" color="primary">
             {statusName}
           </Badge>
         );
-      case "Done":
+      case "完了":
         return (
           <Badge variant="dot" color="secondary">
             {statusName}

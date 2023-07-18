@@ -152,11 +152,11 @@ func (task *Task) DeleteTask(db *gorm.DB, id int) error {
 func statusToString(status uint) string {
 	switch status {
 	case 1:
-		return "Not started"
+		return "未着"
 	case 2:
-		return "On going"
+		return "進行中"
 	case 3:
-		return "Done"
+		return "完了"
 	default:
 		return "Unknown status"
 	}
