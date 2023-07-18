@@ -117,15 +117,12 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 		StartDate:   &startDate,
 	}
 
-	// URLからtaskのIDを取得
-	idStr := path.Base(c.Request.URL.Path)
-	id, err := strconv.Atoi(idStr)
-		if err != nil {
-			log.Printf("URLのIDのフォーマットが不正です")
-			log.Printf("Invalid date format: %v", err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
-			return
-		}
+	// URLからtaskのidを取得
+	id, err := getIdFromURL(c)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Invalid ID format")
+		return
+	}
 
 	err = updateTask.UpdateTask(handler.DB, id)
 	if err != nil {
@@ -145,6 +142,21 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 }
 
 func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
+
+	// URLからtaskのidを取得
+	id, err := getIdFromURL(c)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Invalid ID format")
+		return
+	}
+
+	deleteTask := &models.Task{}
+
+	err = deleteTask.DeleteTask(handler.DB, id)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, "Failed to delete task")
+		return
+	}
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
@@ -178,4 +190,18 @@ func extractUserID(c *gin.Context) (uint, error) {
 	}
 
 	return uint(userIDFloat), nil
+}
+
+func getIdFromURL(c *gin.Context)(int, error) {
+
+	idStr := path.Base(c.Request.URL.Path)
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		log.Printf("URLのIDのフォーマットが不正です")
+		log.Printf("Invalid date format: %v", err)
+		return id, err
+	}
+
+	return id, nil
 }

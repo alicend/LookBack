@@ -129,8 +129,21 @@ func (task *Task) UpdateTask(db *gorm.DB, id int) (error) {
 		return result.Error
 	}
 	log.Printf("タスクの更新に成功")
-	log.Printf("更新後: %v\n", task)
 
+	return nil
+}
+
+func (task *Task) DeleteTask(db *gorm.DB, id int) error {
+
+	result := db.Unscoped().Delete(task, id)
+
+	if result.Error != nil {
+		log.Printf("Error deleting task: %v\n", result.Error)
+		return result.Error
+	}
+
+	log.Printf("タスクの削除に成功")
+	
 	return nil
 }
 
