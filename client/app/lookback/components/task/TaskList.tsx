@@ -3,11 +3,9 @@ import dayjs from 'dayjs';
 
 import { styled } from '@mui/system';
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   Button,
-  Avatar,
   Badge,
   Table,
   TableHead,
@@ -19,15 +17,20 @@ import {
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchAsyncDeleteTask,
   selectTasks,
   editTask,
   selectTask,
 } from "@/reducer/taskSlice";
-import { selectLoginUser, selectProfiles } from "@/reducer/authSlice";
 import { AppDispatch } from "@/store/store";
 import { initialState } from "@/reducer/taskSlice";
 import { SORT_STATE, READ_TASK } from "@/types/type";
+
+const StyledTableCell = styled(TableCell)({
+  maxWidth: '20px',
+  overflow: 'hidden',
+  textOverflow: 'clip',
+  whiteSpace: 'normal'
+});
 
 const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3),
@@ -45,16 +48,9 @@ const StyledTable = styled(Table)`
   table-layout: fixed;
 `;
 
-const SmallAvatar = styled(Avatar)(({ theme }) => ({
-  margin: 'auto',
-  width: theme.spacing(3),
-  height: theme.spacing(3),
-}));
-
 const TaskList: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const tasks = useSelector(selectTasks);
-  const profiles = useSelector(selectProfiles);
   const columns = tasks[0] && Object.keys(tasks[0]);
 
   const [state, setState] = useState<SORT_STATE>({
@@ -115,13 +111,6 @@ const TaskList: React.FC = () => {
     }
   };
 
-  const conditionalSrc = (user: number) => {
-    const loginProfile = profiles.filter(
-      (prof) => prof.user_profile === user
-    )[0];
-    return loginProfile?.img !== null ? loginProfile?.img : undefined;
-  };
-
   return (
     <>
       <StyledButton
@@ -159,7 +148,7 @@ const TaskList: React.FC = () => {
                     column === "Estimate" ||
                     column === "Responsible" ||
                     column === "Creator") && (
-                    <TableCell align="center" key={colIndex}>
+                    <StyledTableCell align="center" key={colIndex}>
                       <TableSortLabel
                         active={state.activeKey === column}
                         direction={state.order}
@@ -167,7 +156,7 @@ const TaskList: React.FC = () => {
                       >
                         <strong>{column}</strong>
                       </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                   )
               )}
               <TableCell></TableCell>
