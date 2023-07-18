@@ -21,7 +21,6 @@ type Task struct {
 	ResponsibleUserID User       `gorm:"foreignKey:Responsible;"`
 	Estimate          uint       `gorm:"not null"`
 	StartDate         *time.Time `gorm:"not null"`
-	CompletedDate     *time.Time
 }
 
 type TaskInput struct {
@@ -143,7 +142,7 @@ func (task *Task) DeleteTask(db *gorm.DB, id int) error {
 	}
 
 	log.Printf("タスクの削除に成功")
-	
+
 	return nil
 }
 

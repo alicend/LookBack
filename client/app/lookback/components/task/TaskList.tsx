@@ -56,10 +56,6 @@ const TaskList: React.FC = () => {
   const tasks = useSelector(selectTasks);
   const profiles = useSelector(selectProfiles);
   const columns = tasks[0] && Object.keys(tasks[0]);
-  console.log("tasksだよ");
-  console.log(tasks);
-  console.log("columnsだよ");
-  console.log(columns);
 
   const [state, setState] = useState<SORT_STATE>({
     rows: tasks,

@@ -143,7 +143,8 @@ const TaskForm: React.FC = () => {
     editedTask.Task.length === 0 ||
     editedTask.Description.length === 0 ||
     editedTask.Responsible === 0 ||
-    editedTask.Category === 0;
+    editedTask.Category === 0 ||
+    editedTask.StartDate.length === 0;
 
   const isCatDisabled = inputText.length === 0;
 
@@ -166,8 +167,14 @@ const TaskForm: React.FC = () => {
     dispatch(editTask({ ...editedTask, [name]: value }));
   };
   
-  const handleSelectDateChange = (date: Date) => {
-    dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
+  const handleSelectDateChange = (date: any) => {
+    if (date.$d instanceof Date && !isNaN(date.$d.getTime())) {
+      console.log("Valid Date");
+      dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
+    } else {
+      console.log("Invalid Date");
+      dispatch(editTask({ ...editedTask, StartDate: "" }));
+    }
   };
   
   let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
