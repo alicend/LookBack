@@ -84,8 +84,12 @@ const Auth: React.FC = () => {
       const loginResult = await dispatch(fetchAsyncLogin(credential));
       // レスポンスの結果に応じてエラーメッセージを設定
       if (fetchAsyncLogin.rejected.match(loginResult)) {
-        console.log(loginResult);
-        setLoginError("ユーザ名かパスワードが間違っています");
+        // payloadを{ error: string, message?: string }型にキャストします。
+        const payload = loginResult.payload as { error: string, message?: string };
+
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用します。
+        const errorMessage = payload.message ? payload.message : payload.error;
+        setLoginError(errorMessage);
       }
     } else {
       // 登録処理
