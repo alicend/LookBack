@@ -2,8 +2,12 @@ package controllers
 
 import (
 	"net/http"
+	"errors"
+	"log"
 
+	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
+
 	"github.com/alicend/LookBack/app/constant"
 	"github.com/alicend/LookBack/app/models"
 	"github.com/alicend/LookBack/app/utils"
@@ -12,7 +16,9 @@ import (
 func (handler *Handler) SignUpHandler(c *gin.Context) {
 	var signUpInput models.UserInput
 	if err := c.ShouldBindJSON(&signUpInput); err != nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -36,27 +42,32 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 func (handler *Handler) LoginHandler(c *gin.Context) {
 	var loginInput models.UserInput
 	if err := c.ShouldBind(&loginInput); err != nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// メールアドレスでユーザを取得
+	// ユーザを取得
 	user, err := models.FindUserByName(handler.DB, loginInput.Name)
-	if err != nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Failed to find user")
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+    respondWithErrAndMsg(c, http.StatusNotFound, err.Error(), "存在しないユーザです")
+    return
+	} else if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
-	}
+	} 
 
   // 入力されたパスワードとIDから取得したパスワードが等しいかを検証
 	if !user.VerifyPassword(loginInput.Password) {
-		respondWithError(c, http.StatusUnauthorized, "Password is invalid")
+		respondWithError(c, http.StatusUnauthorized, "パスワードが違います")
 		return
 	}
 
 	// クッキーにJWT(中身はユーザID)をセットする
 	token, err := utils.GenerateToken(user.ID)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to sign up")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 

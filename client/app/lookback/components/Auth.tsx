@@ -60,8 +60,7 @@ const Auth: React.FC = () => {
   const isLoginView = useSelector(selectIsLoginView);
   const [credential, setCredential] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({ username: "", password: "" });
-  const usernameError = errors.username;
-  const passwordError = errors.password;
+  const [loginError, setLoginError] = useState("");
 
   const isDisabled =
   credential.username.length === 0 ||
@@ -87,12 +86,21 @@ const Auth: React.FC = () => {
 
     if (isLoginView) {
       // ログイン処理
-      await dispatch(fetchAsyncLogin(credential));
+      const loginResult = await dispatch(fetchAsyncLogin(credential));
+      // レスポンスの結果に応じてエラーメッセージを設定
+      if (fetchAsyncLogin.rejected.match(loginResult)) {
+        setLoginError("ユーザ名かパスワードが間違っています");
+      }
     } else {
       // 登録処理
-      const result = await dispatch(fetchAsyncRegister(credential));
-      if (fetchAsyncRegister.fulfilled.match(result)) {
-        await dispatch(fetchAsyncLogin(credential));
+      const registerResult = await dispatch(fetchAsyncRegister(credential));
+      if (fetchAsyncRegister.fulfilled.match(registerResult)) {
+        const loginResult = await dispatch(fetchAsyncLogin(credential));
+        if (fetchAsyncLogin.rejected.match(loginResult)) {
+          setLoginError("Failed to automatically log in after registration");
+        }
+      } else if (fetchAsyncRegister.rejected.match(registerResult)) {
+        setLoginError("Failed to register. Please try again.");
       }
     }
   };
@@ -100,6 +108,7 @@ const Auth: React.FC = () => {
   return (
     <StyledContainer>
       <h1>{isLoginView ? "Login" : "Register"}</h1>
+      {loginError && <div className="text-red-600">{loginError}</div>}
       <br />
       <StyledTextField
         InputLabelProps={{
@@ -110,8 +119,8 @@ const Auth: React.FC = () => {
         name="username"
         value={credential.username}
         onChange={handleInputChange}
-        error={Boolean(usernameError)}
-        helperText={usernameError}
+        error={Boolean(errors.username)}
+        helperText={errors.username}
       />
       <br />
       <StyledTextField
@@ -123,8 +132,8 @@ const Auth: React.FC = () => {
         name="password"
         value={credential.password}
         onChange={handleInputChange}
-        error={Boolean(passwordError)}
-        helperText={passwordError}
+        error={Boolean(errors.password)}
+        helperText={errors.password}
       />
       <StyledButton
         variant="contained"

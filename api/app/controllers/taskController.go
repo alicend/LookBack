@@ -21,7 +21,7 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&createTaskInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -87,11 +87,9 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&updateTaskInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	log.Printf("updateTaskInput: %v", updateTaskInput)
 
 	// StartDateをstring型から*time.Time型に変換
 	layout1 := "2006-01-02T15:04:05Z07:00"
@@ -102,7 +100,7 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 		startDate, err = time.Parse(layout2, updateTaskInput.StartDate)
 		if err != nil { // ２種類に変換に失敗すればエラーを返す
 			log.Printf("Invalid date format: %v", err)
-			respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid date format")
+			respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "開始日のフォーマットが正しくありません")
 			return
 		}
 	}

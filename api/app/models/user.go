@@ -36,6 +36,7 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	migrateErr := db.AutoMigrate(&User{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
+		return nil, migrateErr
 	}
 
 	user = &User{
@@ -53,11 +54,17 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	return user, nil
 }
 
-func FindUserByName(db *gorm.DB, email string) (User, error) {
+func FindUserByName(db *gorm.DB, name string) (User, error) {
 	var user User
-	result := db.Where("name = ?", email).First(&user)
+	result := db.Where("name = ?", name).First(&user)
 
-	return user, result.Error
+	if result.Error != nil {
+		log.Printf("Error fetching users: %v", result.Error)
+		return user, result.Error
+	}
+	log.Printf("ユーザーの取得に成功")
+
+	return user, nil
 }
 
 func FindUsersAll(db *gorm.DB) ([]UserResponse, error) {

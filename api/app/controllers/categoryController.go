@@ -14,7 +14,7 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&createCategoryInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
-		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "Invalid request body")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	
@@ -24,9 +24,7 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 
 	category, err := newCategory.CreateCategory(handler.DB)
 	if err != nil {
-		log.Printf("Failed to create category: %v", err)
-		log.Printf("カテゴリーの生成に失敗しました")
-		respondWithError(c, http.StatusBadRequest, "Failed to create category")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -41,7 +39,7 @@ func (handler *Handler) GetCategoryHandler(c *gin.Context) {
 	if err != nil {
 		log.Printf("Failed to fetch categories: %v", err)
 		log.Printf("カテゴリーの取得に失敗しました")
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch categories")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 

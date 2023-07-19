@@ -35,15 +35,13 @@ func (category *Category) CreateCategory(db *gorm.DB) (*CategoryResponse, error)
 	migrateErr := db.AutoMigrate(&Category{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
+		return nil, migrateErr
 	}
 
 	result := db.Create(category)
-	log.Printf("Category: %v", category)
-	log.Printf("result: %v", result)
 
 	if result.Error != nil {
 		log.Printf("Error creating category: %v\n", result.Error)
-		log.Printf("Category: %v", category)
 		return nil, result.Error
 	}
 	log.Printf("カテゴリーの作成に成功")
