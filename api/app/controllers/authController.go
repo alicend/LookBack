@@ -60,6 +60,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 
   // 入力されたパスワードとIDから取得したパスワードが等しいかを検証
 	if !user.VerifyPassword(loginInput.Password) {
+		log.Printf("パスワードが違います")
 		respondWithError(c, http.StatusUnauthorized, "パスワードが違います")
 		return
 	}

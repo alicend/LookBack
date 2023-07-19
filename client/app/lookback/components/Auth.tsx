@@ -4,14 +4,9 @@ import { z } from 'zod';
 import { styled } from '@mui/system';
 import { TextField, Button } from "@mui/material";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import {
-  toggleMode,
-  fetchAsyncLogin,
-  fetchAsyncRegister,
-  selectIsLoginView,
-} from "@/reducer/authSlice";
+import { fetchAsyncLogin, fetchAsyncRegister } from "@/reducer/authSlice";
 
 const StyledContainer = styled('div')`
   font-family: serif;
@@ -57,7 +52,7 @@ const credentialSchema = z.object({
 
 const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const isLoginView = useSelector(selectIsLoginView);
+  const [isLoginView, setIsLoginView] = useState(true);
   const [credential, setCredential] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({ username: "", password: "" });
   const [loginError, setLoginError] = useState("");
@@ -89,6 +84,7 @@ const Auth: React.FC = () => {
       const loginResult = await dispatch(fetchAsyncLogin(credential));
       // レスポンスの結果に応じてエラーメッセージを設定
       if (fetchAsyncLogin.rejected.match(loginResult)) {
+        console.log(loginResult);
         setLoginError("ユーザ名かパスワードが間違っています");
       }
     } else {
@@ -97,9 +93,11 @@ const Auth: React.FC = () => {
       if (fetchAsyncRegister.fulfilled.match(registerResult)) {
         const loginResult = await dispatch(fetchAsyncLogin(credential));
         if (fetchAsyncLogin.rejected.match(loginResult)) {
+          console.log(loginResult.payload);
           setLoginError("Failed to automatically log in after registration");
         }
       } else if (fetchAsyncRegister.rejected.match(registerResult)) {
+        console.log(registerResult.payload);
         setLoginError("Failed to register. Please try again.");
       }
     }
@@ -144,7 +142,7 @@ const Auth: React.FC = () => {
       >
         {isLoginView ? "Login" : "Register"}
       </StyledButton>
-      <span onClick={() => dispatch(toggleMode())} className="cursor-pointer">
+      <span onClick={() => setIsLoginView(!isLoginView)} className="cursor-pointer">
         {isLoginView ? "Create new account ?" : "Back to Login"}
       </span>
     </StyledContainer>

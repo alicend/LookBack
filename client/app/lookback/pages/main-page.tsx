@@ -10,11 +10,6 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-  selectLoginUser,
-  selectProfiles,
-  fetchAsyncUpdateProf,
-} from "@/reducer/authSlice";
-import {
   fetchAsyncGetTasks,
   fetchAsyncGetUsers,
   fetchAsyncGetCategory,
@@ -52,18 +47,6 @@ export default function MainPage() {
 
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
-
-  const loginUser = useSelector(selectLoginUser);
-  const profiles = useSelector(selectProfiles);
-
-  const loginProfile = profiles.filter(
-    (prof) => prof.user_profile === loginUser.id
-  )[0];
-
-  const handlerEditPicture = () => {
-    const fileInput = document.getElementById("imageInput");
-    fileInput?.click();
-  };
 
   const router = useRouter();
   const Logout = async () => {
@@ -104,25 +87,9 @@ export default function MainPage() {
                 <button className="bg-transparent text-gray-600 mt-1 border-none outline-none cursor-pointer" onClick={Logout}>
                   <ExitToAppIcon fontSize="large" />
                 </button>
-                <input
-                  type="file"
-                  id="imageInput"
-                  hidden={true}
-                  onChange={(e) => {
-                    dispatch(
-                      fetchAsyncUpdateProf({
-                        id: loginProfile.id,
-                        img: e.target.files !== null ? e.target.files[0] : null,
-                      })
-                    );
-                  }}
-                />
-                <button className="bg-transparent pt-1 border-none outline-none cursor-pointer" onClick={handlerEditPicture}>
+                <button className="bg-transparent pt-1 border-none outline-none cursor-pointer">
                   <StyledAvatar
                     alt="avatar"
-                    src={
-                      loginProfile?.img !== null ? loginProfile?.img : undefined
-                    }
                   />
                 </button>
               </div>
