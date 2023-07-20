@@ -193,8 +193,10 @@ export const taskSlice = createSlice({
         };
       }
     );
-    builder.addCase(fetchAsyncGetTasks.rejected, () => {
-      //router.push("/");
+    builder.addCase(fetchAsyncGetTasks.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
     });
     builder.addCase(
       fetchAsyncGetUsers.fulfilled,
@@ -205,6 +207,11 @@ export const taskSlice = createSlice({
         };
       }
     );
+    builder.addCase(fetchAsyncGetUsers.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
+    });
     builder.addCase(
       fetchAsyncGetCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY[]>) => {
@@ -214,6 +221,11 @@ export const taskSlice = createSlice({
         };
       }
     );
+    builder.addCase(fetchAsyncGetCategory.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
+    });
     builder.addCase(
       fetchAsyncCreateCategory.fulfilled,
       (state, action: PayloadAction<CATEGORY>) => {
@@ -229,8 +241,10 @@ export const taskSlice = createSlice({
         };
       }
     );
-    builder.addCase(fetchAsyncCreateCategory.rejected, () => {
-      //router.push("/");
+    builder.addCase(fetchAsyncCreateCategory.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
     });
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
@@ -242,8 +256,10 @@ export const taskSlice = createSlice({
         };
       }
     );
-    builder.addCase(fetchAsyncCreateTask.rejected, () => {
-      //router.push("/");
+    builder.addCase(fetchAsyncCreateTask.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
     });
     builder.addCase(
       fetchAsyncUpdateTask.fulfilled,
@@ -256,8 +272,10 @@ export const taskSlice = createSlice({
         };
       }
     );
-    builder.addCase(fetchAsyncUpdateTask.rejected, () => {
-      router.push("/");
+    builder.addCase(fetchAsyncUpdateTask.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
     });
     builder.addCase(
       fetchAsyncDeleteTask.fulfilled,
@@ -270,8 +288,10 @@ export const taskSlice = createSlice({
         };
       }
     );
-    builder.addCase(fetchAsyncDeleteTask.rejected, () => {
-      router.push("/");
+    builder.addCase(fetchAsyncDeleteTask.rejected, (state, action) => {
+      if (action.error.code === '401') {
+        router.push("/");
+      }
     });
   },
 });
