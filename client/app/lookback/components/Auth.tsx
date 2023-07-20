@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/authSlice";
 
+import { RESPONSE } from "@/types/ResponseType";
+
 const StyledContainer = styled('div')`
   font-family: serif;
   color: gray-500;
@@ -86,7 +88,7 @@ const Auth: React.FC = () => {
     if (fetchAsyncLogin.fulfilled.match(loginResult)) {
       router.push("/main-page");
     } else if (fetchAsyncLogin.rejected.match(loginResult)){
-      const payload = loginResult.payload as { error: string, message?: string };
+      const payload = loginResult.payload as RESPONSE;
       // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
       const errorMessage = payload.message ? payload.message : payload.error;
       setLoginError(errorMessage);
@@ -108,7 +110,7 @@ const Auth: React.FC = () => {
       if (fetchAsyncRegister.fulfilled.match(registerResult)) {
         login
       } else if (fetchAsyncRegister.rejected.match(registerResult)) {
-        const payload = registerResult.payload as { error: string, message?: string };
+        const payload = registerResult.payload as RESPONSE;
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.message ? payload.message : payload.error;
         setLoginError(errorMessage);
