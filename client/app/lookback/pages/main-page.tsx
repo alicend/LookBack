@@ -22,10 +22,6 @@ import TaskDisplay from "@/components/task/TaskDisplay";
 
 import { AppDispatch } from "@/store/store";
 
-interface ResponseData {
-  access: string;
-}
-
 const theme = createTheme({
   palette: {
     secondary: {
@@ -51,7 +47,7 @@ export default function MainPage() {
   const router = useRouter();
   const Logout = async () => {
     try {
-      const res: AxiosResponse<ResponseData> = await axios.get(
+      const res = await axios.get(
           `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
           { headers: { "Content-Type": "application/json" } }
       );
