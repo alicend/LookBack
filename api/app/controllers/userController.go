@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"log"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,9 +13,7 @@ func (handler *Handler) GetUsersAllHandler(c *gin.Context) {
 
 	users, err := models.FindUsersAll(handler.DB)
 	if err != nil {
-		log.Printf("Failed to fetch users: %v", err)
-		log.Printf("ユーザーの取得に失敗しました")
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch users")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 

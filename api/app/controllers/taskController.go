@@ -54,13 +54,13 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 
 	err = newTask.CreateTask(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to create task")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -73,7 +73,7 @@ func (handler *Handler) GetTaskHandler(c *gin.Context) {
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	
@@ -100,7 +100,7 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 		startDate, err = time.Parse(layout2, updateTaskInput.StartDate)
 		if err != nil { // ２種類に変換に失敗すればエラーを返す
 			log.Printf("Invalid date format: %v", err)
-			respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "開始日のフォーマットが正しくありません")
+			respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "開始日のフォーマットが不正です")
 			return
 		}
 	}
@@ -118,19 +118,19 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 	// URLからtaskのidを取得
 	id, err := getIdFromURL(c)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Invalid ID format")
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
 	}
 
 	err = updateTask.UpdateTask(handler.DB, id)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to update task")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	
@@ -144,7 +144,7 @@ func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 	// URLからtaskのidを取得
 	id, err := getIdFromURL(c)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Invalid ID format")
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
 	}
 
@@ -152,13 +152,13 @@ func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 
 	err = deleteTask.DeleteTask(handler.DB, id)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to delete task")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	tasks, err := models.FetchTasks(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to fetch tasks")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	
