@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from 'next/router';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
@@ -51,6 +52,7 @@ const credentialSchema = z.object({
 });
 
 const Auth: React.FC = () => {
+  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const [isLoginView, setIsLoginView] = useState(true);
   const [credential, setCredential] = useState({ username: "", password: "" });
@@ -69,7 +71,6 @@ const Auth: React.FC = () => {
   };
   
   const login = async () => {
-
     // 入力チェック
     const result = credentialSchema.safeParse(credential);
     if (!result.success) {
@@ -79,33 +80,40 @@ const Auth: React.FC = () => {
       return;
     }
 
-    if (isLoginView) {
-      // ログイン処理
-      const loginResult = await dispatch(fetchAsyncLogin(credential));
-      // レスポンスの結果に応じてエラーメッセージを設定
-      if (fetchAsyncLogin.rejected.match(loginResult)) {
-        // payloadを{ error: string, message?: string }型にキャストします。
-        const payload = loginResult.payload as { error: string, message?: string };
+    // ログイン処理
+    const loginResult = await dispatch(fetchAsyncLogin(credential));
+    // レスポンスの結果に応じてエラーメッセージを設定
+    if (fetchAsyncLogin.fulfilled.match(loginResult)) {
+      router.push("/main-page");
+    } else if (fetchAsyncLogin.rejected.match(loginResult)){
+      const payload = loginResult.payload as { error: string, message?: string };
+      // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+      const errorMessage = payload.message ? payload.message : payload.error;
+      setLoginError(errorMessage);
+    }
+  };
 
-        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用します。
+  const register = async () => {
+    // 入力チェック
+    const result = credentialSchema.safeParse(credential);
+    if (!result.success) {
+      const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
+      const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
+      setErrors({ username: usernameError, password: passwordError });
+      return;
+    }
+
+    // 登録処理
+    const registerResult = await dispatch(fetchAsyncRegister(credential));
+      if (fetchAsyncRegister.fulfilled.match(registerResult)) {
+        login
+      } else if (fetchAsyncRegister.rejected.match(registerResult)) {
+        const payload = registerResult.payload as { error: string, message?: string };
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.message ? payload.message : payload.error;
         setLoginError(errorMessage);
       }
-    } else {
-      // 登録処理
-      const registerResult = await dispatch(fetchAsyncRegister(credential));
-      if (fetchAsyncRegister.fulfilled.match(registerResult)) {
-        const loginResult = await dispatch(fetchAsyncLogin(credential));
-        if (fetchAsyncLogin.rejected.match(loginResult)) {
-          console.log(loginResult.payload);
-          setLoginError("Failed to automatically log in after registration");
-        }
-      } else if (fetchAsyncRegister.rejected.match(registerResult)) {
-        console.log(registerResult.payload);
-        setLoginError("Failed to register. Please try again.");
-      }
-    }
-  };
+  }
 
   return (
     <StyledContainer>
@@ -138,13 +146,13 @@ const Auth: React.FC = () => {
         helperText={errors.password}
       />
       <StyledButton
-        variant="contained"
-        color="primary"
-        size="small"
-        disabled={isDisabled}
-        onClick={login}
+          variant="contained"
+          color="primary"
+          size="small"
+          disabled={isDisabled}
+          onClick={isLoginView ? login : register}
       >
-        {isLoginView ? "Login" : "Register"}
+          {isLoginView ? "Login" : "Register"}
       </StyledButton>
       <span onClick={() => setIsLoginView(!isLoginView)} className="cursor-pointer">
         {isLoginView ? "Create new account ?" : "Back to Login"}
