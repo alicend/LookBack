@@ -191,7 +191,7 @@ const TaskForm: React.FC = () => {
     <div>
       <h2>{editedTask.ID ? "Update Task" : "New Task"}</h2>
       <form>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale.name}>
           <StyledDatePicker
             label="Start Date"
             value={dayjs(editedTask.StartDate)}
