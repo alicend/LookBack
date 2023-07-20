@@ -1,7 +1,9 @@
+import { CATEGORY_RESPONSE, CATEGORY } from '@/types/CategoryType';
+import { TASK_RESPONSE, POST_TASK, TASK_STATE, READ_TASK } from '@/types/TaskType';
+import { USER_RESPONSE, USER } from '@/types/UserType';
 import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY, CATEGORY_RESPONSE, USER_RESPONSE, TASK_RESPONSE } from "@/types/type";
 import router from 'next/router';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {

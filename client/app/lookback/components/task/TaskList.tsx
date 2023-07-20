@@ -23,7 +23,7 @@ import {
 } from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
 import { initialState } from "@/slices/taskSlice";
-import { SORT_STATE, READ_TASK } from "@/types/type";
+import { SORT_STATE, READ_TASK } from "@/types/TaskType";
 
 const StyledTableCell = styled(TableCell)({
   maxWidth: '20px',

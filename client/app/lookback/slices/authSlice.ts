@@ -1,10 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { CRED } from "@/types/type";
+import { AUTHENTICATION } from "@/types/AuthType";
 
 export const fetchAsyncLogin = createAsyncThunk(
   "auth/login",
-  async (auth: CRED, thunkAPI) => {
+  async (auth: AUTHENTICATION, thunkAPI) => {
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/login`,
@@ -25,7 +25,7 @@ export const fetchAsyncLogin = createAsyncThunk(
 
 export const fetchAsyncRegister = createAsyncThunk(
   "auth/register",
-  async (auth: CRED, thunkAPI) => {
+  async (auth: AUTHENTICATION, thunkAPI) => {
       try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
