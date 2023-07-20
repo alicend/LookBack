@@ -5,22 +5,29 @@ import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import router from 'next/router';
+import { PAYLOAD, RESPONSE } from '@/types/ResponseType';
 
-export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
-  const res = await axios.get<TASK_RESPONSE>(
-    `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return res.data.tasks;
+export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async (_, thunkAPI) => {
+  try {
+    const res = await axios.get<TASK_RESPONSE>(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.tasks;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
+  }
 });
 
-export const fetchAsyncGetUsers = createAsyncThunk(
-  "task/getUsers",
-  async () => {
+export const fetchAsyncGetUsers = createAsyncThunk("task/getUsers", async (_, thunkAPI) => {
+  try{
     const res = await axios.get<USER_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
       {
@@ -30,12 +37,16 @@ export const fetchAsyncGetUsers = createAsyncThunk(
       }
     );
     return res.data.users;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
   }
-);
+});
 
-export const fetchAsyncGetCategory = createAsyncThunk(
-  "task/getCategory",
-  async () => {
+export const fetchAsyncGetCategory = createAsyncThunk("task/getCategory", async (_, thunkAPI) => {
+  try{
     const res = await axios.get<CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
       {
@@ -45,15 +56,19 @@ export const fetchAsyncGetCategory = createAsyncThunk(
       }
     );
     return res.data.categories;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
   }
-);
+});
 
-export const fetchAsyncCreateCategory = createAsyncThunk(
-  "task/createCategory",
-  async (item: string) => {
+export const fetchAsyncCreateCategory = createAsyncThunk("task/createCategory", async (category: string, thunkAPI) => {
+  try{
     const res = await axios.post<CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
-      { category: item },
+      { category: category },
       {
         headers: {
           "Content-Type": "application/json",
@@ -61,12 +76,16 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
       }
     );
     return res.data.category;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
   }
-);
+});
 
-export const fetchAsyncCreateTask = createAsyncThunk(
-  "task/createTask",
-  async (task: POST_TASK) => {
+export const fetchAsyncCreateTask = createAsyncThunk("task/createTask", async (task: POST_TASK, thunkAPI) => {
+  try{
     const res = await axios.post<TASK_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
       task,
@@ -77,12 +96,13 @@ export const fetchAsyncCreateTask = createAsyncThunk(
       }
     );
     return res.data.tasks;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue(err.response.data);
   }
-);
+});
 
-export const fetchAsyncUpdateTask = createAsyncThunk(
-  "task/updateTask",
-  async (task: POST_TASK) => {
+export const fetchAsyncUpdateTask = createAsyncThunk("task/updateTask", async (task: POST_TASK, thunkAPI) => {
+  try{  
     const res = await axios.put<TASK_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${task.ID}`,
       task,
@@ -93,12 +113,16 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
       }
     );
     return res.data.tasks;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
   }
-);
+});
 
-export const fetchAsyncDeleteTask = createAsyncThunk(
-  "task/deleteTask",
-  async (id: number) => {
+export const fetchAsyncDeleteTask = createAsyncThunk("task/deleteTask", async (id: number, thunkAPI) => {
+  try{ 
     const res = await axios.delete<TASK_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks/${id}`,
       {
@@ -108,8 +132,13 @@ export const fetchAsyncDeleteTask = createAsyncThunk(
       }
     );
     return res.data.tasks;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
   }
-);
+});
 
 export const initialState: TASK_STATE = {
   tasks: [
@@ -184,11 +213,7 @@ export const taskSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(
-      fetchAsyncGetTasks.fulfilled,
-      (state, action: PayloadAction<READ_TASK[]>) => {
-        console.log("action.payload")
-        console.log(action.payload)
+    builder.addCase(fetchAsyncGetTasks.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
           tasks: action.payload,
@@ -196,8 +221,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncGetTasks.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
     builder.addCase(
@@ -210,8 +241,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncGetUsers.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
     builder.addCase(
@@ -224,8 +261,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncGetCategory.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
     builder.addCase(
@@ -244,8 +287,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateCategory.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
     builder.addCase(
@@ -259,8 +308,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateTask.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
     builder.addCase(
@@ -275,8 +330,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncUpdateTask.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
     builder.addCase(
@@ -291,8 +352,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncDeleteTask.rejected, (state, action) => {
-      if (action.error.code === '401') {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
         router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
       }
     });
   },

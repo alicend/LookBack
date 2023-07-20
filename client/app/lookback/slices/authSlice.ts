@@ -17,7 +17,6 @@ export const fetchAsyncLogin = createAsyncThunk(
       );
       return { data: res.data, status: res.status };
     } catch (err :any) {
-        // エラーレスポンスのデータをペイロードとして返します。
         return thunkAPI.rejectWithValue(err.response.data);
     }
   }
@@ -26,7 +25,7 @@ export const fetchAsyncLogin = createAsyncThunk(
 export const fetchAsyncRegister = createAsyncThunk(
   "auth/register",
   async (auth: AUTHENTICATION, thunkAPI) => {
-      try {
+    try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
         auth,
@@ -38,7 +37,6 @@ export const fetchAsyncRegister = createAsyncThunk(
       );
       return res.data;
     } catch (err :any) {
-      // エラーレスポンスのデータをペイロードとして返します。
       return thunkAPI.rejectWithValue(err.response.data);
     }
   }
