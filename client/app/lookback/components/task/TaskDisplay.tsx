@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { selectSelectedTask } from "@/reducer/taskSlice";
+import { selectSelectedTask } from "@/slices/taskSlice";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 
 const TaskDisplay: React.FC = () => {

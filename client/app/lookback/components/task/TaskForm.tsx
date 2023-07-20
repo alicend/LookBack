@@ -30,9 +30,9 @@ import {
   editTask,
   selectTask,
   fetchAsyncDeleteTask,
-} from "@/reducer/taskSlice";
+} from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
-import { initialState } from "@/reducer/taskSlice";
+import { initialState } from "@/slices/taskSlice";
 
 function getModalStyle() {
   const top = 50;

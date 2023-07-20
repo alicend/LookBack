@@ -20,9 +20,9 @@ import {
   selectTasks,
   editTask,
   selectTask,
-} from "@/reducer/taskSlice";
+} from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
-import { initialState } from "@/reducer/taskSlice";
+import { initialState } from "@/slices/taskSlice";
 import { SORT_STATE, READ_TASK } from "@/types/type";
 
 const StyledTableCell = styled(TableCell)({

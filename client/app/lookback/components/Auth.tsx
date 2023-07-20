@@ -6,7 +6,7 @@ import { TextField, Button } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister } from "@/reducer/authSlice";
+import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/authSlice";
 
 const StyledContainer = styled('div')`
   font-family: serif;

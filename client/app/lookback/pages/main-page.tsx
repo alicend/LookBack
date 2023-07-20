@@ -14,7 +14,7 @@ import {
   fetchAsyncGetUsers,
   fetchAsyncGetCategory,
   selectEditedTask
-} from "@/reducer/taskSlice";
+} from "@/slices/taskSlice";
 
 import TaskList from '@/components/task/TaskList';
 import TaskForm from "@/components/task/TaskForm";
