@@ -97,7 +97,10 @@ export const fetchAsyncCreateTask = createAsyncThunk("task/createTask", async (t
     );
     return res.data.tasks;
   } catch (err :any) {
-    return thunkAPI.rejectWithValue(err.response.data);
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
   }
 });
 
@@ -308,12 +311,14 @@ export const taskSlice = createSlice({
       }
     );
     builder.addCase(fetchAsyncCreateTask.rejected, (state, action) => {
+      console.log(action)
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
         alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        console.log(payload)
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
       }
