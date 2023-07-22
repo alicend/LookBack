@@ -19,7 +19,7 @@ type Task struct {
 	Status            uint       `gorm:"not null"`
 	Responsible       uint       `gorm:"not null"`
 	ResponsibleUserID User       `gorm:"foreignKey:Responsible;"`
-	Estimate          uint       `gorm:"not null"`
+	Estimate          *uint       `gorm:"not null"`
 	StartDate         *time.Time `gorm:"not null"`
 }
 
@@ -27,7 +27,7 @@ type TaskInput struct {
 	Task        string `json:"Task" binding:"required,min=1,max=255"`
 	Description string `json:"Description" binding:"required,min=1,max=255"`
 	StartDate   string `json:"StartDate" binding:"required,min=1,max=24"`
-	Estimate    uint   `json:"Estimate" binding:"required"`
+	Estimate    *uint   `json:"Estimate" binding:"required"`
 	Responsible uint   `json:"Responsible" binding:"required"`
 	Status      uint   `json:"Status" binding:"required"`
 	CategoryID  uint   `json:"Category" binding:"required"`
@@ -41,7 +41,7 @@ type TaskResponse struct {
 	StatusName          string
 	Category            uint
 	CategoryName        string
-	Estimate            uint
+	Estimate            *uint
 	StartDate           string
 	Responsible         uint
 	ResponsibleUserName string

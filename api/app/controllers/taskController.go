@@ -19,6 +19,7 @@ import (
 func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	var createTaskInput models.TaskInput
 	if err := c.ShouldBindJSON(&createTaskInput); err != nil {
+		log.Printf("createTaskInput: %v", createTaskInput.Estimate)
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
 		respondWithError(c, http.StatusBadRequest, err.Error())
