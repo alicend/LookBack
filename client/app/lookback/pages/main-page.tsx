@@ -98,7 +98,6 @@ export default function MainPage() {
                 container
                 direction="column"
                 alignItems="center"
-                justifyContent="center"
                 style={{ minHeight: "80vh" }}
               >
                 <Grid item>
