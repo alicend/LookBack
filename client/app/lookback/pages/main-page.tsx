@@ -1,11 +1,11 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { useRouter } from "next/router"; 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { Grid, Avatar } from "@mui/material";
+import { Grid, Menu } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { styled } from '@mui/system';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
 import { useSelector, useDispatch } from "react-redux";
@@ -21,6 +21,7 @@ import TaskForm from "@/components/task/TaskForm";
 import TaskDisplay from "@/components/task/TaskDisplay";
 
 import { AppDispatch } from "@/store/store";
+import { IconMenu } from '@/components/IconMenu';
 
 const theme = createTheme({
   palette: {
@@ -35,27 +36,18 @@ const StyledIcon = styled(RadioButtonCheckedIcon)(({ theme }) => ({
   cursor: "none",
 }));
 
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  marginLeft: theme.spacing(1),
-}));
-
 export default function MainPage() {
 
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const router = useRouter();
-  const Logout = async () => {
-    try {
-      const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
-          { headers: { "Content-Type": "application/json" } }
-      );
-      console.log(res);
-    } catch (err: any) {
-      console.log(err);
-    }
-    router.push("/");
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   useEffect(() => {
@@ -73,21 +65,29 @@ export default function MainPage() {
         <div className="text-center bg-white text-gray-600 font-serif m-6">
           <Grid container>
             <Grid item xs={4}>
-              <StyledIcon />
             </Grid>
             <Grid item xs={4}>
-              <h1>Scrum Task Board</h1>
+              <h1>Task Board</h1>
             </Grid>
             <Grid item xs={4}>
               <div className="mt-5 flex justify-end">
-                <button className="bg-transparent text-gray-600 mt-1 border-none outline-none cursor-pointer" onClick={Logout}>
-                  <ExitToAppIcon fontSize="large" />
+                <button
+                  className="bg-transparent pt-1 border-none outline-none cursor-pointer"
+                  aria-controls="simple-menu" 
+                  aria-haspopup="true" 
+                  onClick={handleClick}
+                >
+                  <MoreVertIcon/>
                 </button>
-                <button className="bg-transparent pt-1 border-none outline-none cursor-pointer">
-                  <StyledAvatar
-                    alt="avatar"
-                  />
-                </button>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <IconMenu />
+                </Menu>
               </div>
             </Grid>
             <Grid item xs={6}>
