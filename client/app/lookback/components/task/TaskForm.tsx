@@ -18,6 +18,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import AddIcon from "@mui/icons-material/Add";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -33,6 +34,8 @@ import {
 } from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
 import { initialState } from "@/slices/taskSlice";
+import NewCategoryModal from "./categoryModal/NewCategoryModal";
+import EditCategoryModal from "./categoryModal/EditCategoryModal";
 
 function getModalStyle() {
   const top = 50;
@@ -99,28 +102,6 @@ const StyledFab = styled(Fab)(({ theme }) => ({
   },
 }));
 
-const CategorySaveButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  marginLeft: theme.spacing(2),
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
-  },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
-  },
-}));
-
-const StyledPaper = styled('div')(({ theme }) => ({
-  position: "absolute",
-  textAlign: "center",
-  width: 400,
-  backgroundColor: theme.palette.background.paper,
-  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
-  padding: theme.spacing(2, 4, 3),
-}));
-
 const TaskForm: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
@@ -129,15 +110,23 @@ const TaskForm: React.FC = () => {
   const editedTask = useSelector(selectEditedTask);
   console.log(editedTask);
 
-  const [open, setOpen] = useState(false);
+  const [newCategoryOpen, setNewCategoryOpen] = useState(false);
+  const [editCategoryOpen, setEditCategoryOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
-  const [inputText, setInputText] = useState("");
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleNewCategoryOpen = () => {
+    setNewCategoryOpen(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+  const handleNewCategoryClose = () => {
+    console.log("aaaa");
+    setNewCategoryOpen(false);
+  };
+
+  const handleEditCategoryOpen = () => {
+    setEditCategoryOpen(true);
+  };
+  const handleEditCategoryClose = () => {
+    setEditCategoryOpen(false);
   };
   const isDisabled =
     editedTask.Task.length === 0 ||
@@ -145,12 +134,6 @@ const TaskForm: React.FC = () => {
     editedTask.Responsible === 0 ||
     editedTask.Category === 0 ||
     editedTask.StartDate.length === 0;
-
-  const isCatDisabled = inputText.length === 0;
-
-  const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value: string | number = e.target.value;
@@ -169,10 +152,8 @@ const TaskForm: React.FC = () => {
   
   const handleSelectDateChange = (date: any) => {
     if (date.$d instanceof Date && !isNaN(date.$d.getTime())) {
-      console.log("Valid Date");
       dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
     } else {
-      console.log("Invalid Date");
       dispatch(editTask({ ...editedTask, StartDate: "" }));
     }
   };
@@ -269,37 +250,21 @@ const TaskForm: React.FC = () => {
         <StyledFab
           size="small"
           color="primary"
-          onClick={handleOpen}
+          onClick={editedTask.Category ? handleEditCategoryOpen : handleNewCategoryOpen }
         >
-          <AddIcon />
+          {editedTask.Category ? <EditOutlinedIcon /> : <AddIcon />}
         </StyledFab>
 
-        <Modal open={open} onClose={handleClose}>
-          <StyledPaper style={modalStyle}>
-            <StyledTextField
-              InputLabelProps={{
-                shrink: true,
-              }}
-              label="New category"
-              type="text"
-              value={inputText}
-              onChange={handleInputTextChange}
-            />
-            <CategorySaveButton
-              variant="contained"
-              color="primary"
-              size="small"
-              startIcon={<SaveIcon />}
-              disabled={isCatDisabled}
-              onClick={() => {
-                dispatch(fetchAsyncCreateCategory(inputText));
-                handleClose();
-              }}
-            >
-              SAVE
-            </CategorySaveButton>
-          </StyledPaper>
-        </Modal>
+        <NewCategoryModal 
+          open={newCategoryOpen}
+          onClose={handleNewCategoryClose}
+          modalStyle={modalStyle}
+        />
+        <EditCategoryModal 
+          open={editCategoryOpen}
+          onClose={handleEditCategoryClose}
+          modalStyle={modalStyle}
+        />
         <br />
         <ButtonGroup>
         <TaskSaveButton

@@ -72,15 +72,15 @@ export default function MainPage() {
             <Grid item xs={4}>
               <div className="mt-5 flex justify-end">
                 <button
-                  className="bg-transparent pt-1 border-none outline-none cursor-pointer"
-                  aria-controls="simple-menu" 
+                  className="bg-transparent pt-1 mr-3 border-none outline-none cursor-pointer"
+                  aria-controls="menu" 
                   aria-haspopup="true" 
                   onClick={handleClick}
                 >
                   <MoreVertIcon/>
                 </button>
                 <Menu
-                  id="simple-menu"
+                  id="menu"
                   anchorEl={anchorEl}
                   keepMounted
                   open={Boolean(anchorEl)}
