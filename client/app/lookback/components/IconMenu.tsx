@@ -36,7 +36,7 @@ export const IconMenu: React.FC = () => {
         <ListItemIcon>
           <ManageAccountsIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Profile</ListItemText>
+        <ListItemText>Profile Edit</ListItemText>
       </MenuItem>
     </MenuList>
   );
