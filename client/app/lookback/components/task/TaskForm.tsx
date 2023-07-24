@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs';
@@ -12,7 +12,6 @@ import {
   Select,
   Button,
   Fab,
-  Modal,
   SelectChangeEvent
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
@@ -24,7 +23,6 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchAsyncCreateTask,
   fetchAsyncUpdateTask,
-  fetchAsyncCreateCategory,
   selectUsers,
   selectEditedTask,
   selectCategory,
@@ -36,6 +34,7 @@ import { AppDispatch } from "@/store/store";
 import { initialState } from "@/slices/taskSlice";
 import NewCategoryModal from "./categoryModal/NewCategoryModal";
 import EditCategoryModal from "./categoryModal/EditCategoryModal";
+import { CATEGORY } from "@/types/CategoryType";
 
 function getModalStyle() {
   const top = 50;
@@ -106,13 +105,23 @@ const TaskForm: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const users = useSelector(selectUsers);
-  const category = useSelector(selectCategory);
+  const categories = useSelector(selectCategory);
   const editedTask = useSelector(selectEditedTask);
   console.log(editedTask);
-
+  
   const [newCategoryOpen, setNewCategoryOpen] = useState(false);
   const [editCategoryOpen, setEditCategoryOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<CATEGORY>({ ID: 0, Category: '' });
   const [modalStyle] = useState(getModalStyle);
+  console.log(selectedCategory);
+
+  useEffect(() => {
+    const selectedCategoryObj = categories.find((cat) => cat.ID === editedTask.Category);
+    if (selectedCategoryObj) {
+      setSelectedCategory(selectedCategoryObj);
+    }
+  }, [editedTask.Category, categories]);
+  
 
   const handleNewCategoryOpen = () => {
     setNewCategoryOpen(true);
@@ -163,7 +172,7 @@ const TaskForm: React.FC = () => {
       {user.Name}
     </MenuItem>
   ));
-  let categoryOptions = [{ ID: 0, Category: '' }, ...category].map((cat) => (
+  let categoryOptions = [{ ID: 0, Category: '' }, ...categories].map((cat) => (
     <MenuItem key={cat.ID} value={cat.ID} style={{ minHeight: '36px'}}>
       {cat.Category}
     </MenuItem>
@@ -264,6 +273,7 @@ const TaskForm: React.FC = () => {
           open={editCategoryOpen}
           onClose={handleEditCategoryClose}
           modalStyle={modalStyle}
+          originalCategory={selectedCategory}
         />
         <br />
         <ButtonGroup>

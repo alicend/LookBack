@@ -84,6 +84,45 @@ export const fetchAsyncCreateCategory = createAsyncThunk("task/createCategory", 
   }
 });
 
+export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", async (category: CATEGORY, thunkAPI) => {
+  try{
+    const res = await axios.put<CATEGORY_RESPONSE>(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category${category.ID}`,
+      { category: category },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.category;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
+  }
+});
+
+export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", async (id: number, thunkAPI) => {
+  try{
+    const res = await axios.delete<CATEGORY_RESPONSE>(
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.category;
+  } catch (err :any) {
+    return thunkAPI.rejectWithValue({
+      response: err.response.data, 
+      status: err.response.status
+    });
+  }
+});
+
 export const fetchAsyncCreateTask = createAsyncThunk("task/createTask", async (task: POST_TASK, thunkAPI) => {
   try{
     const res = await axios.post<TASK_RESPONSE>(

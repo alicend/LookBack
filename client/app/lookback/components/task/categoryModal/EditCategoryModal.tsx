@@ -1,12 +1,14 @@
-import React, { ChangeEvent, MouseEvent, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { TextField, Button, Modal } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { AppDispatch } from '@/store/store';
 import { useDispatch } from 'react-redux';
+import { fetchAsyncUpdateCategory, fetchAsyncDeleteCategory } from '@/slices/taskSlice';
+import { CATEGORY } from '@/types/CategoryType';
 
-const CategorySaveButton = styled(Button)(({ theme }) => ({
+const CategoryUpdateButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(4),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
@@ -41,21 +43,28 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   minWidth: 240,
 }));
 
-interface NewCategoryModalProps {
+interface EditCategoryModalProps {
   open: boolean;
   onClose: () => void;
   modalStyle: React.CSSProperties;
+  originalCategory: CATEGORY
 }
 
-const EditCategoryModal: React.FC<NewCategoryModalProps> = ({ open, onClose, modalStyle }) => {
+const EditCategoryModal: React.FC<EditCategoryModalProps> = ({ open, onClose, modalStyle, originalCategory }) => {
   
   const dispatch: AppDispatch = useDispatch();
 
-  const [inputText, setInputText] = useState("");
-  const isDisabled = inputText.length === 0;
+  const [editCategory, setEditCategory] = useState(originalCategory);
+  const isDisabled = editCategory.Category.length === 0;
+
+  useEffect(() => {
+    setEditCategory(originalCategory);
+  }, [originalCategory]);
+  
+  console.log(editCategory);
 
   const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
+    setEditCategory({...editCategory, Category: e.target.value});
   };
   
   return (
@@ -67,29 +76,29 @@ const EditCategoryModal: React.FC<NewCategoryModalProps> = ({ open, onClose, mod
           }}
           label="Edit category"
           type="text"
-          value={inputText}
+          value={editCategory.Category}
           onChange={handleInputTextChange}
         />
-        <CategorySaveButton
+        <CategoryUpdateButton
           variant="contained"
           color="primary"
           size="small"
           startIcon={<SaveIcon />}
           disabled={isDisabled}
           onClick={() => {
-            //dispatch(fetchAsyncUpdateCategory(inputText));
+            dispatch(fetchAsyncUpdateCategory(editCategory));
             onClose();
           }}
         >
           UPDATE
-        </CategorySaveButton>
+        </CategoryUpdateButton>
         <CategoryDeleteButton
             variant="contained"
             color="error"
             size="small"
             startIcon={<DeleteOutlineOutlinedIcon />}
             onClick={() => {
-              // dispatch(fetchAsyncUpdateCategory(editedTask.ID));
+              dispatch(fetchAsyncDeleteCategory(editCategory.ID));
               onClose();
             }}
           >
