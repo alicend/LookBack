@@ -75,7 +75,7 @@ export const fetchAsyncCreateCategory = createAsyncThunk("task/createCategory", 
         },
       }
     );
-    return res.data.category;
+    return res.data.categories;
   } catch (err :any) {
     return thunkAPI.rejectWithValue({
       response: err.response.data, 
@@ -86,16 +86,17 @@ export const fetchAsyncCreateCategory = createAsyncThunk("task/createCategory", 
 
 export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", async (category: CATEGORY, thunkAPI) => {
   try{
+    console.log(category);
     const res = await axios.put<CATEGORY_RESPONSE>(
-      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category${category.ID}`,
-      { category: category },
+      `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category/${category.ID}`,
+      { category: category.Category },
       {
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
-    return res.data.category;
+    return res.data.categories;
   } catch (err :any) {
     return thunkAPI.rejectWithValue({
       response: err.response.data, 
@@ -106,7 +107,7 @@ export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", 
 
 export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", async (id: number, thunkAPI) => {
   try{
-    const res = await axios.delete<DELETE_CATEGORY_RESPONSE>(
+    const res = await axios.delete<CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category/${id}`,
       {
         headers: {
@@ -114,7 +115,7 @@ export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", 
         },
       }
     );
-    return id;
+    return res.data.categories;
   } catch (err :any) {
     return thunkAPI.rejectWithValue({
       response: err.response.data, 
@@ -310,10 +311,10 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(fetchAsyncCreateCategory.fulfilled, (state, action: PayloadAction<CATEGORY>) => {
+    builder.addCase(fetchAsyncCreateCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
       return {
         ...state,
-        category: [...state.category, action.payload],
+        category: action.payload,
       };
     });
     builder.addCase(fetchAsyncCreateCategory.rejected, (state, action) => {
@@ -327,16 +328,10 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(fetchAsyncUpdateCategory.fulfilled, (state, action: PayloadAction<CATEGORY>) => {
-      let updatedCategory;
-      if (state.category) {
-        updatedCategory = [...state.category, action.payload];
-      } else {
-        updatedCategory = [action.payload];
-      }
+    builder.addCase(fetchAsyncUpdateCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
       return {
         ...state,
-        category: updatedCategory.sort((a, b) => a.Category.localeCompare(b.Category)),
+        category: action.payload,
       };
     });
     builder.addCase(fetchAsyncUpdateCategory.rejected, (state, action) => {
@@ -350,9 +345,12 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<number>) => {
-      state.editedTask.Category = 0;
-      state.category = state.category.filter(category => category.ID !== action.payload);
+    builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
+      return {
+        ...state,
+        editedTask: { ...state.editedTask, Category: 0 },
+        category: action.payload,
+      };
     });
     builder.addCase(fetchAsyncDeleteCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;

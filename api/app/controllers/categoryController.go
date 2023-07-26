@@ -22,14 +22,22 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 		Category:   createCategoryInput.Category,
 	}
 
-	category, err := newCategory.CreateCategory(handler.DB)
+	err := newCategory.CreateCategory(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	categories, err := models.FetchCategory(handler.DB)
+	if err != nil {
+		log.Printf("Failed to fetch categories: %v", err)
+		log.Printf("カテゴリーの取得に失敗しました")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"category" : category,
+		"categories" : categories,  // categoriesをレスポンスとして返す
 	})
 }
 
@@ -68,14 +76,22 @@ func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
 		return
 	}
 
-	category, err := updateCategory.UpdateCategory(handler.DB, id)
+	err = updateCategory.UpdateCategory(handler.DB, id)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	
+	categories, err := models.FetchCategory(handler.DB)
+	if err != nil {
+		log.Printf("Failed to fetch categories: %v", err)
+		log.Printf("カテゴリーの取得に失敗しました")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"category" : category,
+		"categories" : categories,  // categoriesをレスポンスとして返す
 	})
 }
 
@@ -96,8 +112,16 @@ func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 		return
 	}
 
+	categories, err := models.FetchCategory(handler.DB)
+	if err != nil {
+		log.Printf("Failed to fetch categories: %v", err)
+		log.Printf("カテゴリーの取得に失敗しました")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully deleted task",
+		"categories" : categories,  // categoriesをレスポンスとして返す
 	})
 }
 

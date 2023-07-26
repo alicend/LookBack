@@ -30,29 +30,23 @@ func (CategoryResponse) TableName() string {
 	return "categories"
 }
 
-func (category *Category) CreateCategory(db *gorm.DB) (*CategoryResponse, error) {
+func (category *Category) CreateCategory(db *gorm.DB) error {
 	// 自動マイグレーション(Categoryテーブルを作成)
 	migrateErr := db.AutoMigrate(&Category{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
-		return nil, migrateErr
+		return migrateErr
 	}
 
 	result := db.Create(category)
 
 	if result.Error != nil {
 		log.Printf("Error creating category: %v\n", result.Error)
-		return nil, result.Error
+		return result.Error
 	}
 	log.Printf("カテゴリーの作成に成功")
 
-	// CategoryオブジェクトをCategoryResponseオブジェクトに変換
-	categoryResponse := &CategoryResponse{
-		ID:       category.ID,
-		Category: category.Category,
-	}
-
-	return categoryResponse, nil
+	return nil
 }
 
 func FetchCategory(db *gorm.DB) ([]CategoryResponse, error) {
@@ -69,18 +63,18 @@ func FetchCategory(db *gorm.DB) ([]CategoryResponse, error) {
 	return categories, nil
 }
 
-func (category *Category) UpdateCategory(db *gorm.DB, id int) (*Category, error) {
+func (category *Category) UpdateCategory(db *gorm.DB, id int) error {
 	result := db.Model(category).Where("id = ?", id).Updates(Category{
 		Category: category.Category,
 	})
 
 	if result.Error != nil {
 		log.Printf("Error updating category: %v\n", result.Error)
-		return nil, result.Error
+		return result.Error
 	}
 	log.Printf("カテゴリの更新に成功")
 
-	return category, nil
+	return nil
 }
 
 func (category *Category) DeleteCategory(db *gorm.DB, id int) error {
