@@ -10,7 +10,7 @@ import (
 )
 
 func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
-	var createCategoryInput models.CreateCategoryInput
+	var createCategoryInput models.CategoryInput
 	if err := c.ShouldBindJSON(&createCategoryInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
@@ -49,46 +49,34 @@ func (handler *Handler) GetCategoryHandler(c *gin.Context) {
 }
 
 func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
-	// var updateTaskInput models.TaskInput
-	// if err := c.ShouldBindJSON(&updateTaskInput); err != nil {
-	// 	log.Printf("Invalid request body: %v", err)
-	// 	log.Printf("リクエスト内容が正しくありません")
-	// 	respondWithError(c, http.StatusBadRequest, err.Error())
-	// 	return
-	// }
+	var updateCategoryInput models.CategoryInput
+	if err := c.ShouldBindJSON(&updateCategoryInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
 	
-	// updateTask := &models.Task{
-	// 	Task:        updateTaskInput.Task,
-	// 	Description: updateTaskInput.Description,
-	// 	CategoryID:  updateTaskInput.CategoryID,
-	// 	Status:      updateTaskInput.Status,
-	// 	Responsible: updateTaskInput.Responsible,
-	// 	Estimate:    updateTaskInput.Estimate,
-	// 	StartDate:   &startDate,
-	// }
-
-	// // URLからtaskのidを取得
-	// id, err := getIdFromURL(c)
-	// if err != nil {
-	// 	respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
-	// 	return
-	// }
-
-	// err = updateTask.UpdateTask(handler.DB, id)
-	// if err != nil {
-	// 	respondWithError(c, http.StatusBadRequest, err.Error())
-	// 	return
-	// }
-
-	// tasks, err := models.FetchTasks(handler.DB)
-	// if err != nil {
-	// 	respondWithError(c, http.StatusBadRequest, err.Error())
-	// 	return
-	// }
+	updateCategory := &models.Category{
+		Category: updateCategoryInput.Category,
+	}
 	
-	// c.JSON(http.StatusOK, gin.H{
-	// 	"tasks"   : tasks,  // tasksをレスポンスとして返す
-	// })
+	// URLからtaskのidを取得
+	id, err := getIdFromURL(c)
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
+		return
+	}
+
+	category, err := updateCategory.UpdateCategory(handler.DB, id)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{
+		"category" : category,
+	})
 }
 
 func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
@@ -109,7 +97,6 @@ func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"CategoryID": id,
 		"message": "Successfully deleted task",
 	})
 }

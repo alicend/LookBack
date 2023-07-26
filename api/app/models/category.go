@@ -15,8 +15,8 @@ type Category struct {
 }
 
 // カテゴリー作成の入力値
-type CreateCategoryInput struct {
-	Category string `json:"category" binding:"required,min=1,max=31"`
+type CategoryInput struct {
+	Category string `json:"category" binding:"required,min=1"`
 }
 
 // カテゴリー一覧取得
@@ -67,6 +67,20 @@ func FetchCategory(db *gorm.DB) ([]CategoryResponse, error) {
 	log.Printf("カテゴリーの取得に成功")
 
 	return categories, nil
+}
+
+func (category *Category) UpdateCategory(db *gorm.DB, id int) (*Category, error) {
+	result := db.Model(category).Where("id = ?", id).Updates(Category{
+		Category: category.Category,
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating category: %v\n", result.Error)
+		return nil, result.Error
+	}
+	log.Printf("カテゴリの更新に成功")
+
+	return category, nil
 }
 
 func (category *Category) DeleteCategory(db *gorm.DB, id int) error {
