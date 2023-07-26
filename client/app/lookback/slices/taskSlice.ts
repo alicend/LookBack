@@ -1,4 +1,4 @@
-import { CATEGORY_RESPONSE, CATEGORY } from '@/types/CategoryType';
+import { CATEGORY_RESPONSE, CATEGORY, DELETE_CATEGORY_RESPONSE } from '@/types/CategoryType';
 import { TASK_RESPONSE, POST_TASK, TASK_STATE, READ_TASK } from '@/types/TaskType';
 import { USER_RESPONSE, USER } from '@/types/UserType';
 import { RootState } from '../store/store';
@@ -106,7 +106,7 @@ export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", 
 
 export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", async (id: number, thunkAPI) => {
   try{
-    const res = await axios.delete<CATEGORY_RESPONSE>(
+    const res = await axios.delete<DELETE_CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category/${id}`,
       {
         headers: {
@@ -114,7 +114,7 @@ export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", 
         },
       }
     );
-    return res.data.category;
+    return id;
   } catch (err :any) {
     return thunkAPI.rejectWithValue({
       response: err.response.data, 
@@ -293,15 +293,12 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(
-      fetchAsyncGetCategory.fulfilled,
-      (state, action: PayloadAction<CATEGORY[]>) => {
-        return {
-          ...state,
-          category: action.payload,
-        };
-      }
-    );
+    builder.addCase(fetchAsyncGetCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
+      return {
+        ...state,
+        category: action.payload,
+      };
+    });
     builder.addCase(fetchAsyncGetCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
@@ -313,21 +310,12 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(
-      fetchAsyncCreateCategory.fulfilled,
-      (state, action: PayloadAction<CATEGORY>) => {
-        let updatedCategory;
-        if (state.category) {
-          updatedCategory = [...state.category, action.payload];
-        } else {
-          updatedCategory = [action.payload];
-        }
-        return {
-          ...state,
-          category: updatedCategory.sort((a, b) => a.Category.localeCompare(b.Category)),
-        };
-      }
-    );
+    builder.addCase(fetchAsyncCreateCategory.fulfilled, (state, action: PayloadAction<CATEGORY>) => {
+      return {
+        ...state,
+        category: [...state.category, action.payload],
+      };
+    });
     builder.addCase(fetchAsyncCreateCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
@@ -339,16 +327,51 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(
-      fetchAsyncCreateTask.fulfilled,
-      (state, action: PayloadAction<READ_TASK[]>) => {
-        return {
-          ...state,
-          tasks: action.payload,
-          editedTask: initialState.editedTask,
-        };
+    builder.addCase(fetchAsyncUpdateCategory.fulfilled, (state, action: PayloadAction<CATEGORY>) => {
+      let updatedCategory;
+      if (state.category) {
+        updatedCategory = [...state.category, action.payload];
+      } else {
+        updatedCategory = [action.payload];
       }
-    );
+      return {
+        ...state,
+        category: updatedCategory.sort((a, b) => a.Category.localeCompare(b.Category)),
+      };
+    });
+    builder.addCase(fetchAsyncUpdateCategory.rejected, (state, action) => {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
+        router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
+      }
+    });
+    builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<number>) => {
+      state.editedTask.Category = 0;
+      state.category = state.category.filter(category => category.ID !== action.payload);
+    });
+    builder.addCase(fetchAsyncDeleteCategory.rejected, (state, action) => {
+      const payload = action.payload as PAYLOAD;
+      if (payload.status === 401) {
+        alert("認証エラー")
+        router.push("/");
+      } else {
+        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+        const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+        alert(errorMessage);
+      }
+    });
+    builder.addCase(fetchAsyncCreateTask.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
+      return {
+        ...state,
+        tasks: action.payload,
+        editedTask: initialState.editedTask,
+      };
+    });
     builder.addCase(fetchAsyncCreateTask.rejected, (state, action) => {
       console.log(action)
       const payload = action.payload as PAYLOAD;

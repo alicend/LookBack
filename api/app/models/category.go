@@ -69,6 +69,20 @@ func FetchCategory(db *gorm.DB) ([]CategoryResponse, error) {
 	return categories, nil
 }
 
+func (category *Category) DeleteCategory(db *gorm.DB, id int) error {
+
+	result := db.Unscoped().Delete(category, id)
+
+	if result.Error != nil {
+		log.Printf("Error deleting category: %v\n", result.Error)
+		return result.Error
+	}
+
+	log.Printf("カテゴリーの削除に成功")
+
+	return nil
+}
+
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================

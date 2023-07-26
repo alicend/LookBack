@@ -50,7 +50,7 @@ interface EditCategoryModalProps {
   originalCategory: CATEGORY
 }
 
-const EditCategoryModal: React.FC<EditCategoryModalProps> = ({ open, onClose, modalStyle, originalCategory }) => {
+const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, onClose, modalStyle, originalCategory }) => {
   
   const dispatch: AppDispatch = useDispatch();
 
@@ -107,6 +107,6 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({ open, onClose, mo
       </StyledPaper>
     </Modal>
   );
-};
+});
 
 export default EditCategoryModal;

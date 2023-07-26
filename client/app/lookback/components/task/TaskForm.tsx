@@ -127,7 +127,6 @@ const TaskForm: React.FC = () => {
     setNewCategoryOpen(true);
   };
   const handleNewCategoryClose = () => {
-    console.log("aaaa");
     setNewCategoryOpen(false);
   };
 
