@@ -1,7 +1,6 @@
 package models
 
 import (
-	// "time"
 	"log"
 	"fmt"
 
@@ -79,10 +78,39 @@ func (category *Category) UpdateCategory(db *gorm.DB, id int) error {
 
 func (category *Category) DeleteCategory(db *gorm.DB, id int) error {
 
-	result := db.Unscoped().Delete(category, id)
+	// トランザクションの開始
+	tx := db.Begin()
+
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// 削除するカテゴリに関連するタスクを検索
+	var tasks []Task
+	result := db.Where("category_id = ?", id).Find(&tasks)
+
+	if result.Error != nil {
+		log.Printf("Error finding related tasks: %v\n", result.Error)
+		tx.Rollback()
+		return result.Error
+	}
+
+	// 削除するカテゴリに関連するタスクを削除
+	for _, task := range tasks {
+		result = db.Unscoped().Delete(&task)
+		if result.Error != nil {
+			log.Printf("Error deleting task: %v\n", result.Error)
+			tx.Rollback()
+			return result.Error
+		}
+	}
+
+	// カテゴリを削除
+	result = db.Unscoped().Delete(category, id)
 
 	if result.Error != nil {
 		log.Printf("Error deleting category: %v\n", result.Error)
+		tx.Rollback()
 		return result.Error
 	}
 

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { TextField, Button, Modal } from "@mui/material";
+import { TextField, Button, Modal, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -54,6 +54,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
   
   const dispatch: AppDispatch = useDispatch();
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(originalCategory);
   const isDisabled = editCategory.Category.length === 0;
 
@@ -61,13 +62,25 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
     setEditCategory(originalCategory);
   }, [originalCategory]);
   
-  console.log(editCategory);
+  const handleDeleteConfirmation = () => {
+    console.log("aaa")
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmClose = (shouldDelete: boolean) => {
+    setConfirmOpen(false);
+    if (shouldDelete) {
+      dispatch(fetchAsyncDeleteCategory(editCategory.ID));
+      onClose();
+    }
+  };
 
   const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditCategory({...editCategory, Category: e.target.value});
   };
   
   return (
+    <>
     <Modal open={open} onClose={onClose}>
       <StyledPaper style={modalStyle}>
         <StyledTextField
@@ -97,15 +110,31 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
             color="error"
             size="small"
             startIcon={<DeleteOutlineOutlinedIcon />}
-            onClick={() => {
-              dispatch(fetchAsyncDeleteCategory(editCategory.ID));
-              onClose();
-            }}
+            onClick={
+              handleDeleteConfirmation
+            }
           >
             DELETE
           </CategoryDeleteButton>
       </StyledPaper>
     </Modal>
+    <Dialog open={confirmOpen} onClose={() => handleConfirmClose(false)}>
+      <DialogTitle>{"Confirm Delete"}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          {`カテゴリ「${editCategory.Category}」に関連するタスクも削除されますが本当に削除してよろしいですか？`}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => handleConfirmClose(false)} color="primary">
+          No
+        </Button>
+        <Button onClick={() => handleConfirmClose(true)} color="primary" autoFocus>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
+    </>
   );
 });
 
