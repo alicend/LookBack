@@ -147,7 +147,7 @@ const TaskList: React.FC = () => {
                     column === "Estimate" ||
                     column === "Responsible" ||
                     column === "Creator") && (
-                    <StyledTableCell align="center" key={colIndex}>
+                    <StyledTableCell  key={colIndex}>
                       <TableSortLabel
                         active={state.activeKey === column}
                         direction={state.order}
@@ -174,7 +174,6 @@ const TaskList: React.FC = () => {
                       key === "ResponsibleUserName" ||
                       key === "CreatorUserName") && (
                       <TableCell
-                        align="center"
                         className="cursor-pointer"
                         key={`${rowIndex}+${colIndex}`}
                         onClick={() => {
@@ -191,7 +190,7 @@ const TaskList: React.FC = () => {
                     )
                 )}
 
-                <TableCell align="center">
+                <TableCell>
                   <div className="text-gray-400 cursor-not-allowed">
                     <button
                       className="cursor-pointer bg-transparent border-none outline-none text-lg text-gray-500"

@@ -106,7 +106,7 @@ func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 
 	deleteCategory := &models.Category{}
 
-	err = deleteCategory.DeleteCategory(handler.DB, id)
+	err = deleteCategory.DeleteCategoryAndRelatedTasks(handler.DB, id)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -114,14 +114,19 @@ func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 
 	categories, err := models.FetchCategory(handler.DB)
 	if err != nil {
-		log.Printf("Failed to fetch categories: %v", err)
-		log.Printf("カテゴリーの取得に失敗しました")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	tasks, err := models.FetchTasks(handler.DB)
+	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"categories" : categories,  // categoriesをレスポンスとして返す
+		"tasks"      : tasks,       // tasksをレスポンスとして返す
 	})
 }
 

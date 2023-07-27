@@ -107,7 +107,7 @@ export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", 
 
 export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", async (id: number, thunkAPI) => {
   try{
-    const res = await axios.delete<CATEGORY_RESPONSE>(
+    const res = await axios.delete<DELETE_CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category/${id}`,
       {
         headers: {
@@ -115,7 +115,11 @@ export const fetchAsyncDeleteCategory = createAsyncThunk("task/deleteCategory", 
         },
       }
     );
-    return res.data.categories;
+    return {
+      categories: res.data.categories,
+      tasks:      res.data.tasks,
+      CategoryID: id
+    };
   } catch (err :any) {
     return thunkAPI.rejectWithValue({
       response: err.response.data, 
@@ -345,11 +349,15 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
+    builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<DELETE_CATEGORY_RESPONSE>) => {
       return {
         ...state,
-        editedTask: { ...state.editedTask, Category: 0 },
-        category: action.payload,
+        editedTask: {
+          ...state.editedTask,
+          Category: state.editedTask.Category === action.payload.CategoryID ? 0 : state.editedTask.Category,
+        },
+        category: action.payload.categories,
+        tasks: action.payload.tasks, 
       };
     });
     builder.addCase(fetchAsyncDeleteCategory.rejected, (state, action) => {

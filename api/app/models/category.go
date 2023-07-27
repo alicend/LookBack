@@ -76,7 +76,7 @@ func (category *Category) UpdateCategory(db *gorm.DB, id int) error {
 	return nil
 }
 
-func (category *Category) DeleteCategory(db *gorm.DB, id int) error {
+func (category *Category) DeleteCategoryAndRelatedTasks(db *gorm.DB, id int) error {
 
 	// トランザクションの開始
 	tx := db.Begin()
@@ -86,32 +86,32 @@ func (category *Category) DeleteCategory(db *gorm.DB, id int) error {
 	}
 
 	// 削除するカテゴリに関連するタスクを検索
-	var tasks []Task
-	result := db.Where("category_id = ?", id).Find(&tasks)
+	var relatedTasks []Task
+	searchTaskResult := db.Where("category_id = ?", id).Find(&relatedTasks)
 
-	if result.Error != nil {
-		log.Printf("Error finding related tasks: %v\n", result.Error)
+	if searchTaskResult.Error != nil {
+		log.Printf("Error finding related tasks: %v\n", searchTaskResult.Error)
 		tx.Rollback()
-		return result.Error
+		return searchTaskResult.Error
 	}
 
 	// 削除するカテゴリに関連するタスクを削除
-	for _, task := range tasks {
-		result = db.Unscoped().Delete(&task)
-		if result.Error != nil {
-			log.Printf("Error deleting task: %v\n", result.Error)
+	for _, task := range relatedTasks {
+		deleteTaskResult := db.Unscoped().Delete(&task)
+		if deleteTaskResult.Error != nil {
+			log.Printf("Error deleting task: %v\n", deleteTaskResult.Error)
 			tx.Rollback()
-			return result.Error
+			return deleteTaskResult.Error
 		}
 	}
 
 	// カテゴリを削除
-	result = db.Unscoped().Delete(category, id)
+	deleteCategoryResult := db.Unscoped().Delete(category, id)
 
-	if result.Error != nil {
-		log.Printf("Error deleting category: %v\n", result.Error)
+	if deleteCategoryResult.Error != nil {
+		log.Printf("Error deleting category: %v\n", deleteCategoryResult.Error)
 		tx.Rollback()
-		return result.Error
+		return deleteCategoryResult.Error
 	}
 
 	log.Printf("カテゴリーの削除に成功")
