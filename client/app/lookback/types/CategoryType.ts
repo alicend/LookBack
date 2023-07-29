@@ -13,3 +13,8 @@ export interface DELETE_CATEGORY_RESPONSE {
   categories: CATEGORY[];
   CategoryID: number;
 }
+
+export interface UPDATE_CATEGORY_RESPONSE {
+  tasks: READ_TASK[];
+  categories: CATEGORY[];
+}

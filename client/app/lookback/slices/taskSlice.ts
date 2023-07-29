@@ -1,4 +1,4 @@
-import { CATEGORY_RESPONSE, CATEGORY, DELETE_CATEGORY_RESPONSE } from '@/types/CategoryType';
+import { CATEGORY_RESPONSE, CATEGORY, DELETE_CATEGORY_RESPONSE, UPDATE_CATEGORY_RESPONSE } from '@/types/CategoryType';
 import { TASK_RESPONSE, POST_TASK, TASK_STATE, READ_TASK } from '@/types/TaskType';
 import { USER_RESPONSE, USER } from '@/types/UserType';
 import { RootState } from '../store/store';
@@ -87,7 +87,7 @@ export const fetchAsyncCreateCategory = createAsyncThunk("task/createCategory", 
 export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", async (category: CATEGORY, thunkAPI) => {
   try{
     console.log(category);
-    const res = await axios.put<CATEGORY_RESPONSE>(
+    const res = await axios.put<UPDATE_CATEGORY_RESPONSE>(
       `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category/${category.ID}`,
       { category: category.Category },
       {
@@ -96,7 +96,10 @@ export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", 
         },
       }
     );
-    return res.data.categories;
+    return {
+      categories: res.data.categories,
+      tasks:      res.data.tasks,
+    }
   } catch (err :any) {
     return thunkAPI.rejectWithValue({
       response: err.response.data, 
@@ -332,10 +335,11 @@ export const taskSlice = createSlice({
         alert(errorMessage);
       }
     });
-    builder.addCase(fetchAsyncUpdateCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
+    builder.addCase(fetchAsyncUpdateCategory.fulfilled, (state, action: PayloadAction<UPDATE_CATEGORY_RESPONSE>) => {
       return {
         ...state,
-        category: action.payload,
+        category: action.payload.categories,
+        tasks: action.payload.tasks, 
       };
     });
     builder.addCase(fetchAsyncUpdateCategory.rejected, (state, action) => {
