@@ -1,4 +1,4 @@
-import React, { ChangeEvent, MouseEvent, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { TextField, Button, Modal } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from '@mui/icons-material/Save';
@@ -49,6 +49,12 @@ const NewCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, o
   const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
   };
+
+  useEffect(() => {
+    if (!open) {
+      setInputText("");
+    }
+  }, [open]);
   
   return (
     <Modal open={open} onClose={onClose}>
