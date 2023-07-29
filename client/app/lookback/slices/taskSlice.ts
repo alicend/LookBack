@@ -354,12 +354,14 @@ export const taskSlice = createSlice({
       }
     });
     builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<DELETE_CATEGORY_RESPONSE>) => {
+      const isTaskPresent = action.payload.tasks.find(task => task.ID === state.editedTask.ID);
       return {
         ...state,
-        editedTask: {
+        editedTask: isTaskPresent ? {
           ...state.editedTask,
           Category: state.editedTask.Category === action.payload.CategoryID ? 0 : state.editedTask.Category,
-        },
+        } : initialState.editedTask,
+        selectedTask: isTaskPresent ? state.selectedTask : initialState.selectedTask,
         category: action.payload.categories,
         tasks: action.payload.tasks, 
       };
