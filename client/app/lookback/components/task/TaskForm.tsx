@@ -298,6 +298,7 @@ const TaskForm: React.FC = () => {
             startIcon={<DeleteOutlineOutlinedIcon />}
             onClick={() => {
               dispatch(fetchAsyncDeleteTask(editedTask.ID));
+              dispatch(editTask(initialState.editedTask));
               dispatch(selectTask(initialState.selectedTask));
             }}
           >

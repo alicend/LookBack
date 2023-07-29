@@ -90,8 +90,15 @@ func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
 		return
 	}
 
+	tasks, err := models.FetchTasks(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"categories" : categories,  // categoriesをレスポンスとして返す
+		"tasks"      : tasks,       // tasksをレスポンスとして返す
 	})
 }
 
