@@ -87,7 +87,7 @@ const Auth: React.FC = () => {
     const loginResult = await dispatch(fetchAsyncLogin(credential));
     // レスポンスの結果に応じてエラーメッセージを設定
     if (fetchAsyncLogin.fulfilled.match(loginResult)) {
-      router.push("/main-page");
+      router.push("/task-board");
     } else if (fetchAsyncLogin.rejected.match(loginResult)){
       const payload = loginResult.payload as RESPONSE;
       // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
