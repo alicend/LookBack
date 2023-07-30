@@ -21,6 +21,7 @@ import TaskDisplay from "@/components/task/TaskDisplay";
 
 import { AppDispatch } from "@/store/store";
 import { IconMenu } from '@/components/IconMenu';
+import { HomeLayout } from "@/components/HomeLayout";
 
 const theme = createTheme({
   palette: {
@@ -74,7 +75,7 @@ export default function MainPage() {
   }, [dispatch]);
 
   return (
-    <>
+    <HomeLayout title="Task Board">
       <ThemeProvider theme={theme}>
         <div className="text-center bg-white text-gray-600 font-serif m-6">
           <Grid container>
@@ -127,6 +128,6 @@ export default function MainPage() {
           </Alert>
         </Snackbar>
       </ThemeProvider>
-    </>
+    </HomeLayout>
   )
 }
