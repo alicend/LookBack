@@ -7,6 +7,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import Link from 'next/link';
 
 export const IconMenu: React.FC = () => {
 
@@ -32,12 +33,14 @@ export const IconMenu: React.FC = () => {
         </ListItemIcon>
         <ListItemText>Log out</ListItemText>
       </MenuItem>
-      <MenuItem>
-        <ListItemIcon>
-          <ManageAccountsIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Profile Edit</ListItemText>
-      </MenuItem>
+      <Link href="/profile">
+        <MenuItem>
+          <ListItemIcon>
+            <ManageAccountsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Profile Edit</ListItemText>
+        </MenuItem>
+      </Link>
     </MenuList>
   );
 }
