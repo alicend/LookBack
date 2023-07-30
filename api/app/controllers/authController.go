@@ -76,7 +76,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", "localhost", false, true)
 	
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully logged in",
+		"user": user,
 	})
 }
 

@@ -7,7 +7,7 @@ import { TextField, Button } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/authSlice";
+import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
 
 import { RESPONSE } from "@/types/ResponseType";
 
