@@ -5,7 +5,7 @@ import { RootState } from '../store/store';
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import router from 'next/router';
-import { PAYLOAD, RESPONSE } from '@/types/ResponseType';
+import { PAYLOAD } from '@/types/ResponseType';
 
 export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async (_, thunkAPI) => {
   try {
@@ -191,6 +191,8 @@ export const fetchAsyncDeleteTask = createAsyncThunk("task/deleteTask", async (i
 });
 
 export const initialState: TASK_STATE = {
+  message: "",
+  status: "",
   tasks: [
     {
       ID: 0,
@@ -273,33 +275,50 @@ export const taskSlice = createSlice({
     builder.addCase(fetchAsyncGetTasks.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
-      }
-    });
-    builder.addCase(
-      fetchAsyncGetUsers.fulfilled,
-      (state, action: PayloadAction<USER[]>) => {
         return {
           ...state,
-          users: action.payload,
-        };
+          status: 'failed',
+          message: errorMessage,
+        }
       }
-    );
+    });
+    builder.addCase(fetchAsyncGetTasks.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
+    });
+    builder.addCase(fetchAsyncGetUsers.fulfilled, (state, action: PayloadAction<USER[]>) => {
+      return {
+        ...state,
+        users: action.payload,
+      };
+    });
     builder.addCase(fetchAsyncGetUsers.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
+        return {
+          ...state,
+          status: 'failed',
+          message: errorMessage,
+        }
       }
+    });
+    builder.addCase(fetchAsyncGetUsers.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
     });
     builder.addCase(fetchAsyncGetCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
       return {
@@ -310,48 +329,82 @@ export const taskSlice = createSlice({
     builder.addCase(fetchAsyncGetCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
+        return {
+          ...state,
+          status: 'failed',
+          message: errorMessage,
+        }
       }
+    });
+    builder.addCase(fetchAsyncGetCategory.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
     });
     builder.addCase(fetchAsyncCreateCategory.fulfilled, (state, action: PayloadAction<CATEGORY[]>) => {
       return {
         ...state,
         category: action.payload,
+        status: 'succeeded',
+        message: 'カテゴリを作成しました',
       };
     });
     builder.addCase(fetchAsyncCreateCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
+        return {
+          ...state,
+          status: 'failed',
+          message: errorMessage,
+        }
       }
+    });
+    builder.addCase(fetchAsyncCreateCategory.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
     });
     builder.addCase(fetchAsyncUpdateCategory.fulfilled, (state, action: PayloadAction<UPDATE_CATEGORY_RESPONSE>) => {
       return {
         ...state,
         category: action.payload.categories,
         tasks: action.payload.tasks, 
+        status: 'succeeded',
+        message: 'カテゴリを更新しました',
       };
     });
     builder.addCase(fetchAsyncUpdateCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
+        return {
+          ...state,
+          status: 'failed',
+          message: errorMessage,
+        }
       }
+    });
+    builder.addCase(fetchAsyncUpdateCategory.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
     });
     builder.addCase(fetchAsyncDeleteCategory.fulfilled, (state, action: PayloadAction<DELETE_CATEGORY_RESPONSE>) => {
       const isTaskPresent = action.payload.tasks.find(task => task.ID === state.editedTask.ID);
@@ -364,82 +417,123 @@ export const taskSlice = createSlice({
         selectedTask: isTaskPresent ? state.selectedTask : initialState.selectedTask,
         category: action.payload.categories,
         tasks: action.payload.tasks, 
+        status: 'succeeded',
+        message: 'カテゴリを削除しました',
       };
     });
     builder.addCase(fetchAsyncDeleteCategory.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
+        return {
+          ...state,
+          status: 'failed',
+          message: errorMessage,
+        }
       }
+    });
+    builder.addCase(fetchAsyncDeleteCategory.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
     });
     builder.addCase(fetchAsyncCreateTask.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
       return {
         ...state,
         tasks: action.payload,
         editedTask: initialState.editedTask,
+        status: 'succeeded',
+        message: 'タスクを作成しました',
       };
     });
     builder.addCase(fetchAsyncCreateTask.rejected, (state, action) => {
       console.log(action)
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
-        console.log(payload)
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
-      }
-    });
-    builder.addCase(
-      fetchAsyncUpdateTask.fulfilled,
-      (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
-          tasks: action.payload,
-          editedTask: initialState.editedTask,
-          selectedTask: initialState.selectedTask,
-        };
+          status: 'failed',
+          message: errorMessage,
+        }
       }
-    );
+    });
+    builder.addCase(fetchAsyncCreateTask.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
+    });
+    builder.addCase(fetchAsyncUpdateTask.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
+      return {
+        ...state,
+        tasks: action.payload,
+        editedTask: initialState.editedTask,
+        selectedTask: initialState.selectedTask,
+        status: 'succeeded',
+        message: 'タスクを更新しました',
+      };
+    });
     builder.addCase(fetchAsyncUpdateTask.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
-      }
-    });
-    builder.addCase(
-      fetchAsyncDeleteTask.fulfilled,
-      (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
-          tasks: action.payload,
-          editedTask: initialState.editedTask,
-          selectedTask: initialState.selectedTask,
-        };
+          status: 'failed',
+          message: errorMessage,
+        }
       }
-    );
+    });
+    builder.addCase(fetchAsyncUpdateTask.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
+    });
+    builder.addCase(fetchAsyncDeleteTask.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
+      return {
+        ...state,
+        tasks: action.payload,
+        editedTask: initialState.editedTask,
+        selectedTask: initialState.selectedTask,
+        status: 'succeeded',
+        message: 'タスクを削除しました',
+      };
+    });
     builder.addCase(fetchAsyncDeleteTask.rejected, (state, action) => {
       const payload = action.payload as PAYLOAD;
       if (payload.status === 401) {
-        alert("認証エラー")
         router.push("/");
       } else {
         // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
         const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
         alert(errorMessage);
+        return {
+          ...state,
+          status: 'failed',
+          message: errorMessage,
+        }
       }
+    });
+    builder.addCase(fetchAsyncDeleteTask.pending, (state, action) => {
+      return {
+        ...state,
+        status: 'loading',
+      };
     });
   },
 });
@@ -450,4 +544,6 @@ export const selectEditedTask   = (state: RootState) => state.task.editedTask;
 export const selectTasks        = (state: RootState) => state.task.tasks;
 export const selectUsers        = (state: RootState) => state.task.users;
 export const selectCategory     = (state: RootState) => state.task.category;
+export const selectStatus       = (state: RootState) => state.task.status;
+export const selectMessage      = (state: RootState) => state.task.message;
 export default taskSlice.reducer;

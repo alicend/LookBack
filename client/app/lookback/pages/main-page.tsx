@@ -1,19 +1,18 @@
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import { useRouter } from "next/router"; 
 import React, { useEffect, useState } from "react";
 
+import { Snackbar, Alert } from '@mui/material';
 import { Grid, Menu } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { styled } from '@mui/system';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchAsyncGetTasks,
   fetchAsyncGetUsers,
   fetchAsyncGetCategory,
-  selectEditedTask
+  selectEditedTask,
+  selectStatus,
+  selectMessage
 } from "@/slices/taskSlice";
 
 import TaskList from '@/components/task/TaskList';
@@ -31,16 +30,15 @@ const theme = createTheme({
   },
 });
 
-const StyledIcon = styled(RadioButtonCheckedIcon)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  cursor: "none",
-}));
-
 export default function MainPage() {
 
   const dispatch: AppDispatch = useDispatch();
+  const status = useSelector(selectStatus);
+  const message = useSelector(selectMessage);
   const editedTask = useSelector(selectEditedTask);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -50,6 +48,22 @@ export default function MainPage() {
     setAnchorEl(null);
   };
 
+  const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  useEffect(() => {
+    if (status === 'succeeded' || status === 'failed') {
+      setSnackbarMessage(message);
+      setSnackbarOpen(true);
+    } else if (status === 'loading') {
+      setSnackbarOpen(false);
+    }
+  }, [status]);
+  
   useEffect(() => {
     const fetchBootLoader = async () => {
       await dispatch(fetchAsyncGetTasks());
@@ -107,6 +121,11 @@ export default function MainPage() {
             </Grid>
           </Grid>
         </div>
+        <Snackbar open={snackbarOpen} autoHideDuration={6000}>
+          <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </ThemeProvider>
     </>
   )

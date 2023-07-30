@@ -41,6 +41,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInput-root": {
     marginBottom: theme.spacing(2),
   },
+  width: '300px',
 }));
 
 // 少なくとも1つの英字と1つの数字を含む

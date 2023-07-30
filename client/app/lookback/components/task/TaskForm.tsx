@@ -120,8 +120,7 @@ const TaskForm: React.FC = () => {
     if (selectedCategoryObj) {
       setSelectedCategory(selectedCategoryObj);
     }
-  }, [editedTask.Category, categories]);
-  
+  }, [editedTask.Category, categories]);  
 
   const handleNewCategoryOpen = () => {
     setNewCategoryOpen(true);
