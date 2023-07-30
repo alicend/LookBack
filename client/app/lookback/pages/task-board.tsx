@@ -78,15 +78,15 @@ export default function MainPage() {
       <ThemeProvider theme={theme}>
         <div className="text-center bg-white text-gray-600 font-serif m-6">
           <Grid container>
-            <Grid item xs={4}>
+            <Grid item xs={4} className="border-b border-gray-400 mb-5">
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} className="border-b border-gray-400 mb-5">
               <h1>Task Board</h1>
             </Grid>
-            <Grid item xs={4}>
-              <div className="mt-5 flex justify-end">
+            <Grid item xs={4} className="border-b border-gray-400 mb-5">
+              <div className="flex justify-end">
                 <button
-                  className="bg-transparent pt-1 mr-3 border-none outline-none cursor-pointer"
+                  className="bg-transparent mb-2 mr-3 border-none outline-none cursor-pointer"
                   aria-controls="menu" 
                   aria-haspopup="true" 
                   onClick={handleClick}
