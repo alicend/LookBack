@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { z } from 'zod';
 
@@ -7,9 +7,8 @@ import { TextField, Button } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
+import { fetchAsyncGetLoginUser, fetchAsyncLogin, fetchAsyncRegister, selectLoginUser } from "@/slices/userSlice";
 
-import { RESPONSE } from "@/types/ResponseType";
 import { HomeLayout } from "@/components/HomeLayout";
 
 const StyledContainer = styled('div')`
@@ -58,6 +57,7 @@ const credentialSchema = z.object({
 const profile: React.FC = () => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
+  const loginUser = useSelector(selectLoginUser);
 
   const [credential, setCredential] = useState({ new_username: "", password: "" });
   const [errors, setErrors] = useState({ new_username: "", password: "" });
@@ -96,6 +96,12 @@ const profile: React.FC = () => {
     //   setLoginError(errorMessage);
     // }
   };
+  useEffect(() => {
+    const fetchBootLoader = async () => {
+      await dispatch(fetchAsyncGetLoginUser());
+    };
+    fetchBootLoader();
+  }, [dispatch]);
 
   return (
     <HomeLayout title="Task Board">
@@ -111,7 +117,7 @@ const profile: React.FC = () => {
           label="Current Username"
           type="text"
           name="current_username"
-          // value={}
+          value={loginUser?.Name}
           disabled={true}
         />
         <StyledTextField

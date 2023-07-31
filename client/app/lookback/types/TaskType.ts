@@ -32,7 +32,7 @@ export interface TASK_RESPONSE {
   tasks: READ_TASK[];
 }
 export interface TASK_STATE {
-  status: string;
+  status: "" | 'loading' | 'succeeded' | 'failed';
   message: string;
   tasks: READ_TASK[];
   editedTask: POST_TASK;
