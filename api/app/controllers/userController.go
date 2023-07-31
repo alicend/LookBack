@@ -22,6 +22,26 @@ func (handler *Handler) GetUsersAllHandler(c *gin.Context) {
 	})
 }
 
+func (handler *Handler) GetCurrentUserHandler(c *gin.Context) {
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	user, err := models.FindUserByID(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user" : user,  // userをレスポンスとして返す
+	})
+}
+
 func (handler *Handler) DeleteUserHandler(c *gin.Context) {
 	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
 

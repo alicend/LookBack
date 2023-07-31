@@ -48,6 +48,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	users.Use(middleware.AuthMiddleware)
 	{
 		users.GET("", handler.GetUsersAllHandler)
+		users.GET("/me", handler.GetCurrentUserHandler)
 	}
 
 	return r

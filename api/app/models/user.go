@@ -46,10 +46,23 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	result := db.Create(user)
 
 	if result.Error != nil {
-		log.Printf("Error creating users: %v", result.Error)
+		log.Printf("Error creating user: %v", result.Error)
 		return nil, result.Error
 	}
 	log.Printf("ユーザーの作成に成功")
+
+	return user, nil
+}
+
+func FindUserByID(db *gorm.DB, userID uint) (User, error) {
+	var user User
+	result := db.Where("ID = ?", userID).First(&user)
+
+	if result.Error != nil {
+		log.Printf("Error fetching user: %v", result.Error)
+		return user, result.Error
+	}
+	log.Printf("ユーザーの取得に成功")
 
 	return user, nil
 }
@@ -59,7 +72,7 @@ func FindUserByName(db *gorm.DB, name string) (User, error) {
 	result := db.Where("name = ?", name).First(&user)
 
 	if result.Error != nil {
-		log.Printf("Error fetching users: %v", result.Error)
+		log.Printf("Error fetching user: %v", result.Error)
 		return user, result.Error
 	}
 	log.Printf("ユーザーの取得に成功")
