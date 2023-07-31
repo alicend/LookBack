@@ -21,7 +21,7 @@ import TaskDisplay from "@/components/task/TaskDisplay";
 
 import { AppDispatch } from "@/store/store";
 import { IconMenu } from '@/components/IconMenu';
-import { HomeLayout } from "@/components/HomeLayout";
+import { MainPageLayout } from "@/components/layout/MainPageLayout";
 
 const theme = createTheme({
   palette: {
@@ -75,9 +75,8 @@ export default function MainPage() {
   }, [dispatch]);
 
   return (
-    <HomeLayout title="Task Board">
-      <ThemeProvider theme={theme}>
-        <div className="text-center bg-white text-gray-600 font-serif m-6">
+    <MainPageLayout title="Task Board">
+        <div className="text-center text-gray-600 font-serif m-6">
           <Grid container>
             <Grid item xs={4} className="border-b border-gray-400 mb-5">
             </Grid>
@@ -105,21 +104,23 @@ export default function MainPage() {
                 </Menu>
               </div>
             </Grid>
-            <Grid item xs={6}>
-              <TaskList />
-            </Grid>
-            <Grid item xs={6}>
-              <Grid
-                container
-                direction="column"
-                alignItems="center"
-                style={{ minHeight: "80vh" }}
-              >
-                <Grid item>
-                  {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
+            <ThemeProvider theme={theme}>
+              <Grid item xs={6}>
+                <TaskList />
+              </Grid>
+              <Grid item xs={6}>
+                <Grid
+                  container
+                  direction="column"
+                  alignItems="center"
+                  style={{ minHeight: "80vh" }}
+                >
+                  <Grid item>
+                    {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
+            </ThemeProvider>
           </Grid>
         </div>
         <Snackbar open={snackbarOpen} autoHideDuration={6000}>
@@ -127,7 +128,6 @@ export default function MainPage() {
             {snackbarMessage}
           </Alert>
         </Snackbar>
-      </ThemeProvider>
-    </HomeLayout>
+    </MainPageLayout>
   )
 }

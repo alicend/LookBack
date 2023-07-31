@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { fetchAsyncGetLoginUser, fetchAsyncLogin, fetchAsyncRegister, selectLoginUser } from "@/slices/userSlice";
 
-import { HomeLayout } from "@/components/HomeLayout";
+import { MainPageLayout } from "@/components/layout/MainPageLayout";
 
 const StyledContainer = styled('div')`
   font-family: serif;
@@ -74,28 +74,6 @@ const profile: React.FC = () => {
     setErrors({ ...errors, [name]: "" });
   };
   
-  const login = async () => {
-    // 入力チェック
-    const result = credentialSchema.safeParse(credential);
-    if (!result.success) {
-      const usernameError = result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
-      const passwordError = result.error.formErrors.fieldErrors["new_password"]?.[0] || "";
-      setErrors({ new_username: usernameError, password: passwordError });
-      return;
-    }
-
-    // // ログイン処理
-    // const loginResult = await dispatch(fetchAsyncLogin(credential));
-    // // レスポンスの結果に応じてエラーメッセージを設定
-    // if (fetchAsyncLogin.fulfilled.match(loginResult)) {
-    //   router.push("/task-board");
-    // } else if (fetchAsyncLogin.rejected.match(loginResult)){
-    //   const payload = loginResult.payload as RESPONSE;
-    //   // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
-    //   const errorMessage = payload.message ? payload.message : payload.error;
-    //   setLoginError(errorMessage);
-    // }
-  };
   useEffect(() => {
     const fetchBootLoader = async () => {
       await dispatch(fetchAsyncGetLoginUser());
@@ -104,7 +82,7 @@ const profile: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <HomeLayout title="Task Board">
+    <MainPageLayout title="Task Board">
       <StyledContainer>
         {}
         <h1>Your Profile</h1>
@@ -150,12 +128,12 @@ const profile: React.FC = () => {
             color="primary"
             size="small"
             disabled={isDisabled}
-            onClick={login}
+            // onClick={login}
         >
             Edit
         </StyledButton>
       </StyledContainer>
-    </HomeLayout>
+    </MainPageLayout>
   );
 };
 

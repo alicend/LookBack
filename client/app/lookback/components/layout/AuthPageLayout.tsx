@@ -6,7 +6,7 @@ type Props = {
   title: string
 }
 
-export const HomeLayout = ({children, title = "Default title"}: Props) => {
+export const MainPageLayout = ({children, title = "Default title"}: Props) => {
   return(
     <div className="flex justify-center items-center flex-col min-h-screen">
       <Head>
