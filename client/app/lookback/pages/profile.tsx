@@ -49,23 +49,26 @@ const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(va
 
 const credentialSchema = z.object({
   new_username: z.string(),
+  current_password: z.string()
+    .min(8, "パスワードは８文字以上にしてください")
+    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
   new_password: z.string()
     .min(8, "パスワードは８文字以上にしてください")
     .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
 });
 
 const profile: React.FC = () => {
-  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const loginUser = useSelector(selectLoginUser);
 
-  const [credential, setCredential] = useState({ new_username: "", password: "" });
-  const [errors, setErrors] = useState({ new_username: "", password: "" });
-  const [loginError, setLoginError] = useState("");
+  const [credential, setCredential] = useState({ new_username: "", current_password: "", new_password: "" });
+  const [errors, setErrors] = useState({ new_username: "", current_password: "", new_password: "" });
+  const [updateError, setUpdateError] = useState("");
 
   const isDisabled =
   credential.new_username.length === 0 ||
-  credential.password.length === 0;
+  credential.current_password.length === 0 ||
+  credential.new_password.length === 0;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -73,6 +76,22 @@ const profile: React.FC = () => {
     setCredential({ ...credential, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
+
+  const update = () => {
+    const result = credentialSchema.safeParse(credential);
+    if (!result.success) {
+      const newUsernameError = result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
+      const currentPasswordError = result.error.formErrors.fieldErrors["current_password"]?.[0] || "";
+      const newPasswordError = result.error.formErrors.fieldErrors["new_password"]?.[0] || "";
+      setErrors({ 
+        new_username: newUsernameError,
+        current_password: currentPasswordError,
+        new_password: newPasswordError
+      });
+      return;
+    }
+
+  }
   
   useEffect(() => {
     const fetchBootLoader = async () => {
@@ -85,8 +104,7 @@ const profile: React.FC = () => {
     <MainPageLayout title="Profile Edit">
       <Grid item xs={12}>
         <StyledContainer>
-          <h1>Your Profile</h1>
-          {loginError && <div className="text-red-600">{loginError}</div>}
+          {updateError && <div className="text-red-600">{updateError}</div>}
           <br />
           <StyledTextField
             InputLabelProps={{
@@ -98,6 +116,7 @@ const profile: React.FC = () => {
             value={loginUser?.Name}
             disabled={true}
           />
+          <br />
           <StyledTextField
             InputLabelProps={{
               shrink: true,
@@ -111,26 +130,40 @@ const profile: React.FC = () => {
             helperText={errors.new_username}
           />
           <br />
+          <br />
           <StyledTextField
             InputLabelProps={{
               shrink: true,
             }}
-            label="Password"
+            label="Current Password"
             type="password"
-            name="password"
-            value={credential.password}
+            name="current_password"
+            value={credential.current_password}
             onChange={handleInputChange}
-            error={Boolean(errors.password)}
-            helperText={errors.password}
+            error={Boolean(errors.current_password)}
+            helperText={errors.current_password}
+          />
+          <br />
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="New Password"
+            type="password"
+            name="new_password"
+            value={credential.new_password}
+            onChange={handleInputChange}
+            error={Boolean(errors.new_password)}
+            helperText={errors.new_password}
           />
           <StyledButton
               variant="contained"
               color="primary"
               size="small"
               disabled={isDisabled}
-              // onClick={login}
+              onClick={update}
           >
-              Edit
+              UPDATE
           </StyledButton>
         </StyledContainer>
       </Grid>
