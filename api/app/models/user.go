@@ -54,8 +54,8 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	return user, nil
 }
 
-func FindUserByID(db *gorm.DB, userID uint) (User, error) {
-	var user User
+func FindUserByID(db *gorm.DB, userID uint) (UserResponse, error) {
+	var user UserResponse
 	result := db.Where("ID = ?", userID).First(&user)
 
 	if result.Error != nil {
