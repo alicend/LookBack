@@ -68,7 +68,6 @@ export const fetchAsyncCreateCategory = createAsyncThunk("task/createCategory", 
 
 export const fetchAsyncUpdateCategory = createAsyncThunk("task/updateCategory", async (category: CATEGORY, thunkAPI) => {
   try{
-    console.log(category);
     const res = await axios.put<UPDATE_CATEGORY_RESPONSE>(`${ENDPOINTS.CATEGORY}/${category.ID}`, { category: category.Category }, COMMON_HTTP_HEADER);
     return {
       categories: res.data.categories,

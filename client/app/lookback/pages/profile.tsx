@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Grid } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
@@ -82,57 +82,58 @@ const profile: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <MainPageLayout title="Task Board">
-      <StyledContainer>
-        {}
-        <h1>Your Profile</h1>
-        {loginError && <div className="text-red-600">{loginError}</div>}
-        <br />
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Current Username"
-          type="text"
-          name="current_username"
-          value={loginUser?.Name}
-          disabled={true}
-        />
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="New Username"
-          type="text"
-          name="new_username"
-          value={credential.new_username}
-          onChange={handleInputChange}
-          error={Boolean(errors.new_username)}
-          helperText={errors.new_username}
-        />
-        <br />
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Password"
-          type="password"
-          name="password"
-          value={credential.password}
-          onChange={handleInputChange}
-          error={Boolean(errors.password)}
-          helperText={errors.password}
-        />
-        <StyledButton
-            variant="contained"
-            color="primary"
-            size="small"
-            disabled={isDisabled}
-            // onClick={login}
-        >
-            Edit
-        </StyledButton>
-      </StyledContainer>
+    <MainPageLayout title="Profile Edit">
+      <Grid item xs={12}>
+        <StyledContainer>
+          <h1>Your Profile</h1>
+          {loginError && <div className="text-red-600">{loginError}</div>}
+          <br />
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Current Username"
+            type="text"
+            name="current_username"
+            value={loginUser?.Name}
+            disabled={true}
+          />
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="New Username"
+            type="text"
+            name="new_username"
+            value={credential.new_username}
+            onChange={handleInputChange}
+            error={Boolean(errors.new_username)}
+            helperText={errors.new_username}
+          />
+          <br />
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Password"
+            type="password"
+            name="password"
+            value={credential.password}
+            onChange={handleInputChange}
+            error={Boolean(errors.password)}
+            helperText={errors.password}
+          />
+          <StyledButton
+              variant="contained"
+              color="primary"
+              size="small"
+              disabled={isDisabled}
+              // onClick={login}
+          >
+              Edit
+          </StyledButton>
+        </StyledContainer>
+      </Grid>
     </MainPageLayout>
   );
 };

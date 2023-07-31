@@ -18,7 +18,6 @@ export const IconMenu: React.FC = () => {
           `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
           { headers: { "Content-Type": "application/json" } }
       );
-      console.log(res);
     } catch (err: any) {
       console.log(err);
     }
