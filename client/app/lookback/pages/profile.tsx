@@ -7,7 +7,7 @@ import { TextField, Button } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister, selectLoginUser } from "@/slices/userSlice";
+import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
 
 import { RESPONSE } from "@/types/ResponseType";
 import { HomeLayout } from "@/components/HomeLayout";
@@ -58,7 +58,6 @@ const credentialSchema = z.object({
 const profile: React.FC = () => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-  const loginUser = useSelector(selectLoginUser);
 
   const [credential, setCredential] = useState({ new_username: "", password: "" });
   const [errors, setErrors] = useState({ new_username: "", password: "" });
@@ -101,8 +100,7 @@ const profile: React.FC = () => {
   return (
     <HomeLayout title="Task Board">
       <StyledContainer>
-        {loginUser.ID}
-        {loginUser.Name}
+        {}
         <h1>Your Profile</h1>
         {loginError && <div className="text-red-600">{loginError}</div>}
         <br />
@@ -113,7 +111,7 @@ const profile: React.FC = () => {
           label="Current Username"
           type="text"
           name="current_username"
-          // value={credential.username}
+          // value={}
           disabled={true}
         />
         <StyledTextField
