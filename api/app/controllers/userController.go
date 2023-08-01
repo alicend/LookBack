@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -47,6 +48,38 @@ func (handler *Handler) DeleteUserHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully deleted task",
+	})
+}
+
+func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
+	var updateInput models.UserInput
+	if err := c.ShouldBindJSON(&updateInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	updateUser := &models.User{
+		Name:     updateInput.Name,
+		Password: updateInput.Password,
+	}
+
+	err = updateUser.UpdateUser(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user": updateUser,
 	})
 }
 

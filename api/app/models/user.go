@@ -93,6 +93,21 @@ func FindUsersAll(db *gorm.DB) ([]UserResponse, error) {
 	return users, nil
 }
 
+func (user *User) UpdateUser(db *gorm.DB, userID uint) error {
+	result := db.Model(user).Where("id = ?", userID).Updates(User{
+		Name:     user.Name,
+		Password: user.Password,
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating user: %v\n", result.Error)
+		return result.Error
+	}
+	log.Printf("ユーザーの更新に成功")
+
+	return nil
+}
+
 func (u *User) VerifyPassword(inputPassword string) bool {
 	return u.Password == encrypt(inputPassword)
 }
