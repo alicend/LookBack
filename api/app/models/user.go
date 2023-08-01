@@ -19,6 +19,12 @@ type UserInput struct {
 	Password string `json:"password" binding:"required,min=8,max=255"`
 }
 
+type UserUpdateInput struct {
+	NewName         string `json:"new_username" binding:"required,min=1,max=255"`
+	CurrentPassword string `json:"current_password" binding:"required,min=8,max=255"`
+	NewPassword     string `json:"new_password" binding:"required,min=8,max=255"`
+}
+
 // ユーザー一覧取得
 type UserResponse struct {
 	ID   uint
@@ -54,8 +60,21 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	return user, nil
 }
 
-func FindUserByID(db *gorm.DB, userID uint) (UserResponse, error) {
+func FindUserByIDWithoutPassword(db *gorm.DB, userID uint) (UserResponse, error) {
 	var user UserResponse
+	result := db.Where("ID = ?", userID).First(&user)
+
+	if result.Error != nil {
+		log.Printf("Error fetching user: %v", result.Error)
+		return user, result.Error
+	}
+	log.Printf("ユーザーの取得に成功")
+
+	return user, nil
+}
+
+func FindUserByID(db *gorm.DB, userID uint) (User, error) {
+	var user User
 	result := db.Where("ID = ?", userID).First(&user)
 
 	if result.Error != nil {

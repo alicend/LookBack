@@ -32,7 +32,7 @@ func (handler *Handler) GetCurrentUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := models.FindUserByID(handler.DB, userID)
+	user, err := models.FindUserByIDWithoutPassword(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -52,7 +52,7 @@ func (handler *Handler) DeleteUserHandler(c *gin.Context) {
 }
 
 func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
-	var updateInput models.UserInput
+	var updateInput models.UserUpdateInput
 	if err := c.ShouldBindJSON(&updateInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
@@ -67,9 +67,23 @@ func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
 		return
 	}
 
+	// ユーザを取得
+	user, err := models.FindUserByID(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// 入力されたパスワードとIDから取得したパスワードが等しいかを検証
+	if !user.VerifyPassword(updateInput.CurrentPassword) {
+		log.Printf("パスワードが違います")
+		respondWithError(c, http.StatusUnauthorized, "パスワードが違います")
+		return
+	}
+
 	updateUser := &models.User{
-		Name:     updateInput.Name,
-		Password: updateInput.Password,
+		Name:     updateInput.NewName,
+		Password: updateInput.NewPassword,
 	}
 
 	err = updateUser.UpdateUser(handler.DB, userID)
