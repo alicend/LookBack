@@ -22,6 +22,16 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 		return
 	}
 
+	// ユーザ名が既に使用されていないか確認
+	_, err := models.FindUserByName(handler.DB, signUpInput.Name)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			respondWithError(c, http.StatusBadRequest, err.Error())
+			return
+	} else if err == nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "そのユーザは既に存在します")
+		return
+	}
+
 	newUser := &models.User{
 		Name:     signUpInput.Name,
 		Password: signUpInput.Password,
@@ -93,6 +103,7 @@ func (handler *Handler) LogoutHandler(c *gin.Context) {
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================
+
 func respondWithError(c *gin.Context, status int, err string) {
 	c.JSON(status, gin.H{
 		"error": err,

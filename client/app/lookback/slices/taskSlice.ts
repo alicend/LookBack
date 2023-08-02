@@ -16,6 +16,7 @@ const COMMON_HTTP_HEADER = {
 
 // 共通のエラーハンドラ
 const handleHttpError = (err: any, thunkAPI: any) => {
+  console.log(err)
   return thunkAPI.rejectWithValue({
     response: err.response.data, 
     status: err.response.status
@@ -188,7 +189,6 @@ const handleError = (state:any, action: any) => {
     router.push("/");
   } else {
     const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
-    alert(errorMessage);
     state.status = 'failed';
     state.message = errorMessage;
   }
@@ -215,8 +215,7 @@ export const taskSlice = createSlice({
           ...state,
           tasks: action.payload,
         };
-      }
-    );
+    });
     builder.addCase(fetchAsyncGetTasks.rejected, handleError);
     builder.addCase(fetchAsyncGetTasks.pending, handleLoading);
     builder.addCase(fetchAsyncGetUsers.fulfilled, (state, action: PayloadAction<USER[]>) => {

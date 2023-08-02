@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { AUTHENTICATION } from "@/types/AuthType";
 import { RootState } from "@/store/store";
-import { USER, USER_STATE } from "@/types/UserType";
+import { USER, USER_STATE, USER_UPDATE } from "@/types/UserType";
 import { PAYLOAD } from "@/types/ResponseType";
 import router from "next/router";
 
@@ -46,7 +46,7 @@ export const fetchAsyncRegister = createAsyncThunk("auth/register", async (auth:
   }
 });
 
-export const fetchAsyncGetLoginUser = createAsyncThunk("user", async (_, thunkAPI) => {
+export const fetchAsyncGetLoginUser = createAsyncThunk("users/getUser", async (_, thunkAPI) => {
   try {
     const res = await axios.get(`${ENDPOINTS.USERS}/me`, COMMON_HTTP_HEADER);
     return res.data.user;
@@ -55,8 +55,18 @@ export const fetchAsyncGetLoginUser = createAsyncThunk("user", async (_, thunkAP
   }
 });
 
+export const fetchAsyncUpdateLoginUser = createAsyncThunk("users/updateUser", async (user: USER_UPDATE, thunkAPI) => {
+  try {
+    const res = await axios.put(`${ENDPOINTS.USERS}/me`, user, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
 const initialState: USER_STATE = {
   status: "",
+  message: "",
   loginUser: {
     ID: 0,
     Name: "",
@@ -75,6 +85,15 @@ const handleError = (state:any, action: any) => {
   }
 };
 
+const handleLoginError = (state:any, action: any) => {
+  const payload = action.payload as PAYLOAD;
+  const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
+  state.status = 'failed';
+  state.message = errorMessage;
+  console.log(state.status);
+  console.log(state.message);
+};
+
 const handleLoading = (state: any) => {
   state.status = 'loading';
 }
@@ -88,6 +107,20 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      router.push("/task-board");
+    });
+    builder.addCase(fetchAsyncLogin.rejected, handleLoginError);
+    builder.addCase(fetchAsyncLogin.pending, handleLoading);
+    builder.addCase(fetchAsyncRegister.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = '登録に成功しました';
+    });
+    builder.addCase(fetchAsyncRegister.rejected, handleLoginError);
+    builder.addCase(fetchAsyncRegister.pending, handleLoading);
     builder.addCase(fetchAsyncGetLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;
@@ -99,5 +132,7 @@ export const userSlice = createSlice({
 
 
 export const selectLoginUser = (state: RootState) => state.user.loginUser;
+export const selectStatus    = (state: RootState) => state.user.status;
+export const selectMessage   = (state: RootState) => state.user.message;
 
 export default userSlice.reducer;

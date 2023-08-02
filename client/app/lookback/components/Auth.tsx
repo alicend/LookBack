@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Snackbar, Alert } from "@mui/material";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
+import { fetchAsyncLogin, fetchAsyncRegister, selectMessage, selectStatus } from "@/slices/userSlice";
 
 import { RESPONSE } from "@/types/ResponseType";
 
@@ -57,10 +57,13 @@ const credentialSchema = z.object({
 const Auth: React.FC = () => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
+  const status = useSelector(selectStatus);
+  const message = useSelector(selectMessage);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
   const [credential, setCredential] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({ username: "", password: "" });
-  const [loginError, setLoginError] = useState("");
 
   const isDisabled =
   credential.username.length === 0 ||
@@ -71,6 +74,13 @@ const Auth: React.FC = () => {
     const name = e.target.name;
     setCredential({ ...credential, [name]: value });
     setErrors({ ...errors, [name]: "" });
+  };
+
+  const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
   };
   
   const login = async () => {
@@ -84,16 +94,7 @@ const Auth: React.FC = () => {
     }
 
     // ログイン処理
-    const loginResult = await dispatch(fetchAsyncLogin(credential));
-    // レスポンスの結果に応じてエラーメッセージを設定
-    if (fetchAsyncLogin.fulfilled.match(loginResult)) {
-      router.push("/task-board");
-    } else if (fetchAsyncLogin.rejected.match(loginResult)){
-      const payload = loginResult.payload as RESPONSE;
-      // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
-      const errorMessage = payload.message ? payload.message : payload.error;
-      setLoginError(errorMessage);
-    }
+    await dispatch(fetchAsyncLogin(credential));
   };
 
   const register = async () => {
@@ -108,20 +109,27 @@ const Auth: React.FC = () => {
 
     // 登録処理
     const registerResult = await dispatch(fetchAsyncRegister(credential));
-      if (fetchAsyncRegister.fulfilled.match(registerResult)) {
-        login
-      } else if (fetchAsyncRegister.rejected.match(registerResult)) {
-        const payload = registerResult.payload as RESPONSE;
-        // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
-        const errorMessage = payload.message ? payload.message : payload.error;
-        setLoginError(errorMessage);
-      }
+      // if (fetchAsyncRegister.fulfilled.match(registerResult)) {
+      //   login
+      // } else if (fetchAsyncRegister.rejected.match(registerResult)) {
+      //   const payload = registerResult.payload as RESPONSE;
+      //   // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
+      //   const errorMessage = payload.message ? payload.message : payload.error;
+      // }
   }
+
+  useEffect(() => {
+    if (status === 'succeeded' || status === 'failed') {
+      setSnackbarMessage(message);
+      setSnackbarOpen(true);
+    } else if (status === 'loading') {
+      setSnackbarOpen(false);
+    }
+  }, [status]);
 
   return (
     <StyledContainer>
       <h1>{isLoginView ? "Login" : "Register"}</h1>
-      {loginError && <div className="text-red-600">{loginError}</div>}
       <br />
       <StyledTextField
         InputLabelProps={{
@@ -160,6 +168,11 @@ const Auth: React.FC = () => {
       <span onClick={() => setIsLoginView(!isLoginView)} className="cursor-pointer">
         {isLoginView ? "Create new account ?" : "Back to Login"}
       </span>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000}>
+        <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </StyledContainer>
   );
 };
