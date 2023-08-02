@@ -3,11 +3,11 @@ import { useRouter } from 'next/router';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
-import { TextField, Button, Grid } from "@mui/material";
+import { TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncGetLoginUser, fetchAsyncLogin, fetchAsyncRegister, selectLoginUser } from "@/slices/userSlice";
+import { fetchAsyncGetLoginUser, fetchAsyncLogin, fetchAsyncRegister, fetchAsyncUpdateLoginUser, selectLoginUser, selectMessage, selectStatus } from "@/slices/userSlice";
 
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
 
@@ -47,28 +47,46 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 // 少なくとも1つの英字と1つの数字を含む
 const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(val);
 
-const credentialSchema = z.object({
-  new_username: z.string(),
-  current_password: z.string()
-    .min(8, "パスワードは８文字以上にしてください")
-    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
-  new_password: z.string()
-    .min(8, "パスワードは８文字以上にしてください")
-    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
-});
-
 const profile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const loginUser = useSelector(selectLoginUser);
+  const status = useSelector(selectStatus);
+  const message = useSelector(selectMessage);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const [credential, setCredential] = useState({ new_username: "", current_password: "", new_password: "" });
   const [errors, setErrors] = useState({ new_username: "", current_password: "", new_password: "" });
-  const [updateError, setUpdateError] = useState("");
 
   const isDisabled =
   credential.new_username.length === 0 ||
   credential.current_password.length === 0 ||
   credential.new_password.length === 0;
+
+  const credentialSchema = z.object({
+    new_username: z.string(),
+    current_password: z.string()
+      .min(8, "パスワードは８文字以上にしてください")
+      .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
+    new_password: z.string()
+      .min(8, "パスワードは８文字以上にしてください")
+      .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
+  }).superRefine((data, context) => {
+    if (data.new_password === data.current_password) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['new_password'],
+        message: "新しいパスワードは現在のパスワードと異なるものにしてください",
+      });
+    }
+    if (data.new_username === loginUser?.Name) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['new_username'],
+        message: "新しいユーザー名は現在のユーザー名と異なるものにしてください",
+      });
+    }
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -77,7 +95,14 @@ const profile: React.FC = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
-  const update = () => {
+  const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const update = async () => {
     const result = credentialSchema.safeParse(credential);
     if (!result.success) {
       const newUsernameError = result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
@@ -91,7 +116,18 @@ const profile: React.FC = () => {
       return;
     }
 
+    await dispatch(fetchAsyncUpdateLoginUser(credential));
   }
+
+  useEffect(() => {
+    console.log("aaa");
+    if (status === 'succeeded' || status === 'failed') {
+      setSnackbarMessage(message);
+      setSnackbarOpen(true);
+    } else if (status === 'loading') {
+      setSnackbarOpen(false);
+    }
+  }, [status]);
   
   useEffect(() => {
     const fetchBootLoader = async () => {
@@ -104,7 +140,6 @@ const profile: React.FC = () => {
     <MainPageLayout title="Profile Edit">
       <Grid item xs={12}>
         <StyledContainer>
-          {updateError && <div className="text-red-600">{updateError}</div>}
           <br />
           <StyledTextField
             InputLabelProps={{
@@ -167,6 +202,11 @@ const profile: React.FC = () => {
           </StyledButton>
         </StyledContainer>
       </Grid>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000}>
+        <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </MainPageLayout>
   );
 };

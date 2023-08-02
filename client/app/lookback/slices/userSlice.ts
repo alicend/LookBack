@@ -79,7 +79,6 @@ const handleError = (state:any, action: any) => {
     router.push("/");
   } else {
     const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
-    alert(errorMessage);
     state.status = 'failed';
     state.message = errorMessage;
   }
@@ -90,8 +89,6 @@ const handleLoginError = (state:any, action: any) => {
   const errorMessage = payload.response.message ? payload.response.message : payload.response.error;
   state.status = 'failed';
   state.message = errorMessage;
-  console.log(state.status);
-  console.log(state.message);
 };
 
 const handleLoading = (state: any) => {
@@ -108,7 +105,6 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
-      state.status = 'succeeded';
       state.loginUser = action.payload;
       router.push("/task-board");
     });
@@ -122,11 +118,17 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncRegister.rejected, handleLoginError);
     builder.addCase(fetchAsyncRegister.pending, handleLoading);
     builder.addCase(fetchAsyncGetLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
-      state.status = 'succeeded';
       state.loginUser = action.payload;
     });
     builder.addCase(fetchAsyncGetLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncGetLoginUser.pending, handleLoading);
+    builder.addCase(fetchAsyncUpdateLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = '更新に成功しました';
+    });
+    builder.addCase(fetchAsyncUpdateLoginUser.rejected, handleLoginError);
+    builder.addCase(fetchAsyncUpdateLoginUser.pending, handleLoading);
   }
 });
 

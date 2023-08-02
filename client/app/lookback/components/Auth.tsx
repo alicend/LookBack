@@ -108,14 +108,7 @@ const Auth: React.FC = () => {
     }
 
     // 登録処理
-    const registerResult = await dispatch(fetchAsyncRegister(credential));
-      // if (fetchAsyncRegister.fulfilled.match(registerResult)) {
-      //   login
-      // } else if (fetchAsyncRegister.rejected.match(registerResult)) {
-      //   const payload = registerResult.payload as RESPONSE;
-      //   // payloadにmessageが存在すればそれを使用し、存在しなければerrorを使用
-      //   const errorMessage = payload.message ? payload.message : payload.error;
-      // }
+    await dispatch(fetchAsyncRegister(credential));
   }
 
   useEffect(() => {

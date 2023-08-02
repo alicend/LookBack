@@ -28,7 +28,7 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 			respondWithError(c, http.StatusBadRequest, err.Error())
 			return
 	} else if err == nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, "", "そのユーザは既に存在します")
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別の名前を入力してください")
 		return
 	}
 

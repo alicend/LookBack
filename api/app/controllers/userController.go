@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"log"
+	"errors"
 	"net/http"
 
+	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
 
 	"github.com/alicend/LookBack/app/constant"
@@ -57,6 +59,16 @@ func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
 		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// ユーザ名が既に使用されていないか確認
+	_, err := models.FindUserByName(handler.DB, updateInput.NewName)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			respondWithError(c, http.StatusBadRequest, err.Error())
+			return
+	} else if err == nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別の名前を入力してください")
 		return
 	}
 
