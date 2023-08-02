@@ -109,6 +109,26 @@ func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
 	})
 }
 
+func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
+
+	deleteUser := &models.User{}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	err = deleteUser.DeleteTask(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{})
+}
+
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================

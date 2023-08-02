@@ -50,6 +50,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		users.GET("", handler.GetUsersAllHandler)
 		users.GET("/me", handler.GetCurrentUserHandler)
 		users.PUT("/me", handler.UpdateCurrentUserHandler)
+		users.DELETE("/me", handler.DeleteCurrentUserHandler)
 	}
 
 	return r
