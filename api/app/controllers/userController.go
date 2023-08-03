@@ -125,6 +125,9 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	// Clear the cookie named "access_token"
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
 	
 	c.JSON(http.StatusOK, gin.H{})
 }
