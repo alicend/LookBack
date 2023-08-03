@@ -89,7 +89,7 @@ func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
 	// 入力されたパスワードとIDから取得したパスワードが等しいかを検証
 	if !user.VerifyPassword(updateInput.CurrentPassword) {
 		log.Printf("パスワードが違います")
-		respondWithError(c, http.StatusUnauthorized, "パスワードが違います")
+		respondWithError(c, http.StatusBadRequest, "パスワードが違います")
 		return
 	}
 

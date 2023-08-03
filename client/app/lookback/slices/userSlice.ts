@@ -127,7 +127,7 @@ export const userSlice = createSlice({
       state.loginUser = action.payload;
       state.message = '更新に成功しました';
     });
-    builder.addCase(fetchAsyncUpdateLoginUser.rejected, handleLoginError);
+    builder.addCase(fetchAsyncUpdateLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUser.pending, handleLoading);
   }
 });

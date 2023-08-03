@@ -120,7 +120,6 @@ const profile: React.FC = () => {
   }
 
   useEffect(() => {
-    console.log("aaa");
     if (status === 'succeeded' || status === 'failed') {
       setSnackbarMessage(message);
       setSnackbarOpen(true);
