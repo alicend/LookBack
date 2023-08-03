@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
 import { TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncGetLoginUser, fetchAsyncLogin, fetchAsyncRegister, fetchAsyncUpdateLoginUser, selectLoginUser, selectMessage, selectStatus } from "@/slices/userSlice";
+import { fetchAsyncDeleteLoginUser, fetchAsyncGetLoginUser, fetchAsyncLogin, fetchAsyncRegister, fetchAsyncUpdateLoginUser, selectLoginUser, selectMessage, selectStatus } from "@/slices/userSlice";
 
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
+import { editTask, initialState, selectTask } from "@/slices/taskSlice";
 
 const StyledContainer = styled('div')`
   font-family: serif;
@@ -22,7 +24,7 @@ const StyledContainer = styled('div')`
   padding: 12px;
 `;
 
-const StyledButton = styled(Button)(({ theme }) => ({
+const UpdateButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
     backgroundColor: '#1769aa !important',
@@ -31,7 +33,15 @@ const StyledButton = styled(Button)(({ theme }) => ({
     backgroundColor: '#ccc !important',
     cursor: 'not-allowed'
   },
-  margin: theme.spacing(3),
+  margin: theme.spacing(2),
+}));
+
+const DeleteButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#f6685e !important',
+  '&:hover': {
+    backgroundColor: '#aa2e25 !important',
+  },
+  margin: theme.spacing(2),
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -190,15 +200,31 @@ const profile: React.FC = () => {
             error={Boolean(errors.new_password)}
             helperText={errors.new_password}
           />
-          <StyledButton
+          <Grid>
+            <UpdateButton
+                variant="contained"
+                color="primary"
+                size="small"
+                startIcon={<SaveIcon />}
+                disabled={isDisabled}
+                onClick={update}
+            >
+                UPDATE
+            </UpdateButton>
+            <DeleteButton
               variant="contained"
-              color="primary"
+              color="error"
               size="small"
-              disabled={isDisabled}
-              onClick={update}
-          >
-              UPDATE
-          </StyledButton>
+              startIcon={<DeleteOutlineOutlinedIcon />}
+              onClick={() => {
+                dispatch(fetchAsyncDeleteLoginUser());
+                dispatch(editTask(initialState.editedTask));
+                dispatch(selectTask(initialState.selectedTask));
+              }}
+            >
+              DELETE
+            </DeleteButton>
+          </Grid>
         </StyledContainer>
       </Grid>
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
