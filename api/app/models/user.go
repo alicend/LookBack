@@ -127,7 +127,7 @@ func (user *User) UpdateUser(db *gorm.DB, userID uint) error {
 	return nil
 }
 
-func (user *User) DeleteTask(db *gorm.DB, id uint) error {
+func (user *User) DeleteUser(db *gorm.DB, id uint) error {
 
 	result := db.Unscoped().Delete(user, id)
 
@@ -135,7 +135,6 @@ func (user *User) DeleteTask(db *gorm.DB, id uint) error {
 		log.Printf("Error deleting user: %v\n", result.Error)
 		return result.Error
 	}
-
 	log.Printf("ユーザーの削除に成功")
 
 	return nil
