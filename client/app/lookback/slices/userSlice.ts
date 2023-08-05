@@ -64,6 +64,15 @@ export const fetchAsyncUpdateLoginUser = createAsyncThunk("users/updateUser", as
   }
 });
 
+export const fetchAsyncDeleteLoginUser = createAsyncThunk("users/deleteUser", async (_, thunkAPI) => {
+  try {
+    const res = await axios.delete(`${ENDPOINTS.USERS}/me`, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
 const initialState: USER_STATE = {
   status: "",
   message: "",
@@ -129,6 +138,14 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchAsyncUpdateLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUser.pending, handleLoading);
+    builder.addCase(fetchAsyncDeleteLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = '削除に成功しました';
+      router.push("/");
+    });
+    builder.addCase(fetchAsyncDeleteLoginUser.rejected, handleError);
+    builder.addCase(fetchAsyncDeleteLoginUser.pending, handleLoading);
   }
 });
 

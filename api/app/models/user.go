@@ -127,16 +127,31 @@ func (user *User) UpdateUser(db *gorm.DB, userID uint) error {
 	return nil
 }
 
-func (user *User) DeleteUser(db *gorm.DB, id uint) error {
-
-	result := db.Unscoped().Delete(user, id)
-
-	if result.Error != nil {
-		log.Printf("Error deleting user: %v\n", result.Error)
-		return result.Error
+func (user *User) DeleteUserAndRelatedTasks(db *gorm.DB, id uint) error {
+	tx := db.Begin()
+	if tx.Error != nil {
+		log.Printf("Error starting transaction: %v\n", tx.Error)
+		return tx.Error
 	}
-	log.Printf("ユーザーの削除に成功")
 
+	if err := deleteUserTasks(tx, id); err != nil {
+		log.Println(err)
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Unscoped().Where("id = ?", id).Delete(&User{}).Error; err != nil {
+		log.Printf("Error deleting user: %v\n", err)
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("Error committing transaction: %v\n", err)
+		return err
+	}
+
+	log.Printf("ユーザーの削除に成功")
 	return nil
 }
 

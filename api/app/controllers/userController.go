@@ -120,7 +120,7 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 		return
 	}
 
-	err = deleteUser.DeleteUser(handler.DB, userID)
+	err = deleteUser.DeleteUserAndRelatedTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return

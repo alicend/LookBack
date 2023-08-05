@@ -146,6 +146,20 @@ func (task *Task) DeleteTask(db *gorm.DB, id int) error {
 	return nil
 }
 
+func deleteUserTasks(tx *gorm.DB, userID uint) error {
+	// Creatorに関連するタスクを削除
+	if err := tx.Unscoped().Where("creator = ?", userID).Delete(&Task{}).Error; err != nil {
+		return fmt.Errorf("error deleting tasks by creator: %v", err)
+	}
+
+	// Responsibleに関連するタスクを削除
+	if err := tx.Unscoped().Where("responsible = ?", userID).Delete(&Task{}).Error; err != nil {
+		return fmt.Errorf("error deleting tasks by responsible: %v", err)
+	}
+
+	return nil
+}
+
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================
