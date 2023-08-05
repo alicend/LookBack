@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Snackbar, Alert } from '@mui/material';
+import { Snackbar, Alert} from '@mui/material';
 import { Grid } from "@mui/material";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -13,12 +13,28 @@ import {
   fetchAsyncGetTasks,
   selectStatus,
   selectMessage,
-  selectTasks
+  selectTasks,
+  selectTask,
+  editTask,
+  initialState
 } from "@/slices/taskSlice";
 
 import { AppDispatch } from "@/store/store";
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
 import { CustomToolbar } from "@/components/calendar/CustomToolbar";
+import { READ_TASK } from "@/types/TaskType";
+import CalenderModal from "@/components/calendar/CalenderModal";
+
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
 
 const theme = createTheme({
   palette: {
@@ -38,6 +54,24 @@ export default function LookBack() {
   const tasks = useSelector(selectTasks);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [newCategoryOpen, setNewCategoryOpen] = useState(false);
+  const [modalStyle] = useState(getModalStyle);
+
+  const handleOpen = (event: any) => {
+    const selectedEvent = tasks.find(task => task.Task === event.title);
+    if (selectedEvent) {
+      handleNewCategoryOpen();
+      dispatch(selectTask(selectedEvent));
+      dispatch(editTask(initialState.editedTask));
+    }
+  };
+
+  const handleNewCategoryOpen = () => {
+    setNewCategoryOpen(true);
+  };
+  const handleNewCategoryClose = () => {
+    setNewCategoryOpen(false);
+  };
 
   const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -46,13 +80,12 @@ export default function LookBack() {
     setSnackbarOpen(false);
   };
 
-  const tasksToEvents = (tasks) => {
+  const tasksToEvents = (tasks: READ_TASK[]) => {
     return tasks.map(task => ({
       start: new Date(task.StartDate),
       end: moment(task.StartDate).add(task.Estimate, 'days').toDate(),
       title: task.Task,
       desc: task.Description,
-      // 他の任意のプロパティもここに追加できます
     }));
   };
 
@@ -77,9 +110,10 @@ export default function LookBack() {
   return (
     <MainPageLayout title="Look Back">
       <ThemeProvider theme={theme}>
-        <Grid item xs={12} style={{ height: '800px' }}>
+        <Grid item xs={12} style={{ minHeight: '800px' }}>
           <Calendar
             localizer={localizer}
+            showAllEvents={true}
             events={events}
             startAccessor="start"
             endAccessor="end"
@@ -89,9 +123,16 @@ export default function LookBack() {
             components={{
               toolbar: CustomToolbar
             }}
+            onSelectEvent={handleOpen}
           />
         </Grid>
+        <CalenderModal 
+          open={newCategoryOpen}
+          onClose={handleNewCategoryClose}
+          modalStyle={modalStyle}
+        />
       </ThemeProvider>
+      
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
         <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
           {snackbarMessage}
@@ -100,9 +141,3 @@ export default function LookBack() {
     </MainPageLayout>
   )
 }
-
-
-
-
-
-

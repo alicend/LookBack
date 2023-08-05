@@ -11,7 +11,10 @@ import {
   fetchAsyncGetCategory,
   selectEditedTask,
   selectStatus,
-  selectMessage
+  selectMessage,
+  editTask,
+  initialState,
+  selectTask
 } from "@/slices/taskSlice";
 
 import TaskList from '@/components/task/TaskList';
@@ -62,6 +65,11 @@ export default function TaskBoard() {
     };
     fetchBootLoader();
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(editTask(initialState.editedTask));
+    dispatch(selectTask(initialState.selectedTask));
+  }, []);
 
   return (
     <MainPageLayout title="Task Board">
