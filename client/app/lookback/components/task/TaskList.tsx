@@ -126,7 +126,7 @@ const TaskList: React.FC = () => {
               Responsible: 0,
               Status:   1,
               Category: 0,
-              Estimate: 0,
+              Estimate: 1,
             })
           );
           dispatch(selectTask(initialState.selectedTask));

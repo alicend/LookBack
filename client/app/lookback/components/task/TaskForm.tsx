@@ -191,7 +191,7 @@ const TaskForm: React.FC = () => {
           label="Estimate [days]"
           type="number"
           name="Estimate"
-          InputProps={{ inputProps: { min: 0, max: 1000 } }}
+          InputProps={{ inputProps: { min: 1, max: 1000 } }}
           InputLabelProps={{
             shrink: true,
           }}
