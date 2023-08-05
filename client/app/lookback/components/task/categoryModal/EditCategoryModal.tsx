@@ -61,11 +61,6 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
   useEffect(() => {
     setEditCategory(originalCategory);
   }, [originalCategory]);
-  
-  const handleDeleteConfirmation = () => {
-    console.log("aaa")
-    setConfirmOpen(true);
-  };
 
   const handleConfirmClose = (shouldDelete: boolean) => {
     setConfirmOpen(false);
@@ -110,9 +105,9 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
             color="error"
             size="small"
             startIcon={<DeleteOutlineOutlinedIcon />}
-            onClick={
-              handleDeleteConfirmation
-            }
+            onClick={() => {
+              setConfirmOpen(true)
+            }}
           >
             DELETE
           </CategoryDeleteButton>
