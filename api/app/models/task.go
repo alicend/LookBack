@@ -78,8 +78,13 @@ func (task *Task) CreateTask(db *gorm.DB) (error) {
 func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 	var tasks []Task
 
-	result := db.Preload("CreatorUserID").Preload("ResponsibleUserID").Preload("Category").Order("created_at asc").Find(&tasks)
-
+	result := db.Preload("CreatorUserID").
+		Preload("ResponsibleUserID").
+		Preload("Category").
+		Where("status != ?", 4).
+		Order("created_at asc").
+		Find(&tasks)
+		
 	if result.Error != nil {
 		log.Printf("Error fetching tasks: %v\n", result.Error)
 		return nil, result.Error
