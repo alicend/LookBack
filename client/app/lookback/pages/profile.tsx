@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
-import { TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
+import { TextField, Button, Grid, Snackbar, Alert, Dialog, DialogTitle, DialogContentText, DialogActions, DialogContent } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
@@ -62,6 +62,7 @@ const profile: React.FC = () => {
   const loginUser = useSelector(selectLoginUser);
   const status = useSelector(selectStatus);
   const message = useSelector(selectMessage);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -97,6 +98,15 @@ const profile: React.FC = () => {
       });
     }
   });
+
+  const handleConfirmClose = (shouldDelete: boolean) => {
+    setConfirmOpen(false);
+    if (shouldDelete) {
+      dispatch(fetchAsyncDeleteLoginUser());
+      dispatch(editTask(initialState.editedTask));
+      dispatch(selectTask(initialState.selectedTask));
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -217,9 +227,7 @@ const profile: React.FC = () => {
               size="small"
               startIcon={<DeleteOutlineOutlinedIcon />}
               onClick={() => {
-                dispatch(fetchAsyncDeleteLoginUser());
-                dispatch(editTask(initialState.editedTask));
-                dispatch(selectTask(initialState.selectedTask));
+                setConfirmOpen(true)
               }}
             >
               DELETE
@@ -227,6 +235,22 @@ const profile: React.FC = () => {
           </Grid>
         </StyledContainer>
       </Grid>
+      <Dialog open={confirmOpen} onClose={() => handleConfirmClose(false)}>
+        <DialogTitle>{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {`ユーザー「${loginUser?.Name}」に関連するタスクも削除されますが本当に削除してよろしいですか？`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleConfirmClose(false)} color="primary">
+            No
+          </Button>
+          <Button onClick={() => handleConfirmClose(true)} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
         <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
           {snackbarMessage}
