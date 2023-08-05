@@ -6,6 +6,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import Link from 'next/link';
@@ -33,6 +34,14 @@ export const IconMenu: React.FC = () => {
         </ListItemIcon>
         <ListItemText>Log out</ListItemText>
       </MenuItem>
+      <Link href="/look-back">
+        <MenuItem>
+          <ListItemIcon>
+            <CalendarMonthOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Look Back</ListItemText>
+        </MenuItem>
+      </Link>
       <Link href="/task-board">
         <MenuItem>
           <ListItemIcon>

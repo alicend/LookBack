@@ -1,9 +1,11 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { selectSelectedTask } from "@/slices/taskSlice";
-import { Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { editTask, initialState, selectSelectedTask, selectTask } from "@/slices/taskSlice";
+import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { AppDispatch } from "@/store/store";
 
 const TaskDisplay: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
   const selectedTask = useSelector(selectSelectedTask);
   const rows = [
     { item: "Task", data: selectedTask.Task },
@@ -37,6 +39,18 @@ const TaskDisplay: React.FC = () => {
           ))}
         </TableBody>
       </Table>
+      <br />
+      <Button
+        variant="contained"
+        color="inherit"
+        size="small"
+        onClick={() => {
+          dispatch(editTask(initialState.editedTask));
+          dispatch(selectTask(initialState.selectedTask));
+        }}
+      >
+        Cancel
+      </Button>
     </>
   );
 };
