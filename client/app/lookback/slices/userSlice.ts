@@ -122,7 +122,7 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncRegister.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;
-      state.message = '登録に成功しました';
+      state.message = 'ユーザーの登録に成功しました';
     });
     builder.addCase(fetchAsyncRegister.rejected, handleLoginError);
     builder.addCase(fetchAsyncRegister.pending, handleLoading);
@@ -134,14 +134,14 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncUpdateLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;
-      state.message = '更新に成功しました';
+      state.message = 'ユーザーの更新に成功しました';
     });
     builder.addCase(fetchAsyncUpdateLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUser.pending, handleLoading);
     builder.addCase(fetchAsyncDeleteLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;
-      state.message = '削除に成功しました';
+      state.message = 'ユーザーの削除に成功しました';
       router.push("/");
     });
     builder.addCase(fetchAsyncDeleteLoginUser.rejected, handleError);
