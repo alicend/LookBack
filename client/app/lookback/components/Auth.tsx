@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
@@ -8,8 +7,6 @@ import { TextField, Button, Snackbar, Alert } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { fetchAsyncLogin, fetchAsyncRegister, selectMessage, selectStatus } from "@/slices/userSlice";
-
-import { RESPONSE } from "@/types/ResponseType";
 
 const StyledContainer = styled('div')`
   font-family: serif;
@@ -55,7 +52,6 @@ const credentialSchema = z.object({
 });
 
 const Auth: React.FC = () => {
-  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const status = useSelector(selectStatus);
   const message = useSelector(selectMessage);

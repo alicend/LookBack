@@ -4,22 +4,21 @@ import { Snackbar, Alert } from '@mui/material';
 import { Grid } from "@mui/material";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import moment from 'moment';
+
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchAsyncGetTasks,
-  fetchAsyncGetUsers,
-  fetchAsyncGetCategory,
-  selectEditedTask,
   selectStatus,
-  selectMessage
+  selectMessage,
+  selectTasks
 } from "@/slices/taskSlice";
-
-import TaskList from '@/components/task/TaskList';
-import TaskForm from "@/components/task/TaskForm";
-import TaskDisplay from "@/components/task/TaskDisplay";
 
 import { AppDispatch } from "@/store/store";
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
+import { CustomToolbar } from "@/components/calendar/CustomToolbar";
 
 const theme = createTheme({
   palette: {
@@ -29,12 +28,14 @@ const theme = createTheme({
   },
 });
 
+const localizer = momentLocalizer(moment);
+
 export default function MainPage() {
 
   const dispatch: AppDispatch = useDispatch();
   const status = useSelector(selectStatus);
   const message = useSelector(selectMessage);
-  const editedTask = useSelector(selectEditedTask);
+  const tasks = useSelector(selectTasks);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -44,6 +45,18 @@ export default function MainPage() {
     }
     setSnackbarOpen(false);
   };
+
+  const tasksToEvents = (tasks) => {
+    return tasks.map(task => ({
+      start: new Date(task.StartDate),
+      end: moment(task.StartDate).add(task.Estimate, 'days').toDate(),
+      title: task.Task,
+      desc: task.Description,
+      // 他の任意のプロパティもここに追加できます
+    }));
+  };
+
+  const events = tasksToEvents(tasks);
 
   useEffect(() => {
     if (status === 'succeeded' || status === 'failed') {
@@ -57,8 +70,6 @@ export default function MainPage() {
   useEffect(() => {
     const fetchBootLoader = async () => {
       await dispatch(fetchAsyncGetTasks());
-      await dispatch(fetchAsyncGetUsers());
-      await dispatch(fetchAsyncGetCategory());
     };
     fetchBootLoader();
   }, [dispatch]);
@@ -66,20 +77,19 @@ export default function MainPage() {
   return (
     <MainPageLayout title="Look Back">
       <ThemeProvider theme={theme}>
-        <Grid item xs={6}>
-          <TaskList />
-        </Grid>
-        <Grid item xs={6}>
-          <Grid
-            container
-            direction="column"
-            alignItems="center"
-            style={{ minHeight: "80vh" }}
-          >
-            <Grid item>
-              {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
-            </Grid>
-          </Grid>
+        <Grid item xs={12} style={{ height: '800px' }}>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            titleAccessor="title"
+            tooltipAccessor="desc"
+            views={['month']}
+            components={{
+              toolbar: CustomToolbar
+            }}
+          />
         </Grid>
       </ThemeProvider>
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
@@ -90,3 +100,9 @@ export default function MainPage() {
     </MainPageLayout>
   )
 }
+
+
+
+
+
+
