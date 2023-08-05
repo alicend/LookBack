@@ -6,7 +6,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchAsyncGetTasks,
+  fetchAsyncGetTaskBoardTasks,
   fetchAsyncGetUsers,
   fetchAsyncGetCategory,
   selectEditedTask,
@@ -59,7 +59,7 @@ export default function TaskBoard() {
   
   useEffect(() => {
     const fetchBootLoader = async () => {
-      await dispatch(fetchAsyncGetTasks());
+      await dispatch(fetchAsyncGetTaskBoardTasks());
       await dispatch(fetchAsyncGetUsers());
       await dispatch(fetchAsyncGetCategory());
     };

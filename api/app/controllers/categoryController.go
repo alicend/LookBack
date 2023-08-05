@@ -90,7 +90,7 @@ func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -125,7 +125,7 @@ func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return

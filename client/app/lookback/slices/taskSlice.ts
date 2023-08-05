@@ -27,12 +27,21 @@ const handleHttpError = (err: any, thunkAPI: any) => {
 const ENDPOINTS = {
   TASKS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/tasks`,
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
-  CATEGORY: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/category`,
+  CATEGORY: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/categories`,
 }
 
-export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async (_, thunkAPI) => {
+export const fetchAsyncGetTaskBoardTasks = createAsyncThunk("task/getTaskBoardTasks", async (_, thunkAPI) => {
   try {
-    const res = await axios.get<TASK_RESPONSE>(ENDPOINTS.TASKS, COMMON_HTTP_HEADER);
+    const res = await axios.get<TASK_RESPONSE>(`${ENDPOINTS.TASKS}/task-board`, COMMON_HTTP_HEADER);
+    return res.data.tasks;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
+export const fetchAsyncGetLookBackTasks = createAsyncThunk("task/getLookBackTasks", async (_, thunkAPI) => {
+  try {
+    const res = await axios.get<TASK_RESPONSE>(`${ENDPOINTS.TASKS}/look-back`, COMMON_HTTP_HEADER);
     return res.data.tasks;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -210,14 +219,22 @@ export const taskSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAsyncGetTasks.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
+    builder.addCase(fetchAsyncGetTaskBoardTasks.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
         return {
           ...state,
           tasks: action.payload,
         };
     });
-    builder.addCase(fetchAsyncGetTasks.rejected, handleError);
-    builder.addCase(fetchAsyncGetTasks.pending, handleLoading);
+    builder.addCase(fetchAsyncGetTaskBoardTasks.rejected, handleError);
+    builder.addCase(fetchAsyncGetTaskBoardTasks.pending, handleLoading);
+    builder.addCase(fetchAsyncGetLookBackTasks.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
+      return {
+        ...state,
+        tasks: action.payload,
+      };
+  });
+  builder.addCase(fetchAsyncGetLookBackTasks.rejected, handleError);
+  builder.addCase(fetchAsyncGetLookBackTasks.pending, handleLoading);
     builder.addCase(fetchAsyncGetUsers.fulfilled, (state, action: PayloadAction<USER[]>) => {
       return {
         ...state,

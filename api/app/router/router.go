@@ -29,19 +29,20 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	tasks := api.Group("/tasks")
 	tasks.Use(middleware.AuthMiddleware)
 	{
-		tasks.GET("", handler.GetTaskHandler)
+		tasks.GET("/task-board", handler.GetTaskBoardTasksHandler)
+		tasks.GET("/look-back", handler.GetLookBackTasksHandler)
 		tasks.POST("", handler.CreateTaskHandler)
 		tasks.PUT("/:taskId", handler.UpdateTaskHandler)
 		tasks.DELETE("/:taskId", handler.DeleteTaskHandler)
 	}
 
-	category := api.Group("/category")
+	category := api.Group("/categories")
 	category.Use(middleware.AuthMiddleware)
 	{
 		category.GET("", handler.GetCategoryHandler)
 		category.POST("", handler.CreateCategoryHandler)
-		category.PUT("/:taskId", handler.UpdateCategoryHandler)
-		category.DELETE("/:taskId", handler.DeleteCategoryHandler)
+		category.PUT("/:categoryId", handler.UpdateCategoryHandler)
+		category.DELETE("/:categoryId", handler.DeleteCategoryHandler)
 	}
 
 	users := api.Group("/users")

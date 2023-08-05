@@ -10,13 +10,14 @@ import moment from 'moment';
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchAsyncGetTasks,
+  fetchAsyncGetTaskBoardTasks,
   selectStatus,
   selectMessage,
   selectTasks,
   selectTask,
   editTask,
-  initialState
+  initialState,
+  fetchAsyncGetLookBackTasks
 } from "@/slices/taskSlice";
 
 import { AppDispatch } from "@/store/store";
@@ -102,7 +103,7 @@ export default function LookBack() {
   
   useEffect(() => {
     const fetchBootLoader = async () => {
-      await dispatch(fetchAsyncGetTasks());
+      await dispatch(fetchAsyncGetLookBackTasks());
     };
     fetchBootLoader();
   }, [dispatch]);

@@ -75,7 +75,7 @@ func (task *Task) CreateTask(db *gorm.DB) (error) {
 	return nil
 }
 
-func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
+func FetchTaskBoardTasks(db *gorm.DB) ([]TaskResponse, error) {
 	var tasks []Task
 
 	result := db.Preload("CreatorUserID").
@@ -84,12 +84,53 @@ func FetchTasks(db *gorm.DB) ([]TaskResponse, error) {
 		Where("status != ?", 4).
 		Order("created_at asc").
 		Find(&tasks)
-		
+
 	if result.Error != nil {
 		log.Printf("Error fetching tasks: %v\n", result.Error)
 		return nil, result.Error
 	}
-	log.Printf("タスクの取得に成功")
+	log.Printf("タスクボード用のタスクの取得に成功")
+
+	taskResponses := make([]TaskResponse, len(tasks))
+	for i, task := range tasks {
+
+		taskResponses[i] = TaskResponse{
+			ID:                  task.ID,
+			Task:                task.Task,
+			Description:         task.Description,
+			Status:              task.Status,
+			StatusName:          statusToString(task.Status),
+			Category:            task.Category.ID,
+			CategoryName:        task.Category.Category,
+			Estimate:            task.Estimate,
+			StartDate:           task.StartDate.Format("2006-01-02"),
+			Responsible:         task.ResponsibleUserID.ID,
+			ResponsibleUserName: task.ResponsibleUserID.Name,
+			Creator:             task.CreatorUserID.ID,
+			CreatorUserName:     task.CreatorUserID.Name,
+			CreatedAt:           task.CreatedAt.Format("2006-01-02 15:04"),
+			UpdatedAt:           task.UpdatedAt.Format("2006-01-02 15:04"),
+		}
+	}
+
+	return taskResponses, nil
+}
+
+func FetchLookBackTasks(db *gorm.DB) ([]TaskResponse, error) {
+	var tasks []Task
+
+	result := db.Preload("CreatorUserID").
+		Preload("ResponsibleUserID").
+		Preload("Category").
+		Where("status = ?", 4).
+		Order("created_at asc").
+		Find(&tasks)
+
+	if result.Error != nil {
+		log.Printf("Error fetching tasks: %v\n", result.Error)
+		return nil, result.Error
+	}
+	log.Printf("ルックバック用のタスクの取得に成功")
 
 	taskResponses := make([]TaskResponse, len(tasks))
 	for i, task := range tasks {

@@ -59,7 +59,7 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -70,9 +70,22 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 	})
 }
 
-func (handler *Handler) GetTaskHandler(c *gin.Context) {
+func (handler *Handler) GetTaskBoardTasksHandler(c *gin.Context) {
 
-	tasks, err := models.FetchTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{
+		"tasks"   : tasks,  // tasksをレスポンスとして返す
+	})
+}
+
+func (handler *Handler) GetLookBackTasksHandler(c *gin.Context) {
+
+	tasks, err := models.FetchLookBackTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -129,7 +142,7 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -157,7 +170,7 @@ func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
