@@ -8,7 +8,7 @@ const TaskDisplay: React.FC = () => {
   const rows = [
     { item: "Task", data: selectedTask.Task },
     { item: "Description", data: selectedTask.Description },
-    { item: "Owner", data: selectedTask.CreatorUserName },
+    { item: "Creator", data: selectedTask.CreatorUserName },
     { item: "Responsible", data: selectedTask.ResponsibleUserName },
     { item: "StartDate", data: selectedTask.StartDate },
     { item: "Estimate [days]", data: selectedTask.Estimate },
