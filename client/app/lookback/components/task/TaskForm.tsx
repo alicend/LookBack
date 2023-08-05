@@ -240,6 +240,7 @@ const TaskForm: React.FC = () => {
             <MenuItem value={1}>未着</MenuItem>
             <MenuItem value={2}>進行中</MenuItem>
             <MenuItem value={3}>完了</MenuItem>
+            <MenuItem value={4}>Look Back</MenuItem>
           </Select>
         </StyledFormControl>
         <br />
