@@ -27,7 +27,7 @@ type TaskInput struct {
 	Task        string `json:"Task" binding:"required,min=1,max=255"`
 	Description string `json:"Description" binding:"required,min=1,max=255"`
 	StartDate   string `json:"StartDate" binding:"required,min=1,max=24"`
-	Estimate    *uint   `json:"Estimate" binding:"required",,min=1,max=1000"`
+	Estimate    *uint  `json:"Estimate" binding:"required",,min=1,max=1000"`
 	Responsible uint   `json:"Responsible" binding:"required"`
 	Status      uint   `json:"Status" binding:"required"`
 	CategoryID  uint   `json:"Category" binding:"required"`

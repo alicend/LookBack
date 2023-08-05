@@ -275,48 +275,48 @@ const TaskForm: React.FC = () => {
         />
         <br />
         <ButtonGroup>
-        <TaskSaveButton
-          variant="contained"
-          color="primary"
-          size="small"
-          startIcon={<SaveIcon />}
-          disabled={isDisabled}
-          onClick={
-            editedTask.ID !== 0
-              ? () => dispatch(fetchAsyncUpdateTask(editedTask))
-              : () => dispatch(fetchAsyncCreateTask(editedTask))
-          }
-        >
-          {editedTask.ID !== 0 ? "Update" : "Save"}
-        </TaskSaveButton>
-        {editedTask.ID !== 0 ?
-          <TaskDeleteButton
+          <TaskSaveButton
             variant="contained"
-            color="error"
+            color="primary"
             size="small"
-            startIcon={<DeleteOutlineOutlinedIcon />}
+            startIcon={<SaveIcon />}
+            disabled={isDisabled}
+            onClick={
+              editedTask.ID !== 0
+                ? () => dispatch(fetchAsyncUpdateTask(editedTask))
+                : () => dispatch(fetchAsyncCreateTask(editedTask))
+            }
+          >
+            {editedTask.ID !== 0 ? "Update" : "Save"}
+          </TaskSaveButton>
+          {editedTask.ID !== 0 ?
+            <TaskDeleteButton
+              variant="contained"
+              color="error"
+              size="small"
+              startIcon={<DeleteOutlineOutlinedIcon />}
+              onClick={() => {
+                dispatch(fetchAsyncDeleteTask(editedTask.ID));
+                dispatch(editTask(initialState.editedTask));
+                dispatch(selectTask(initialState.selectedTask));
+              }}
+            >
+              DELETE
+            </TaskDeleteButton>
+            :
+            ""
+          }
+          <Button
+            variant="contained"
+            color="inherit"
+            size="small"
             onClick={() => {
-              dispatch(fetchAsyncDeleteTask(editedTask.ID));
               dispatch(editTask(initialState.editedTask));
               dispatch(selectTask(initialState.selectedTask));
             }}
           >
-            DELETE
-          </TaskDeleteButton>
-          :
-          ""
-        }
-        <Button
-          variant="contained"
-          color="inherit"
-          size="small"
-          onClick={() => {
-            dispatch(editTask(initialState.editedTask));
-            dispatch(selectTask(initialState.selectedTask));
-          }}
-        >
-          Cancel
-        </Button>
+            Cancel
+          </Button>
         </ButtonGroup>
       </form>
     </div>
