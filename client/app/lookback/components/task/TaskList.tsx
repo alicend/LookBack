@@ -173,23 +173,23 @@ const TaskList: React.FC = () => {
                       key === "StartDate" ||
                       key === "ResponsibleUserName" ||
                       key === "CreatorUserName") && (
-                      <TableCell
-                        className="cursor-pointer"
-                        key={`${rowIndex}+${colIndex}`}
-                        onClick={() => {
-                          dispatch(selectTask(row));
-                          dispatch(editTask(initialState.editedTask));
-                        }}
+                        <TableCell
+                          key={`${rowIndex}+${colIndex}`}
+                          onClick={() => {
+                              dispatch(selectTask(row));
+                              dispatch(editTask(initialState.editedTask));
+                          }}
                       >
-                        {key === "StatusName" ? (
-                          renderSwitch(row[key])
-                        ) : (
-                          <span>{row[key]}</span>
-                        )}
-                      </TableCell>
+                          {key === "StatusName" ? (
+                              renderSwitch(row[key])
+                          ) : key === "Estimate" ? (
+                              <span>{row[key]} {row[key] === 1 ? "day" : "days"}</span>
+                          ) : (
+                              <span>{row[key]}</span>
+                          )}
+                        </TableCell>
                     )
                 )}
-
                 <TableCell>
                   <div className="text-gray-400 cursor-not-allowed">
                     <button
