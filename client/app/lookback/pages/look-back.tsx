@@ -30,7 +30,7 @@ const theme = createTheme({
 
 const localizer = momentLocalizer(moment);
 
-export default function MainPage() {
+export default function LookBack() {
 
   const dispatch: AppDispatch = useDispatch();
   const status = useSelector(selectStatus);

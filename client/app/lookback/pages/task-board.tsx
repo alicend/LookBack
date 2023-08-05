@@ -29,7 +29,7 @@ const theme = createTheme({
   },
 });
 
-export default function MainPage() {
+export default function TaskBoard() {
 
   const dispatch: AppDispatch = useDispatch();
   const status = useSelector(selectStatus);

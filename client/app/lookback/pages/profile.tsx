@@ -57,7 +57,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 // 少なくとも1つの英字と1つの数字を含む
 const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(val);
 
-const profile: React.FC = () => {
+export default function Profile() {
   const dispatch: AppDispatch = useDispatch();
   const loginUser = useSelector(selectLoginUser);
   const status = useSelector(selectStatus);
@@ -259,5 +259,3 @@ const profile: React.FC = () => {
     </MainPageLayout>
   );
 };
-
-export default profile;
