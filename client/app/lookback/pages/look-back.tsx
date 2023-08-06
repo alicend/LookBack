@@ -55,23 +55,20 @@ export default function LookBack() {
   const tasks = useSelector(selectTasks);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [newCategoryOpen, setNewCategoryOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
 
-  const handleOpen = (event: any) => {
+  const handleModalOpen = (event: any) => {
     const selectedEvent = tasks.find(task => task.Task === event.title);
     if (selectedEvent) {
-      handleNewCategoryOpen();
+      setModalOpen(true);
       dispatch(selectTask(selectedEvent));
       dispatch(editTask(initialState.editedTask));
     }
   };
 
-  const handleNewCategoryOpen = () => {
-    setNewCategoryOpen(true);
-  };
-  const handleNewCategoryClose = () => {
-    setNewCategoryOpen(false);
+  const handleModalClose = () => {
+    setModalOpen(false);
   };
 
   const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -124,12 +121,12 @@ export default function LookBack() {
             components={{
               toolbar: CustomToolbar
             }}
-            onSelectEvent={handleOpen}
+            onSelectEvent={handleModalOpen}
           />
         </Grid>
         <CalenderModal 
-          open={newCategoryOpen}
-          onClose={handleNewCategoryClose}
+          open={modalOpen}
+          onClose={handleModalClose}
           modalStyle={modalStyle}
         />
       </ThemeProvider>

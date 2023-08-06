@@ -43,7 +43,7 @@ const CalendarTaskDisplay: React.FC = () => {
           
         }}
       >
-        Cancel
+        Move to Completed
       </Button>
     </>
   );
