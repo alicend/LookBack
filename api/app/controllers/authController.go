@@ -14,7 +14,7 @@ import (
 )
 
 func (handler *Handler) SignUpHandler(c *gin.Context) {
-	var signUpInput models.UserInput
+	var signUpInput models.UserSignUpInput
 	if err := c.ShouldBindJSON(&signUpInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
@@ -51,7 +51,7 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 }
 
 func (handler *Handler) LoginHandler(c *gin.Context) {
-	var loginInput models.UserInput
+	var loginInput models.UserLoginInput
 	if err := c.ShouldBind(&loginInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
