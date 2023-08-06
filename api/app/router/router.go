@@ -33,6 +33,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		tasks.GET("/look-back", handler.GetLookBackTasksHandler)
 		tasks.POST("", handler.CreateTaskHandler)
 		tasks.PUT("/:taskId", handler.UpdateTaskHandler)
+		tasks.PUT("/:taskId/to-completed", handler.UpdateTaskToMoveToCompletedHandler)
 		tasks.DELETE("/:taskId", handler.DeleteTaskHandler)
 	}
 

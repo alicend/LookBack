@@ -107,13 +107,11 @@ const TaskForm: React.FC = () => {
   const users = useSelector(selectUsers);
   const categories = useSelector(selectCategory);
   const editedTask = useSelector(selectEditedTask);
-  console.log(editedTask);
   
   const [newCategoryOpen, setNewCategoryOpen] = useState(false);
   const [editCategoryOpen, setEditCategoryOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CATEGORY>({ ID: 0, Category: '' });
   const [modalStyle] = useState(getModalStyle);
-  console.log(selectedCategory);
 
   useEffect(() => {
     const selectedCategoryObj = categories.find((cat) => cat.ID === editedTask.Category);

@@ -5,6 +5,7 @@ import (
 	"path"
 	"strconv"
 	"errors"
+	"strings"
 	"time"
 	"log"
 
@@ -130,7 +131,7 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 	}
 
 	// URLからtaskのidを取得
-	id, err := getIdFromURL(c)
+	id, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
@@ -153,10 +154,47 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 	})
 }
 
+func (handler *Handler) UpdateTaskToMoveToCompletedHandler(c *gin.Context) {
+	var updateTaskInput models.TaskInput
+	if err := c.ShouldBindJSON(&updateTaskInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	
+	updateTask := &models.Task{
+		Status:      updateTaskInput.Status,
+	}
+
+	// URLからtaskのidを取得
+	id, err := getIdFromSecondLastPartOfURL(c)
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
+		return
+	}
+
+	err = updateTask.UpdateTask(handler.DB, id)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	tasks, err := models.FetchLookBackTasks(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{
+		"tasks"   : tasks,  // tasksをレスポンスとして返す
+	})
+}
+
 func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 
 	// URLからtaskのidを取得
-	id, err := getIdFromURL(c)
+	id, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
@@ -204,7 +242,7 @@ func extractUserID(c *gin.Context) (uint, error) {
 	return uint(userIDFloat), nil
 }
 
-func getIdFromURL(c *gin.Context)(int, error) {
+func getIdFromURLTail(c *gin.Context)(int, error) {
 
 	idStr := path.Base(c.Request.URL.Path)
 	id, err := strconv.Atoi(idStr)
@@ -213,6 +251,28 @@ func getIdFromURL(c *gin.Context)(int, error) {
 		log.Printf("URLのIDのフォーマットが不正です")
 		log.Printf("Invalid date format: %v", err)
 		return id, err
+	}
+
+	return id, nil
+}
+func getIdFromSecondLastPartOfURL(c *gin.Context) (int, error) {
+	// URLのパスをスラッシュで分割
+	parts := strings.Split(c.Request.URL.Path, "/")
+
+	// 最低でも2つの部分（例：["taskId", "to-completed"]）が存在することを確認
+	if len(parts) < 2 {
+			log.Printf("URLのフォーマットが不正です")
+			return 0, errors.New("invalid URL format")
+	}
+
+	// パスの末尾から2番目の部分をIDとして取得
+	idStr := parts[len(parts)-2]
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+			log.Printf("URLのIDのフォーマットが不正です")
+			log.Printf("Invalid date format: %v", err)
+			return id, err
 	}
 
 	return id, nil

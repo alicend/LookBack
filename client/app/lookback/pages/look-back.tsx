@@ -63,7 +63,6 @@ export default function LookBack() {
     if (selectedEvent) {
       setModalOpen(true);
       dispatch(selectTask(selectedEvent));
-      dispatch(editTask(initialState.editedTask));
     }
   };
 

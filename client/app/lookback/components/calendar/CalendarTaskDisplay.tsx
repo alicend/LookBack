@@ -1,12 +1,17 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectSelectedTask } from "@/slices/taskSlice";
+import { fetchAsyncUpdateTask, fetchAsyncUpdateTaskToMoveToCompleted, selectEditedTask, selectSelectedTask } from "@/slices/taskSlice";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { AppDispatch } from "@/store/store";
 
-const CalendarTaskDisplay: React.FC = () => {
+interface CalendarTaskDisplayProps {
+  onClose: () => void;
+}
+
+const CalendarTaskDisplay: React.FC<CalendarTaskDisplayProps> = ({ onClose }) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedTask = useSelector(selectSelectedTask);
+
   const rows = [
     { item: "Task", data: selectedTask.Task },
     { item: "Description", data: selectedTask.Description },
@@ -40,7 +45,8 @@ const CalendarTaskDisplay: React.FC = () => {
         color="inherit"
         size="small"
         onClick={() => {
-          
+          dispatch(fetchAsyncUpdateTaskToMoveToCompleted(selectedTask));
+          onClose();
         }}
       >
         Move to Completed

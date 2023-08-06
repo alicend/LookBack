@@ -70,7 +70,7 @@ func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
 	}
 	
 	// URLからtaskのidを取得
-	id, err := getIdFromURL(c)
+	id, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
@@ -105,7 +105,7 @@ func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
 func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 
 	// URLからtaskのidを取得
-	id, err := getIdFromURL(c)
+	id, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return

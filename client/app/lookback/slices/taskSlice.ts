@@ -120,6 +120,20 @@ export const fetchAsyncUpdateTask = createAsyncThunk("task/updateTask", async (t
   }
 });
 
+export const fetchAsyncUpdateTaskToMoveToCompleted = createAsyncThunk("task/updateToCompleted", async (task: POST_TASK, thunkAPI) => {
+  try{  
+    const res = await axios.put<TASK_RESPONSE>(`${ENDPOINTS.TASKS}/${task.ID}/to-completed`, {
+          ...task,
+          Status: 3,
+        },
+        COMMON_HTTP_HEADER
+      );
+    return res.data.tasks;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
 export const fetchAsyncDeleteTask = createAsyncThunk("task/deleteTask", async (id: number, thunkAPI) => {
   try{ 
     const res = await axios.delete<TASK_RESPONSE>(`${ENDPOINTS.TASKS}/${id}`, COMMON_HTTP_HEADER);
@@ -312,6 +326,18 @@ export const taskSlice = createSlice({
     });
     builder.addCase(fetchAsyncUpdateTask.rejected, handleError);
     builder.addCase(fetchAsyncUpdateTask.pending, handleLoading);
+    builder.addCase(fetchAsyncUpdateTaskToMoveToCompleted.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
+      return {
+        ...state,
+        tasks: action.payload,
+        editedTask: initialState.editedTask,
+        selectedTask: initialState.selectedTask,
+        status: 'succeeded',
+        message: 'ステータスを完了に変更しました',
+      };
+    });
+    builder.addCase(fetchAsyncUpdateTaskToMoveToCompleted.rejected, handleError);
+    builder.addCase(fetchAsyncUpdateTaskToMoveToCompleted.pending, handleLoading);
     builder.addCase(fetchAsyncDeleteTask.fulfilled, (state, action: PayloadAction<READ_TASK[]>) => {
       return {
         ...state,

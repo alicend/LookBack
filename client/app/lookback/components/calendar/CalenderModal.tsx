@@ -23,7 +23,7 @@ const CalenderModal: React.FC<EditCategoryModalProps> = React.memo(({ open, onCl
   return (
     <Modal open={open} onClose={onClose}>
       <StyledPaper style={modalStyle}>
-        <CalendarTaskDisplay />
+        <CalendarTaskDisplay onClose={onClose}/>
       </StyledPaper>
     </Modal>
   );
