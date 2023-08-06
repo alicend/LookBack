@@ -10,13 +10,16 @@ import (
 
 type User struct {
 	gorm.Model
-	Name     string `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Password string `gorm:"size:255;not null" validate:"required,min=8,max=255"`
+	Name        string    `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Password    string    `gorm:"size:255;not null" validate:"required,min=8,max=255"`
+	UserGroupID uint      `gorm:"not null"`
+	UserGroup   UserGroup `gorm:"foreignKey:UserGroupID;"`
 }
 
 type UserInput struct {
-	Name     string `json:"username" binding:"required,min=1,max=255"`
-	Password string `json:"password" binding:"required,min=8,max=255"`
+	Name        string `json:"username" binding:"required,min=1,max=255"`
+	Password    string `json:"password" binding:"required,min=8,max=255"`
+	UserGroupID uint   `json:"user_group_id" binding:"required,min=8,max=255"`
 }
 
 type UserUpdateInput struct {
@@ -46,8 +49,9 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	}
 
 	user = &User{
-		Name:     user.Name,
-		Password: encrypt(user.Password),
+		Name:        user.Name,
+		Password:    encrypt(user.Password),
+		UserGroupID: user.UserGroupID,
 	}
 	result := db.Create(user)
 

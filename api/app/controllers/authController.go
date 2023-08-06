@@ -33,8 +33,9 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 	}
 
 	newUser := &models.User{
-		Name:     signUpInput.Name,
-		Password: signUpInput.Password,
+		Name:        signUpInput.Name,
+		Password:    signUpInput.Password,
+		UserGroupID: signUpInput.UserGroupID,
 	}
 
 	user, err := newUser.CreateUser(handler.DB)
