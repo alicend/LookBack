@@ -55,5 +55,14 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		users.DELETE("/me", handler.DeleteCurrentUserHandler)
 	}
 
+	userGroup := api.Group("/user-groups")
+	userGroup.POST("", handler.CreateUserGroupHandler)
+	userGroup.Use(middleware.AuthMiddleware)
+	{
+		userGroup.GET("", handler.GetCategoryHandler)
+		userGroup.PUT("/:categoryId", handler.UpdateCategoryHandler)
+		userGroup.DELETE("/:categoryId", handler.DeleteCategoryHandler)
+	}
+
 	return r
 }
