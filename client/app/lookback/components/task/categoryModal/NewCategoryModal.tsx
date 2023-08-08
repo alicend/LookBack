@@ -33,13 +33,13 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   minWidth: 240,
 }));
 
-interface EditCategoryModalProps {
+interface NewCategoryModalProps {
   open: boolean;
   onClose: () => void;
   modalStyle: React.CSSProperties;
 }
 
-const NewCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, onClose, modalStyle }) => {
+const NewCategoryModal: React.FC<NewCategoryModalProps> = React.memo(({ open, onClose, modalStyle }) => {
   
   const dispatch: AppDispatch = useDispatch();
 
