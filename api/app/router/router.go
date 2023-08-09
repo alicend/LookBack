@@ -56,12 +56,12 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	}
 
 	userGroup := api.Group("/user-groups")
+	userGroup.GET("", handler.GetUserGroupsHandler)
 	userGroup.POST("", handler.CreateUserGroupHandler)
 	userGroup.Use(middleware.AuthMiddleware)
 	{
-		userGroup.GET("", handler.GetCategoryHandler)
-		userGroup.PUT("/:categoryId", handler.UpdateCategoryHandler)
-		userGroup.DELETE("/:categoryId", handler.DeleteCategoryHandler)
+		userGroup.PUT("/:categoryId", handler.UpdateUserGroupHandler)
+		userGroup.DELETE("/:categoryId", handler.DeleteUserGroupHandler)
 	}
 
 	return r

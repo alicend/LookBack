@@ -92,6 +92,8 @@ const Auth: React.FC = () => {
   const [errors, setErrors] = useState({ username: "", password: "" });
   const [modalStyle] = useState(getModalStyle);
 
+  console.log(userGroups);
+
   const isDisabled =
   credential.username.length === 0 ||
   credential.password.length === 0;

@@ -28,7 +28,7 @@ const ENDPOINTS = `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/user-groups`
 export const fetchAsyncCreateUserGroup = createAsyncThunk("user-groups/create", async (UserGroup: string, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS, {UserGroup: UserGroup}, COMMON_HTTP_HEADER);
-    return res.data.userGroups;
+    return res.data.user_groups;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
   }
@@ -37,7 +37,7 @@ export const fetchAsyncCreateUserGroup = createAsyncThunk("user-groups/create", 
 export const fetchAsyncGetUserGroups = createAsyncThunk("user-groups/get", async (_, thunkAPI) => {
   try {
     const res = await axios.get(ENDPOINTS, COMMON_HTTP_HEADER);
-    return res.data;
+    return res.data.user_groups;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
   }

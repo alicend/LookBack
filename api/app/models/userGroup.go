@@ -26,7 +26,7 @@ type UserGroupResponse struct {
 
 // TableName メソッドを追加して、この構造体がユーザーグループテーブルに対応することを指定する
 func (UserGroupResponse) TableName() string {
-	return "userGroups"
+	return "user_groups"
 }
 
 func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {

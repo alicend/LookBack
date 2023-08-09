@@ -28,7 +28,7 @@ func (handler *Handler) CreateUserGroupHandler(c *gin.Context) {
 		return
 	}
 
-	userGroups, err := models.FetchUserGroups(handler.DB)
+	user_groups, err := models.FetchUserGroups(handler.DB)
 	if err != nil {
 		log.Printf("ユーザーグループの取得に失敗しました")
 		respondWithError(c, http.StatusBadRequest, err.Error())
@@ -36,22 +36,22 @@ func (handler *Handler) CreateUserGroupHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"userGroups" : userGroups,  // userGroupsをレスポンスとして返す
+		"user_groups" : user_groups,  // user_groups
 	})
 }
 
 func (handler *Handler) GetUserGroupsHandler(c *gin.Context) {
 
-	categories, err := models.FetchCategory(handler.DB)
+	user_groups, err := models.FetchUserGroups(handler.DB)
 	if err != nil {
-		log.Printf("Failed to fetch categories: %v", err)
-		log.Printf("カテゴリーの取得に失敗しました")
+		log.Printf("Failed to fetch user_groups: %v", err)
+		log.Printf("ユーザーグループの取得に失敗しました")
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"categories" : categories,  // categoriesをレスポンスとして返す
+		"user_groups" : user_groups,  // user_groupsをレスポンスとして返す
 	})
 }
 
