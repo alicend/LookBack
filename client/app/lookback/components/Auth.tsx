@@ -7,7 +7,7 @@ import { TextField, Button, Snackbar, Alert, InputLabel, Select, FormControl, Me
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { fetchAsyncLogin, fetchAsyncRegister, selectMessage, selectStatus } from "@/slices/userSlice";
-import { selectUserGroup } from "@/slices/userGroupSlice";
+import { selectUserGroup, selectUserGroupMessage, selectUserGroupStatus } from "@/slices/userGroupSlice";
 
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -84,6 +84,8 @@ const Auth: React.FC = () => {
   const userGroups = useSelector(selectUserGroup);
   const status = useSelector(selectStatus);
   const message = useSelector(selectMessage);
+  const userGroupStatus = useSelector(selectUserGroupStatus);
+  const userGroupMessage = useSelector(selectUserGroupMessage);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
@@ -148,12 +150,23 @@ const Auth: React.FC = () => {
   }
 
   useEffect(() => {
+    if (userGroupStatus === 'succeeded' || userGroupStatus === 'failed') {
+      setSnackbarMessage(userGroupMessage);
+      setSnackbarOpen(true);
+    } else if (userGroupStatus === 'loading') {
+      setSnackbarOpen(false);
+    }
+
+  }, [userGroupStatus]);
+
+  useEffect(() => {
     if (status === 'succeeded' || status === 'failed') {
       setSnackbarMessage(message);
       setSnackbarOpen(true);
     } else if (status === 'loading') {
       setSnackbarOpen(false);
     }
+
   }, [status]);
 
   let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...userGroups].map((userGroup) => (

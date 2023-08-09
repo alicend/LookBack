@@ -134,7 +134,7 @@ export const userGroupSlice = createSlice({
 });
 
 export const selectUserGroup = (state: RootState) => state.userGroup.userGroups;
-export const selectStatus    = (state: RootState) => state.userGroup.status;
-export const selectMessage   = (state: RootState) => state.userGroup.message;
+export const selectUserGroupStatus    = (state: RootState) => state.userGroup.status;
+export const selectUserGroupMessage   = (state: RootState) => state.userGroup.message;
 
 export default userGroupSlice.reducer;
