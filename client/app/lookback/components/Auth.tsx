@@ -7,27 +7,22 @@ import { TextField, Button, Snackbar, Alert, InputLabel, Select, FormControl, Me
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { fetchAsyncLogin, fetchAsyncRegister, selectMessage, selectStatus } from "@/slices/userSlice";
-import NewCategoryModal from "./task/categoryModal/NewCategoryModal";
 import { selectUserGroup } from "@/slices/userGroupSlice";
 
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import NewUserGroupModal from "./NewUserGroupModal";
 
-const StyledContainer = styled('div')`
-  font-family: serif;
-  color: gray-500;
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-`;
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
 
-const StyledFlexContainer = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-});
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
 
 const StyledAddIcon = styled(AddIcon)({
   position: 'absolute',
@@ -92,12 +87,21 @@ const Auth: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
+  const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
   const [credential, setCredential] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({ username: "", password: "" });
+  const [modalStyle] = useState(getModalStyle);
 
   const isDisabled =
   credential.username.length === 0 ||
   credential.password.length === 0;
+
+  const handleNewUserGroupOpen = () => {
+    setNewUserGroupOpen(true);
+  };
+  const handleNewUserGroupClose = () => {
+    setNewUserGroupOpen(false);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -157,100 +161,107 @@ const Auth: React.FC = () => {
   ));
 
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: '80vh', padding: '12px' }}
-    >
-      <Grid item>
-        <h1>{isLoginView ? "Login" : "Register"}</h1>
-      </Grid>
-      <br />
-      <Grid item>
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Username"
-          type="text"
-          name="username"
-          value={credential.username}
-          onChange={handleInputChange}
-          error={Boolean(errors.username)}
-          helperText={errors.username}
-        />
-      </Grid>
-      <br />
-      <Grid item>
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Password"
-          type="password"
-          name="password"
-          value={credential.password}
-          onChange={handleInputChange}
-          error={Boolean(errors.password)}
-          helperText={errors.password}
-        />
-      </Grid>
-
-      {!isLoginView && 
-        <Grid container item alignItems="center" justifyContent="center" style={{ marginTop: '16px' }}>
-          <Grid>
-            <StyledFormControl>
-              <InputLabel>User Group</InputLabel>
-              <Select
-                name="UserGroup"
-                // value={editedTask.Category}
-                // onChange={handleSelectChange}
-              >
-                {userGroupOptions}
-              </Select>
-            </StyledFormControl>
-          </Grid>
-
-          <Grid>
-            <StyledFab
-              size="small"
-              color="primary"
-              // onClick={ handleNewCategoryOpen }
-            >
-              <StyledAddIcon />
-            </StyledFab>
-          </Grid>
+    <>
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        style={{ minHeight: '80vh', padding: '12px' }}
+      >
+        <Grid item>
+          <h1>{isLoginView ? "Login" : "Register"}</h1>
         </Grid>
-      }
+        <br />
+        <Grid item>
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Username"
+            type="text"
+            name="username"
+            value={credential.username}
+            onChange={handleInputChange}
+            error={Boolean(errors.username)}
+            helperText={errors.username}
+          />
+        </Grid>
+        <br />
+        <Grid item>
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Password"
+            type="password"
+            name="password"
+            value={credential.password}
+            onChange={handleInputChange}
+            error={Boolean(errors.password)}
+            helperText={errors.password}
+          />
+        </Grid>
 
-      <Grid item>
-        <StyledButton
-          variant="contained"
-          color="primary"
-          size="small"
-          disabled={isDisabled}
-          onClick={isLoginView ? login : register}
-        >
-          {isLoginView ? "Login" : "Register"}
-        </StyledButton>
+        {!isLoginView && 
+          <Grid container item alignItems="center" justifyContent="center">
+            <Grid>
+              <StyledFormControl>
+                <InputLabel>User Group</InputLabel>
+                <Select
+                  name="UserGroup"
+                  // value={editedTask.Category}
+                  // onChange={handleSelectChange}
+                >
+                  {userGroupOptions}
+                </Select>
+              </StyledFormControl>
+            </Grid>
+
+            <Grid>
+              <StyledFab
+                size="small"
+                color="primary"
+                onClick={handleNewUserGroupOpen}
+              >
+                <StyledAddIcon />
+              </StyledFab>
+            </Grid>
+          </Grid>
+        }
+
+        <Grid item>
+          <StyledButton
+            variant="contained"
+            color="primary"
+            size="small"
+            disabled={isDisabled}
+            onClick={isLoginView ? login : register}
+          >
+            {isLoginView ? "Login" : "Register"}
+          </StyledButton>
+        </Grid>
+
+        <Grid item>
+          <span onClick={() => setIsLoginView(!isLoginView)} className="cursor-pointer">
+            {isLoginView ? "Create new account ?" : "Back to Login"}
+          </span>
+        </Grid>
+
       </Grid>
 
-      <Grid item>
-        <span onClick={() => setIsLoginView(!isLoginView)} className="cursor-pointer">
-          {isLoginView ? "Create new account ?" : "Back to Login"}
-        </span>
-      </Grid>
+      <NewUserGroupModal 
+        open={newUserGroupOpen}
+        onClose={handleNewUserGroupClose}
+        modalStyle={modalStyle}
+      />
 
-      <Grid item>
-        <Snackbar open={snackbarOpen} autoHideDuration={6000}>
-          <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </Grid>
-    </Grid>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000}>
+        <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

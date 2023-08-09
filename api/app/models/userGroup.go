@@ -7,26 +7,26 @@ import (
 	"gorm.io/gorm"
 )
 
-// カテゴリーテーブル定義 
+// ユーザーグループテーブル定義 
 type UserGroup struct {
 	gorm.Model
 	UserGroup string `gorm:"size:255;not null" validate:"required,min=1,max=30"`
 }
 
-// カテゴリー作成の入力値
+// ユーザーグループ作成の入力値
 type UserGroupInput struct {
 	UserGroup string `json:"UserGroup" binding:"required,min=1"`
 }
 
-// カテゴリー一覧取得
+// ユーザーグループ一覧取得
 type UserGroupResponse struct {
-	ID       uint
-	UserGroup string
+	ID        uint   `gorm:"column:id"`
+	UserGroup string `gorm:"column:user_group"`
 }
 
-// TableName メソッドを追加して、この構造体がカテゴリーテーブルに対応することを指定する
+// TableName メソッドを追加して、この構造体がユーザーグループテーブルに対応することを指定する
 func (UserGroupResponse) TableName() string {
-	return "categories"
+	return "userGroups"
 }
 
 func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
@@ -43,23 +43,23 @@ func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
 		log.Printf("Error creating userGroup: %v\n", result.Error)
 		return result.Error
 	}
-	log.Printf("カテゴリーの作成に成功")
+	log.Printf("ユーザーグループの作成に成功")
 
 	return nil
 }
 
-func FetchUserGroup(db *gorm.DB) ([]UserGroupResponse, error) {
-	var categories []UserGroupResponse
+func FetchUserGroups(db *gorm.DB) ([]UserGroupResponse, error) {
+	var userGroups []UserGroupResponse
 
-	result := db.Select("ID", "UserGroup").Order("UserGroup asc").Find(&categories)
+	result := db.Select("id", "user_group").Order("user_group asc").Find(&userGroups)
 
 	if result.Error != nil {
-		log.Printf("Error fetching userGroups: %v", result.Error)
+		log.Printf("Error fetching user_group: %v", result.Error)
 		return nil, result.Error
 	}
-	log.Printf("カテゴリーの取得に成功")
+	log.Printf("ユーザーグループの取得に成功")
 
-	return categories, nil
+	return userGroups, nil
 }
 
 func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, id int) error {
@@ -71,7 +71,7 @@ func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, id int) error {
 		log.Printf("Error updating userGroup: %v\n", result.Error)
 		return result.Error
 	}
-	log.Printf("カテゴリの更新に成功")
+	log.Printf("ユーザーグループの更新に成功")
 
 	return nil
 }
