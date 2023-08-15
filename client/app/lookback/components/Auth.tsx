@@ -77,6 +77,7 @@ const credentialSchema = z.object({
   password: z.string()
     .min(8, "パスワードは８文字以上にしてください")
     .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
+  user_group: z.number().positive("ユーザーグループを選択してください").int("user_groupは整数でなければなりません")
 });
 
 const Auth: React.FC = () => {
@@ -90,15 +91,13 @@ const Auth: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
   const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
-  const [credential, setCredential] = useState({ username: "", password: "" });
-  const [errors, setErrors] = useState({ username: "", password: "" });
+  const [credential, setCredential] = useState({ username: "", password: "", user_group: 0});
+  const [errors, setErrors] = useState({ username: "", password: "", user_group: "" });
   const [modalStyle] = useState(getModalStyle);
 
-  console.log(userGroups);
-
-  const isDisabled =
-  credential.username.length === 0 ||
-  credential.password.length === 0;
+  const isDisabled = isLoginView
+  ? (credential.username.length === 0 || credential.password.length === 0)
+  : (credential.username.length === 0 || credential.password.length === 0 || credential.user_group === 0);
 
   const handleNewUserGroupOpen = () => {
     setNewUserGroupOpen(true);
@@ -114,6 +113,14 @@ const Auth: React.FC = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<any>) => {
+    const value = e.target.value as string;
+    const name = e.target.name;
+    setCredential({ ...credential, [name]: value });
+    setErrors({ ...errors, [name]: "" });
+  };
+  
+
   const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -127,7 +134,7 @@ const Auth: React.FC = () => {
     if (!result.success) {
       const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
       const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      setErrors({ username: usernameError, password: passwordError });
+      setErrors({ username: usernameError, password: passwordError, user_group: "" });
       return;
     }
 
@@ -141,7 +148,8 @@ const Auth: React.FC = () => {
     if (!result.success) {
       const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
       const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      setErrors({ username: usernameError, password: passwordError });
+      const userGroupError = result.error.formErrors.fieldErrors["user_group"]?.[0] || "";
+      setErrors({ username: usernameError, password: passwordError, user_group: userGroupError });
       return;
     }
 
@@ -224,9 +232,9 @@ const Auth: React.FC = () => {
               <StyledFormControl>
                 <InputLabel>User Group</InputLabel>
                 <Select
-                  name="UserGroup"
-                  // value={editedTask.Category}
-                  // onChange={handleSelectChange}
+                  name="user_group"
+                  value={credential.user_group}
+                  onChange={handleSelectChange}
                 >
                   {userGroupOptions}
                 </Select>

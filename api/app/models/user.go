@@ -24,7 +24,7 @@ type UserLoginInput struct {
 type UserSignUpInput struct {
 	Name        string `json:"username" binding:"required,min=1,max=255"`
 	Password    string `json:"password" binding:"required,min=8,max=255"`
-	UserGroupID uint   `json:"user_group_id" binding:"required,min=8,max=255"`
+	UserGroupID uint   `json:"user_group" binding:"required,min=1"`
 }
 
 type UserUpdateInput struct {

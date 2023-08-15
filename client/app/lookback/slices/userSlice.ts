@@ -39,6 +39,7 @@ export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: AUTHE
 
 export const fetchAsyncRegister = createAsyncThunk("auth/register", async (auth: AUTHENTICATION, thunkAPI) => {
   try {
+    console.log(auth)
     const res = await axios.post(ENDPOINTS.REGISTER, auth, COMMON_HTTP_HEADER);
     return res.data;
   } catch (err :any) {
