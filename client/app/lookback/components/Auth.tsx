@@ -72,12 +72,19 @@ const StyledFab = styled(Fab)(({ theme }) => ({
 // 少なくとも1つの英字と1つの数字を含む
 const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(val);
 
-const credentialSchema = z.object({
+const registerCredentialSchema = z.object({
   username: z.string(),
   password: z.string()
     .min(8, "パスワードは８文字以上にしてください")
     .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
   user_group: z.number().positive("ユーザーグループを選択してください").int("user_groupは整数でなければなりません")
+});
+
+const loginCredentialSchema = z.object({
+  username: z.string(),
+  password: z.string()
+    .min(8, "パスワードは８文字以上にしてください")
+    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
 });
 
 const Auth: React.FC = () => {
@@ -130,7 +137,7 @@ const Auth: React.FC = () => {
   
   const login = async () => {
     // 入力チェック
-    const result = credentialSchema.safeParse(credential);
+    const result = loginCredentialSchema.safeParse(credential);
     if (!result.success) {
       const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
       const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
@@ -144,7 +151,7 @@ const Auth: React.FC = () => {
 
   const register = async () => {
     // 入力チェック
-    const result = credentialSchema.safeParse(credential);
+    const result = registerCredentialSchema.safeParse(credential);
     if (!result.success) {
       const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
       const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
