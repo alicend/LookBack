@@ -7,10 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-// カテゴリーテーブル定義 
+// カテゴリーテーブル定義
 type Category struct {
 	gorm.Model
-	Category string `gorm:"size:255;not null" validate:"required,min=1,max=31"`
+	Category   string    `gorm:"size:255;not null" validate:"required,min=1,max=31"`
+	UserGroupID uint      `gorm:"not null"`
+	UserGroup   UserGroup `gorm:"foreignKey:UserGroupID"`
 }
 
 // カテゴリー作成の入力値
@@ -48,10 +50,19 @@ func (category *Category) CreateCategory(db *gorm.DB) error {
 	return nil
 }
 
-func FetchCategory(db *gorm.DB) ([]CategoryResponse, error) {
+func FetchCategory(db *gorm.DB, userID uint) ([]CategoryResponse, error) {
+	userGroupID, err := FetchUserGroupIDByUserID(db, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	var categories []CategoryResponse
 
-	result := db.Select("ID", "Category").Order("Category asc").Find(&categories)
+	result := db.
+		Select("ID", "Category").
+		Where("user_group_id = ?", userGroupID).
+		Order("Category asc").
+		Find(&categories)
 
 	if result.Error != nil {
 		log.Printf("Error fetching categories: %v", result.Error)

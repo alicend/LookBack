@@ -17,18 +17,33 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	
-	newCategory := &models.Category{
-		Category:   createCategoryInput.Category,
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
 	}
 
-	err := newCategory.CreateCategory(handler.DB)
+	// USER_IDからUSER_GROUP_IDを取得
+	userGroupID, err := models.FetchUserGroupIDByUserID(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract userGroup ID")
+		return
+	}
+
+	newCategory := &models.Category{
+		Category:   createCategoryInput.Category,
+		UserGroupID: userGroupID,
+	}	
+
+	err = newCategory.CreateCategory(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	categories, err := models.FetchCategory(handler.DB)
+	categories, err := models.FetchCategory(handler.DB, userID)
 	if err != nil {
 		log.Printf("Failed to fetch categories: %v", err)
 		log.Printf("カテゴリーの取得に失敗しました")
@@ -43,7 +58,14 @@ func (handler *Handler) CreateCategoryHandler(c *gin.Context) {
 
 func (handler *Handler) GetCategoryHandler(c *gin.Context) {
 
-	categories, err := models.FetchCategory(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	categories, err := models.FetchCategory(handler.DB, userID)
 	if err != nil {
 		log.Printf("Failed to fetch categories: %v", err)
 		log.Printf("カテゴリーの取得に失敗しました")
@@ -81,8 +103,15 @@ func (handler *Handler) UpdateCategoryHandler(c *gin.Context) {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
 	
-	categories, err := models.FetchCategory(handler.DB)
+	categories, err := models.FetchCategory(handler.DB, userID)
 	if err != nil {
 		log.Printf("Failed to fetch categories: %v", err)
 		log.Printf("カテゴリーの取得に失敗しました")
@@ -119,7 +148,14 @@ func (handler *Handler) DeleteCategoryHandler(c *gin.Context) {
 		return
 	}
 
-	categories, err := models.FetchCategory(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	categories, err := models.FetchCategory(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return

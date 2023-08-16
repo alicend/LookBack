@@ -69,19 +69,26 @@ func (handler *Handler) UpdateUserGroupHandler(c *gin.Context) {
 	}
 	
 	// URLからtaskのidを取得
-	id, err := getIdFromURLTail(c)
+	taskID, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
 	}
 
-	err = updateCategory.UpdateCategory(handler.DB, id)
+	err = updateCategory.UpdateCategory(handler.DB, taskID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
 	
-	categories, err := models.FetchCategory(handler.DB)
+	categories, err := models.FetchCategory(handler.DB, userID)
 	if err != nil {
 		log.Printf("Failed to fetch categories: %v", err)
 		log.Printf("カテゴリーの取得に失敗しました")
@@ -104,7 +111,7 @@ func (handler *Handler) UpdateUserGroupHandler(c *gin.Context) {
 func (handler *Handler) DeleteUserGroupHandler(c *gin.Context) {
 
 	// URLからtaskのidを取得
-	id, err := getIdFromURLTail(c)
+	taskID, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
@@ -112,13 +119,20 @@ func (handler *Handler) DeleteUserGroupHandler(c *gin.Context) {
 
 	deleteCategory := &models.Category{}
 
-	err = deleteCategory.DeleteCategoryAndRelatedTasks(handler.DB, id)
+	err = deleteCategory.DeleteCategoryAndRelatedTasks(handler.DB, taskID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	categories, err := models.FetchCategory(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	categories, err := models.FetchCategory(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return

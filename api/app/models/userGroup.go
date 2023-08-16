@@ -24,6 +24,10 @@ type UserGroupResponse struct {
 	UserGroup string `gorm:"column:user_group"`
 }
 
+type UserGroupIDResponse struct {
+	ID        uint   `gorm:"column:id"`
+}
+
 // TableName メソッドを追加して、この構造体がユーザーグループテーブルに対応することを指定する
 func (UserGroupResponse) TableName() string {
 	return "user_groups"
@@ -60,6 +64,25 @@ func FetchUserGroups(db *gorm.DB) ([]UserGroupResponse, error) {
 	log.Printf("ユーザーグループの取得に成功")
 
 	return userGroups, nil
+}
+
+func FetchUserGroupIDByUserID(db *gorm.DB, userID uint) (uint, error) {
+	var userGroup UserGroupIDResponse
+
+	result := db.Table("user_groups").
+		Select("user_groups.id").
+		Joins("JOIN users on user_groups.id = users.user_group_id").
+		Where("users.id = ?", userID).
+		Order("user_group asc").
+		Find(&userGroup)
+
+	if result.Error != nil {
+		log.Printf("Error fetching user_group: %v", result.Error)
+		return 0, result.Error
+	}
+	log.Printf("ユーザーグループの取得に成功")
+
+	return userGroup.ID, nil
 }
 
 func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, id int) error {
