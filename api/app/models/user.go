@@ -108,9 +108,18 @@ func FindUserByName(db *gorm.DB, name string) (User, error) {
 	return user, nil
 }
 
-func FindUsersAll(db *gorm.DB) ([]UserResponse, error) {
+func FindUsersAll(db *gorm.DB, userID uint) ([]UserResponse, error) {
+	userGroupID, err := FetchUserGroupIDByUserID(db, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	var users []UserResponse
-	result := db.Select("id", "Name").Order("Name asc").Find(&users)
+	result := db.
+		Select("id", "Name").
+		Where("user_group_id = ?", userGroupID).
+		Order("Name asc").
+		Find(&users)
 
 	if result.Error != nil {
 		log.Printf("Error fetching users: %v", result.Error)

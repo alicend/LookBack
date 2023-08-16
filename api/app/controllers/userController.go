@@ -15,7 +15,14 @@ import (
 
 func (handler *Handler) GetUsersAllHandler(c *gin.Context) {
 
-	users, err := models.FindUsersAll(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	users, err := models.FindUsersAll(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
