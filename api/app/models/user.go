@@ -10,25 +10,25 @@ import (
 
 type User struct {
 	gorm.Model
-	Name        string    `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Name        string    `gorm:"size:255;not null" validate:"required,min=1,max=30"`
 	Password    string    `gorm:"size:255;not null" validate:"required,min=8,max=255"`
 	UserGroupID uint      `gorm:"not null"`
 	UserGroup   UserGroup `gorm:"foreignKey:UserGroupID;"`
 }
 
 type UserLoginInput struct {
-	Name        string `json:"username" binding:"required,min=1,max=255"`
+	Name        string `json:"username" binding:"required,min=1,max=30"`
 	Password    string `json:"password" binding:"required,min=8,max=255"`
 }
 
 type UserSignUpInput struct {
-	Name        string `json:"username" binding:"required,min=1,max=255"`
+	Name        string `json:"username" binding:"required,min=1,max=30"`
 	Password    string `json:"password" binding:"required,min=8,max=255"`
 	UserGroupID uint   `json:"user_group" binding:"required,min=1"`
 }
 
 type UserUpdateInput struct {
-	NewName         string `json:"new_username" binding:"required,min=1,max=255"`
+	NewName         string `json:"new_username" binding:"required,min=1,max=30"`
 	CurrentPassword string `json:"current_password" binding:"required,min=8,max=255"`
 	NewPassword     string `json:"new_password" binding:"required,min=8,max=255"`
 }

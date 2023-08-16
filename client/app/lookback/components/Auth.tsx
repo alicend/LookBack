@@ -215,6 +215,9 @@ const Auth: React.FC = () => {
             onChange={handleInputChange}
             error={Boolean(errors.username)}
             helperText={errors.username}
+            inputProps={{
+              maxLength: 30
+            }}
           />
         </Grid>
         <br />
