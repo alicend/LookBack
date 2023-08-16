@@ -60,7 +60,7 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTaskBoardTasks(handler.DB)
+	tasks, err := models.FetchTaskBoardTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -73,7 +73,14 @@ func (handler *Handler) CreateTaskHandler(c *gin.Context) {
 
 func (handler *Handler) GetTaskBoardTasksHandler(c *gin.Context) {
 
-	tasks, err := models.FetchTaskBoardTasks(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	tasks, err := models.FetchTaskBoardTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -85,8 +92,15 @@ func (handler *Handler) GetTaskBoardTasksHandler(c *gin.Context) {
 }
 
 func (handler *Handler) GetLookBackTasksHandler(c *gin.Context) {
+	
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
 
-	tasks, err := models.FetchLookBackTasks(handler.DB)
+	tasks, err := models.FetchLookBackTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -143,7 +157,14 @@ func (handler *Handler) UpdateTaskHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTaskBoardTasks(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	tasks, err := models.FetchTaskBoardTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -180,7 +201,14 @@ func (handler *Handler) UpdateTaskToMoveToCompletedHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchLookBackTasks(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	tasks, err := models.FetchLookBackTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
@@ -208,7 +236,14 @@ func (handler *Handler) DeleteTaskHandler(c *gin.Context) {
 		return
 	}
 
-	tasks, err := models.FetchTaskBoardTasks(handler.DB)
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	tasks, err := models.FetchTaskBoardTasks(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return

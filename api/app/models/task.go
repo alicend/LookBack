@@ -75,14 +75,20 @@ func (task *Task) CreateTask(db *gorm.DB) (error) {
 	return nil
 }
 
-func FetchTaskBoardTasks(db *gorm.DB) ([]TaskResponse, error) {
+func FetchTaskBoardTasks(db *gorm.DB, userID uint) ([]TaskResponse, error) {
+	userGroupID, err := FetchUserGroupIDByUserID(db, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	var tasks []Task
 
 	result := db.Preload("CreatorUserID").
 		Preload("ResponsibleUserID").
 		Preload("Category").
-		Where("status != ?", 4).
-		Order("created_at asc").
+		Joins("JOIN categories ON tasks.category_id = categories.id").
+		Where("tasks.status != ? AND categories.user_group_id = ?", 4, userGroupID).
+		Order("tasks.created_at asc").
 		Find(&tasks)
 
 	if result.Error != nil {
@@ -116,15 +122,22 @@ func FetchTaskBoardTasks(db *gorm.DB) ([]TaskResponse, error) {
 	return taskResponses, nil
 }
 
-func FetchLookBackTasks(db *gorm.DB) ([]TaskResponse, error) {
+func FetchLookBackTasks(db *gorm.DB, userID uint) ([]TaskResponse, error) {
+	userGroupID, err := FetchUserGroupIDByUserID(db, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	var tasks []Task
 
 	result := db.Preload("CreatorUserID").
 		Preload("ResponsibleUserID").
 		Preload("Category").
-		Where("status = ?", 4).
-		Order("created_at asc").
+		Joins("JOIN categories ON tasks.category_id = categories.id").
+		Where("tasks.status = ? AND categories.user_group_id = ?", 4, userGroupID).
+		Order("tasks.created_at asc").
 		Find(&tasks)
+
 
 	if result.Error != nil {
 		log.Printf("Error fetching tasks: %v\n", result.Error)
