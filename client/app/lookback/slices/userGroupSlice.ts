@@ -16,6 +16,7 @@ const COMMON_HTTP_HEADER = {
 
 // 共通のエラーハンドラ
 const handleHttpError = (err: any, thunkAPI: any) => {
+  console.log(err)
   return thunkAPI.rejectWithValue({
     response: err.response.data, 
     status: err.response.status
@@ -73,6 +74,7 @@ const initialState: USER_GROUP_STATE = {
 };
 
 const handleError = (state:any, action: any) => {
+  console.log(action)
   const payload = action.payload as PAYLOAD;
   if (payload.status === 401) {
     router.push("/");

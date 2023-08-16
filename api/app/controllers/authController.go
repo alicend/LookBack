@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"errors"
 	"log"
+	"os"
 
 	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
@@ -84,7 +85,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	}
 
 	// JWT_TOKEN_NAMEはクライアントで設定した名称
-	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", "localhost", false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", os.Getenv("DOMAIN"), false, true)
 	
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
@@ -93,7 +94,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 
 func (handler *Handler) LogoutHandler(c *gin.Context) {
 	// Clear the cookie named "access_token"
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("DOMAIN"), false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully logged out",

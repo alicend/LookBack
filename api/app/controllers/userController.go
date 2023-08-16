@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"os"
 	"log"
 	"errors"
 	"net/http"
@@ -46,7 +47,7 @@ func (handler *Handler) GetCurrentUserHandler(c *gin.Context) {
 }
 
 func (handler *Handler) DeleteUserHandler(c *gin.Context) {
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("DOMAIN"), false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully deleted task",
@@ -127,7 +128,7 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 	}
 
 	// Clear the cookie named "access_token"
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", "localhost", false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("DOMAIN"), false, true)
 	
 	c.JSON(http.StatusOK, gin.H{})
 }
