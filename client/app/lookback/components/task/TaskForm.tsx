@@ -207,7 +207,7 @@ const TaskForm: React.FC = () => {
           value={editedTask.Task}
           onChange={handleInputChange}
           inputProps={{
-            maxLength: 255
+            maxLength: 30
           }}
         />
         <StyledTextField
@@ -220,7 +220,7 @@ const TaskForm: React.FC = () => {
           value={editedTask.Description}
           onChange={handleInputChange}
           inputProps={{
-            maxLength: 255
+            maxLength: 30
           }}
         />
         <br />

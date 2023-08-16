@@ -10,8 +10,8 @@ import (
 
 type Task struct {
 	gorm.Model
-	Task              string     `gorm:"size:255;not null" validate:"required,min=1,max=255"`
-	Description       string     `gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	Task              string     `gorm:"size:255;not null" validate:"required,min=1,max=30`
+	Description       string     `gorm:"size:255;not null" validate:"required,min=1,max=30"`
 	Creator           uint       `gorm:"not null"`
 	CreatorUserID     User       `gorm:"foreignKey:Creator;"`
 	CategoryID        uint       `gorm:"not null"`
