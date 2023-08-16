@@ -86,6 +86,9 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
           type="text"
           value={editCategory.Category}
           onChange={handleInputTextChange}
+          inputProps={{
+            maxLength: 30
+          }}
         />
         <CategoryUpdateButton
           variant="contained"

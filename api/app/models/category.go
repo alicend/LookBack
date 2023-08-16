@@ -10,14 +10,14 @@ import (
 // カテゴリーテーブル定義
 type Category struct {
 	gorm.Model
-	Category   string    `gorm:"size:255;not null" validate:"required,min=1,max=31"`
+	Category   string    `gorm:"size:255;not null" validate:"required,min=1,max=30"`
 	UserGroupID uint      `gorm:"not null"`
 	UserGroup   UserGroup `gorm:"foreignKey:UserGroupID"`
 }
 
 // カテゴリー作成の入力値
 type CategoryInput struct {
-	Category string `json:"category" binding:"required,min=1"`
+	Category string `json:"category" binding:"required,min=1,max=30""`
 }
 
 // カテゴリー一覧取得

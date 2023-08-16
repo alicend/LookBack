@@ -67,6 +67,9 @@ const NewCategoryModal: React.FC<NewCategoryModalProps> = React.memo(({ open, on
           type="text"
           value={inputText}
           onChange={handleInputTextChange}
+          inputProps={{
+            maxLength: 30
+          }}
         />
         <CategorySaveButton
           variant="contained"
