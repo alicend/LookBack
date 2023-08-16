@@ -206,6 +206,9 @@ const TaskForm: React.FC = () => {
           name="Task"
           value={editedTask.Task}
           onChange={handleInputChange}
+          inputProps={{
+            maxLength: 255
+          }}
         />
         <StyledTextField
           InputLabelProps={{
@@ -216,6 +219,9 @@ const TaskForm: React.FC = () => {
           name="Description"
           value={editedTask.Description}
           onChange={handleInputChange}
+          inputProps={{
+            maxLength: 255
+          }}
         />
         <br />
         <StyledFormControl>
