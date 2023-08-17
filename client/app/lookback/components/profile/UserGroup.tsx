@@ -1,11 +1,14 @@
 import React, { FC, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Button, Fab, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
+import AddIcon from "@mui/icons-material/Add";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { AppDispatch } from '@/store/store';
 import { selectUserGroup } from '@/slices/userGroupSlice';
 import { fetchAsyncUpdateLoginUserGroup } from '@/slices/userSlice';
+import NewUserGroupModal from '../NewUserGroupModal';
 
 const Adjust = styled('div')`
   height: 22px;
@@ -13,6 +16,19 @@ const Adjust = styled('div')`
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 240,
+}));
+
+const StyledFab = styled(Fab)(({ theme }) => ({
+  marginTop: theme.spacing(1),
+  marginLeft: theme.spacing(2),
+  backgroundColor: '#4dabf5 !important',
+  '&:hover': {
+    backgroundColor: '#1769aa !important',
+  },
+  '&:disabled': {
+    backgroundColor: '#ccc !important',
+    cursor: 'not-allowed'
+  },
 }));
 
 const UpdateButton = styled(Button)(({ theme }) => ({
@@ -36,6 +52,22 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
   const dispatch = useDispatch<AppDispatch>();
   const userGroups = useSelector(selectUserGroup);
   const [selectedUserGroup, setSelectedUserGroup] = useState(loginUserGroupID);
+  const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
+  const [editUserGroupOpen, setEditUserGroupOpen] = useState(false);
+
+  const handleNewUserGroupOpen = () => {
+    setNewUserGroupOpen(true);
+  };
+  const handleNewUserGroupClose = () => {
+    setNewUserGroupOpen(false);
+  };
+
+  const handleEditUserGroupOpen = () => {
+    setEditUserGroupOpen(true);
+  };
+  const handleEditUserGroupClose = () => {
+    setEditUserGroupOpen(false);
+  };
 
   const handleSelectChange = (e: SelectChangeEvent<any>) => {
     setSelectedUserGroup(Number(e.target.value));
@@ -45,7 +77,7 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
     await dispatch(fetchAsyncUpdateLoginUserGroup(selectedUserGroup));
   }
 
-  let userGroupOptions = userGroups.map((userGroup) => (
+  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...userGroups].map((userGroup) => (
     <MenuItem key={userGroup.ID} value={userGroup.ID} style={{ minHeight: '36px'}}>
       {userGroup.UserGroup}
     </MenuItem>
@@ -53,16 +85,27 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
   
   return (
     <>
-      <StyledFormControl>
-        <InputLabel>User Group</InputLabel>
-        <Select
-          name="user_group"
-          value={selectedUserGroup}
-          onChange={handleSelectChange}
+      <Grid>
+        <StyledFormControl>
+          <InputLabel>User Group</InputLabel>
+          <Select
+            name="user_group"
+            value={selectedUserGroup}
+            onChange={handleSelectChange}
+          >
+            {userGroupOptions}
+          </Select>
+        </StyledFormControl>
+
+        <StyledFab
+          size="small"
+          color="primary"
+          onClick={selectedUserGroup !== 0 ? handleEditUserGroupOpen : handleNewUserGroupOpen }
         >
-          {userGroupOptions}
-        </Select>
-      </StyledFormControl>
+          {selectedUserGroup !== 0 ? <EditOutlinedIcon /> : <AddIcon />}
+        </StyledFab>
+
+      </Grid>
       <br />
       <Grid>
         <UpdateButton
@@ -77,6 +120,11 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
       </Grid>
       
       <Adjust/>
+
+      <NewUserGroupModal 
+        open={newUserGroupOpen}
+        onClose={handleNewUserGroupClose}
+      />
     </>
   );
 });

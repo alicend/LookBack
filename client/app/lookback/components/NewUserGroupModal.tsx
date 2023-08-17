@@ -6,6 +6,17 @@ import { AppDispatch } from '@/store/store';
 import { useDispatch } from 'react-redux';
 import { fetchAsyncCreateUserGroup } from '@/slices/userGroupSlice';
 
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
 const CategorySaveButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(4),
   marginLeft: theme.spacing(2),
@@ -36,12 +47,12 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 interface NewUserGroupModalModalProps {
   open: boolean;
   onClose: () => void;
-  modalStyle: React.CSSProperties;
 }
 
-const NewUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ open, onClose, modalStyle }) => {
+const NewUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ open, onClose }) => {
   
   const dispatch: AppDispatch = useDispatch();
+  const [modalStyle] = useState(getModalStyle);
 
   const [inputText, setInputText] = useState("");
   const isDisabled = inputText.length === 0;
