@@ -56,6 +56,8 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
   const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
   const [editUserGroupOpen, setEditUserGroupOpen] = useState(false);
 
+  const isLoginUserGroup = selectedUserGroup === loginUserGroupID;
+
   const handleNewUserGroupOpen = () => {
     setNewUserGroupOpen(true);
   };
@@ -130,6 +132,7 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
             open={editUserGroupOpen}
             onClose={handleEditUserGroupClose}
             originalUserGroup={matchingUserGroup}
+            isLoginUserGroup={isLoginUserGroup}
           />
         :
           <NewUserGroupModal 

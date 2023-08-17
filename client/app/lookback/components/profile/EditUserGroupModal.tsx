@@ -57,10 +57,11 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 interface NewUserGroupModalModalProps {
   open: boolean;
   onClose: () => void;
-  originalUserGroup : USER_GROUP
+  originalUserGroup: USER_GROUP;
+  isLoginUserGroup: boolean;
 }
 
-const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ open, onClose, originalUserGroup }) => {
+const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ open, onClose, originalUserGroup, isLoginUserGroup }) => {
   
   const dispatch: AppDispatch = useDispatch();
   const [modalStyle] = useState(getModalStyle);
@@ -115,17 +116,21 @@ const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ 
           >
             UPDATE
           </UpdateButton>
-          <DeleteButton
-              variant="contained"
-              color="error"
-              size="small"
-              startIcon={<DeleteOutlineOutlinedIcon />}
-              onClick={() => {
-                setConfirmOpen(true)
-              }}
-            >
-              DELETE
-            </DeleteButton>
+          {
+            isLoginUserGroup ?
+              <DeleteButton
+                variant="contained"
+                color="error"
+                size="small"
+                startIcon={<DeleteOutlineOutlinedIcon />}
+                onClick={() => {
+                  setConfirmOpen(true)
+                }}
+              >
+                DELETE
+              </DeleteButton>
+            : null
+          }
         </StyledPaper>
       </Modal>
 
