@@ -40,7 +40,6 @@ const Delete: React.FC<Props> = React.memo(({ loginUserName }) => {
   
   return (
     <>
-
       <DeleteButton
         variant="contained"
         color="error"

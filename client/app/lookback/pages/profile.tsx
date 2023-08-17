@@ -83,10 +83,10 @@ export default function Profile() {
             </Tabs>
           </StyledPaper>
           <br />
-          {tabValue === 0 && <UserName loginUserName={loginUser.Name} />}
-          {tabValue === 1 && <Password/>}
-          {tabValue === 2 && <UserGroup loginUserGroupID={loginUser.UserGroupID}/>}
-          {tabValue === 3 && <Delete loginUserName={loginUser.Name} />}          
+          {tabValue === 0 && loginUser && <UserName loginUserName={loginUser.Name} />}
+          {tabValue === 1 && loginUser && <Password/>}
+          {tabValue === 2 && loginUser && <UserGroup loginUserGroupID={loginUser.UserGroupID}/>}
+          {tabValue === 3 && loginUser && <Delete loginUserName={loginUser.Name} />}          
         </StyledContainer>
       </Grid>
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
