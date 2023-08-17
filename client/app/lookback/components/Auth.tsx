@@ -24,6 +24,10 @@ function getModalStyle() {
   };
 }
 
+const Adjust = styled('div')`
+  height: 88px;
+`;
+
 const StyledAddIcon = styled(AddIcon)({
   position: 'absolute',
   top: '50%',
@@ -126,7 +130,6 @@ const Auth: React.FC = () => {
     setCredential({ ...credential, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
-  
 
   const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -280,6 +283,12 @@ const Auth: React.FC = () => {
             {isLoginView ? "Create new account ?" : "Back to Login"}
           </span>
         </Grid>
+
+        {isLoginView && 
+          <Grid item>
+            <Adjust/>
+          </Grid>
+        }
 
       </Grid>
 
