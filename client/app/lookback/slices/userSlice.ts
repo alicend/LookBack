@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { AUTHENTICATION } from "@/types/AuthType";
 import { RootState } from "@/store/store";
-import { USER, USER_STATE, USER_UPDATE } from "@/types/UserType";
+import { USER, USER_STATE, PASSWORD_UPDATE } from "@/types/UserType";
 import { PAYLOAD } from "@/types/ResponseType";
 import router from "next/router";
 
@@ -56,9 +56,27 @@ export const fetchAsyncGetLoginUser = createAsyncThunk("users/getUser", async (_
   }
 });
 
-export const fetchAsyncUpdateLoginUser = createAsyncThunk("users/updateUser", async (user: USER_UPDATE, thunkAPI) => {
+export const fetchAsyncUpdateLoginUsername = createAsyncThunk("users/updateUsername", async (username: string, thunkAPI) => {
   try {
-    const res = await axios.put(`${ENDPOINTS.USERS}/me`, user, COMMON_HTTP_HEADER);
+    const res = await axios.put(`${ENDPOINTS.USERS}/me/name`, {username: username}, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
+export const fetchAsyncUpdateLoginUserPassword = createAsyncThunk("users/updateUserPassword", async (passwords: PASSWORD_UPDATE, thunkAPI) => {
+  try {
+    const res = await axios.put(`${ENDPOINTS.USERS}/me/password`, passwords, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
+export const fetchAsyncUpdateLoginUserGroup = createAsyncThunk("users/updateUserGroup", async (user_group_id: number, thunkAPI) => {
+  try {
+    const res = await axios.put(`${ENDPOINTS.USERS}/me/user-group`, {user_group_id: user_group_id}, COMMON_HTTP_HEADER);
     return res.data.user;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -133,13 +151,27 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchAsyncGetLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncGetLoginUser.pending, handleLoading);
-    builder.addCase(fetchAsyncUpdateLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
+    builder.addCase(fetchAsyncUpdateLoginUsername.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;
-      state.message = 'ユーザーの更新に成功しました';
+      state.message = 'ユーザー名の更新に成功しました';
     });
-    builder.addCase(fetchAsyncUpdateLoginUser.rejected, handleError);
-    builder.addCase(fetchAsyncUpdateLoginUser.pending, handleLoading);
+    builder.addCase(fetchAsyncUpdateLoginUsername.rejected, handleError);
+    builder.addCase(fetchAsyncUpdateLoginUsername.pending, handleLoading);
+    builder.addCase(fetchAsyncUpdateLoginUserPassword.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'パスワードの更新に成功しました';
+    });
+    builder.addCase(fetchAsyncUpdateLoginUserPassword.rejected, handleError);
+    builder.addCase(fetchAsyncUpdateLoginUserPassword.pending, handleLoading);
+    builder.addCase(fetchAsyncUpdateLoginUserGroup.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'ユーザーグループの更新に成功しました';
+    });
+    builder.addCase(fetchAsyncUpdateLoginUserGroup.rejected, handleError);
+    builder.addCase(fetchAsyncUpdateLoginUserGroup.pending, handleLoading);
     builder.addCase(fetchAsyncDeleteLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;

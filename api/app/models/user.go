@@ -27,10 +27,17 @@ type UserSignUpInput struct {
 	UserGroupID uint   `json:"user_group" binding:"required,min=1"`
 }
 
-type UserUpdateInput struct {
-	NewName         string `json:"new_username" binding:"required,min=1,max=30"`
+type UsernameUpdateInput struct {
+	NewName string `json:"username" binding:"required,min=1,max=30"`
+}
+
+type UserPasswordUpdateInput struct {
 	CurrentPassword string `json:"current_password" binding:"required,min=8,max=255"`
 	NewPassword     string `json:"new_password" binding:"required,min=8,max=255"`
+}
+
+type UserGroupUpdateInput struct {
+	NewUserGroupID uint `json:"user_group_id" binding:"required,min=1,max=30"`
 }
 
 type UserResponse struct {
@@ -140,9 +147,22 @@ func FindUsersAll(db *gorm.DB, userID uint) ([]UserResponse, error) {
 	return users, nil
 }
 
-func (user *User) UpdateUser(db *gorm.DB, userID uint) error {
+func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
 	result := db.Model(user).Where("id = ?", userID).Updates(User{
-		Name:     user.Name,
+		Name: user.Name,
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating user: %v\n", result.Error)
+		return result.Error
+	}
+	log.Printf("ログインユーザーのユーザー名の更新に成功")
+
+	return nil
+}
+
+func (user *User) UpdateUserPassword(db *gorm.DB, userID uint) error {
+	result := db.Model(user).Where("id = ?", userID).Updates(User{
 		Password: user.Password,
 	})
 
@@ -150,7 +170,21 @@ func (user *User) UpdateUser(db *gorm.DB, userID uint) error {
 		log.Printf("Error updating user: %v\n", result.Error)
 		return result.Error
 	}
-	log.Printf("ユーザーの更新に成功")
+	log.Printf("ログインユーザーのパスワードの更新に成功")
+
+	return nil
+}
+
+func (user *User) UpdateUserGroup(db *gorm.DB, userID uint) error {
+	result := db.Model(user).Where("id = ?", userID).Updates(User{
+		UserGroupID: user.UserGroupID,
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating user: %v\n", result.Error)
+		return result.Error
+	}
+	log.Printf("ログインユーザーのユーザーグループの更新に成功")
 
 	return nil
 }

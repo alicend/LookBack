@@ -61,9 +61,9 @@ func (handler *Handler) DeleteUserHandler(c *gin.Context) {
 	})
 }
 
-func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
-	var updateInput models.UserUpdateInput
-	if err := c.ShouldBindJSON(&updateInput); err != nil {
+func (handler *Handler) UpdateCurrentUsernameHandler(c *gin.Context) {
+	var usernameUpdateInput models.UsernameUpdateInput
+	if err := c.ShouldBindJSON(&usernameUpdateInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
 		respondWithError(c, http.StatusBadRequest, err.Error())
@@ -71,12 +71,49 @@ func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
 	}
 
 	// ユーザ名が既に使用されていないか確認
-	_, err := models.FindUserByName(handler.DB, updateInput.NewName)
+	_, err := models.FindUserByName(handler.DB, usernameUpdateInput.NewName)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			respondWithError(c, http.StatusBadRequest, err.Error())
 			return
 	} else if err == nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別の名前を入力してください")
+		return
+	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	updateUser := &models.User{
+		Name:     usernameUpdateInput.NewName,
+	}
+
+	err = updateUser.UpdateUsername(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	updatedUser, err := models.FindUserByIDWithoutPassword(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user" : updatedUser,  // userをレスポンスとして返す
+	})
+}
+
+func (handler *Handler) UpdateCurrentUserPasswordHandler(c *gin.Context) {
+	var userPasswordUpdateInput models.UserPasswordUpdateInput
+	if err := c.ShouldBindJSON(&userPasswordUpdateInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -95,25 +132,67 @@ func (handler *Handler) UpdateCurrentUserHandler(c *gin.Context) {
 	}
 
 	// 入力されたパスワードとIDから取得したパスワードが等しいかを検証
-	if !user.VerifyPassword(updateInput.CurrentPassword) {
+	if !user.VerifyPassword(userPasswordUpdateInput.CurrentPassword) {
 		log.Printf("パスワードが違います")
 		respondWithError(c, http.StatusBadRequest, "パスワードが違います")
 		return
 	}
 
 	updateUser := &models.User{
-		Name:     updateInput.NewName,
-		Password: updateInput.NewPassword,
+		Password: userPasswordUpdateInput.NewPassword,
 	}
 
-	err = updateUser.UpdateUser(handler.DB, userID)
+	err = updateUser.UpdateUserPassword(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	updatedUser, err := models.FindUserByIDWithoutPassword(handler.DB, userID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"user": updateUser,
+		"user" : updatedUser,  // userをレスポンスとして返す
+	})
+}
+
+func (handler *Handler) UpdateCurrentUserGroupHandler(c *gin.Context) {
+	var userGroupUpdateInput models.UserGroupUpdateInput
+	if err := c.ShouldBindJSON(&userGroupUpdateInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	updateUser := &models.User{
+		UserGroupID: userGroupUpdateInput.NewUserGroupID,
+	}
+
+	err = updateUser.UpdateUserGroup(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	updatedUser, err := models.FindUserByIDWithoutPassword(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user" : updatedUser,  // userをレスポンスとして返す
 	})
 }
 
