@@ -6,6 +6,7 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import { AppDispatch } from '@/store/store';
 import { useDispatch } from 'react-redux';
 import { fetchAsyncDeleteCategory } from '@/slices/taskSlice';
+import { USER_GROUP } from '@/types/UserGroupType';
 
 function getModalStyle() {
   const top = 50;
@@ -56,16 +57,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 interface NewUserGroupModalModalProps {
   open: boolean;
   onClose: () => void;
+  originalUserGroup : USER_GROUP
 }
 
-const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ open, onClose }) => {
+const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ open, onClose, originalUserGroup }) => {
   
   const dispatch: AppDispatch = useDispatch();
   const [modalStyle] = useState(getModalStyle);
 
-  const [inputText, setInputText] = useState("");
+  const [editUserGroup, setEditUserGroup] = useState(originalUserGroup.UserGroup);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const isDisabled = inputText.length === 0;
+  const isDisabled = editUserGroup.length === 0;
 
   const handleConfirmClose = (shouldDelete: boolean) => {
     setConfirmOpen(false);
@@ -76,14 +78,12 @@ const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ 
   };
 
   const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
+    setEditUserGroup(e.target.value);
   };
 
   useEffect(() => {
-    if (!open) {
-      setInputText("");
-    }
-  }, [open]);
+    setEditUserGroup(originalUserGroup.UserGroup);
+  }, [originalUserGroup]);
   
   return (
     <>
@@ -95,7 +95,7 @@ const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ 
             }}
             label="Edit User Group"
             type="text"
-            value={inputText}
+            value={editUserGroup}
             onChange={handleInputTextChange}
             inputProps={{
               maxLength: 30
@@ -133,7 +133,7 @@ const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ 
         <DialogTitle>{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {`ユーザーグループ「${inputText}」に所属するユーザーも削除されますが本当に削除してよろしいですか？`}
+            {`ユーザーグループ「${originalUserGroup.UserGroup}」に所属するユーザーも削除されますが本当に削除してよろしいですか？`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

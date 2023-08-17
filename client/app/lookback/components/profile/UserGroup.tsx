@@ -83,55 +83,62 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
       {userGroup.UserGroup}
     </MenuItem>
   ));
+
+  const matchingUserGroup = userGroups.find(userGroup => userGroup.ID === selectedUserGroup);
   
-  return (
-    <>
-      <Grid>
-        <StyledFormControl>
-          <InputLabel>User Group</InputLabel>
-          <Select
-            name="user_group"
-            value={selectedUserGroup}
-            onChange={handleSelectChange}
+  if (matchingUserGroup) {
+    return (
+      <>
+        <Grid>
+          <StyledFormControl>
+            <InputLabel>User Group</InputLabel>
+            <Select
+              name="user_group"
+              value={selectedUserGroup}
+              onChange={handleSelectChange}
+            >
+              {userGroupOptions}
+            </Select>
+          </StyledFormControl>
+
+          <StyledFab
+            size="small"
+            color="primary"
+            onClick={selectedUserGroup !== 0 ? handleEditUserGroupOpen : handleNewUserGroupOpen }
           >
-            {userGroupOptions}
-          </Select>
-        </StyledFormControl>
+            {selectedUserGroup !== 0 ? <EditOutlinedIcon /> : <AddIcon />}
+          </StyledFab>
 
-        <StyledFab
-          size="small"
-          color="primary"
-          onClick={selectedUserGroup !== 0 ? handleEditUserGroupOpen : handleNewUserGroupOpen }
-        >
-          {selectedUserGroup !== 0 ? <EditOutlinedIcon /> : <AddIcon />}
-        </StyledFab>
+        </Grid>
+        <br />
+        <Grid>
+          <UpdateButton
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<SaveIcon />}
+            onClick={update}
+          >
+            UPDATE
+          </UpdateButton>
+        </Grid>
+        
+        <Adjust/>
 
-      </Grid>
-      <br />
-      <Grid>
-        <UpdateButton
-          variant="contained"
-          color="primary"
-          size="small"
-          startIcon={<SaveIcon />}
-          onClick={update}
-        >
-          UPDATE
-        </UpdateButton>
-      </Grid>
-      
-      <Adjust/>
-
-      <NewUserGroupModal 
-        open={newUserGroupOpen}
-        onClose={handleNewUserGroupClose}
-      />
-      <EditUserGroupModal 
-        open={editUserGroupOpen}
-        onClose={handleEditUserGroupClose}
-      />
-    </>
-  );
+        <NewUserGroupModal 
+          open={newUserGroupOpen}
+          onClose={handleNewUserGroupClose}
+        />
+        <EditUserGroupModal 
+          open={editUserGroupOpen}
+          onClose={handleEditUserGroupClose}
+          originalUserGroup={matchingUserGroup}
+        />
+      </>
+    );
+  } else {
+    return null;
+  }
 });
 
 export default UserGroup;
