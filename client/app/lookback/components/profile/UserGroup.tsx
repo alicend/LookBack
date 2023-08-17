@@ -26,10 +26,15 @@ const UpdateButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
-const UserGroup: FC = React.memo(() => {
+interface Props {
+  loginUserGroupID: number;
+}  
+
+const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
+
   const dispatch = useDispatch<AppDispatch>();
   const userGroups = useSelector(selectUserGroup);
-  const [selectedUserGroup, setSelectedUserGroup] = useState(1);
+  const [selectedUserGroup, setSelectedUserGroup] = useState(loginUserGroupID);
 
   const handleSelectChange = (e: SelectChangeEvent<any>) => {
     setSelectedUserGroup(Number(e.target.value));

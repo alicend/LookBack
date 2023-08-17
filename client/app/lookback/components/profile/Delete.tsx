@@ -19,11 +19,11 @@ const DeleteButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
-interface DeleteProps {
+interface Props {
   loginUserName: string;
 }  
 
-const Delete: React.FC<DeleteProps> = React.memo(({ loginUserName }) => {
+const Delete: React.FC<Props> = React.memo(({ loginUserName }) => {
 
   const dispatch: AppDispatch = useDispatch();
 

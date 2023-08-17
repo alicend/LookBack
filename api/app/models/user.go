@@ -33,14 +33,24 @@ type UserUpdateInput struct {
 	NewPassword     string `json:"new_password" binding:"required,min=8,max=255"`
 }
 
-// ユーザー一覧取得
 type UserResponse struct {
 	ID   uint
 	Name string
 }
 
+type CurrentUserResponse struct {
+	ID   uint
+	Name string
+	UserGroupID uint
+}
+
 // TableName メソッドを追加して、この構造体がユーザーテーブルに対応することを指定する
 func (UserResponse) TableName() string {
+	return "users"
+}
+
+// TableName メソッドを追加して、この構造体がユーザーテーブルに対応することを指定する
+func (CurrentUserResponse) TableName() string {
 	return "users"
 }
 
@@ -69,8 +79,8 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	return user, nil
 }
 
-func FindUserByIDWithoutPassword(db *gorm.DB, userID uint) (UserResponse, error) {
-	var user UserResponse
+func FindUserByIDWithoutPassword(db *gorm.DB, userID uint) (CurrentUserResponse, error) {
+	var user CurrentUserResponse
 	result := db.Where("ID = ?", userID).First(&user)
 
 	if result.Error != nil {

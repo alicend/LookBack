@@ -85,7 +85,7 @@ export default function Profile() {
           <br />
           {tabValue === 0 && <UserName loginUserName={loginUser.Name} />}
           {tabValue === 1 && <Password/>}
-          {tabValue === 2 && <UserGroup/>}
+          {tabValue === 2 && <UserGroup loginUserGroupID={loginUser.UserGroupID}/>}
           {tabValue === 3 && <Delete loginUserName={loginUser.Name} />}          
         </StyledContainer>
       </Grid>

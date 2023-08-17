@@ -80,6 +80,7 @@ const initialState: USER_STATE = {
   loginUser: {
     ID: 0,
     Name: "",
+    UserGroupID: 0,
   },
 };
 

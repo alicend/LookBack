@@ -1,6 +1,7 @@
 export interface USER {
   ID: number;
   Name: string;
+  UserGroupID: number;
 }
 export interface USER_UPDATE {
   new_username: string;
