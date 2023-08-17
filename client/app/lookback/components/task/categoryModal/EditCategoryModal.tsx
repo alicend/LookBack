@@ -128,6 +128,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
           </CategoryDeleteButton>
       </StyledPaper>
     </Modal>
+    
     <Dialog open={confirmOpen} onClose={() => handleConfirmClose(false)}>
       <DialogTitle>{"Confirm Delete"}</DialogTitle>
       <DialogContent>

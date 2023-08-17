@@ -9,6 +9,7 @@ import { AppDispatch } from '@/store/store';
 import { selectUserGroup } from '@/slices/userGroupSlice';
 import { fetchAsyncUpdateLoginUserGroup } from '@/slices/userSlice';
 import NewUserGroupModal from '../NewUserGroupModal';
+import EditUserGroupModal from './EditUserGroupModal';
 
 const Adjust = styled('div')`
   height: 22px;
@@ -124,6 +125,10 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
       <NewUserGroupModal 
         open={newUserGroupOpen}
         onClose={handleNewUserGroupClose}
+      />
+      <EditUserGroupModal 
+        open={editUserGroupOpen}
+        onClose={handleEditUserGroupClose}
       />
     </>
   );
