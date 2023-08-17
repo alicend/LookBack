@@ -3,8 +3,7 @@ export interface USER {
   Name: string;
   UserGroupID: number;
 }
-export interface USER_UPDATE {
-  new_username: string;
+export interface PASSWORD_UPDATE {
   current_password: string;
   new_password: string;
 }

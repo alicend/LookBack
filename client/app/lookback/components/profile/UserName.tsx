@@ -5,6 +5,7 @@ import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
 import { z } from 'zod';
 import { AppDispatch } from '@/store/store';
+import { fetchAsyncUpdateLoginUsername } from '@/slices/userSlice';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputLabel-root": {
@@ -57,7 +58,7 @@ const UserName: FC<Props> = React.memo(({ loginUserName }) => {
   };
 
   const update = async () => {
-    const result = credentialSchema.safeParse(newUsername);
+    const result = credentialSchema.safeParse({ new_username: newUsername });
     if (!result.success) {
       const newUsernameError = result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
       setErrors({ new_username: newUsernameError });
@@ -84,6 +85,9 @@ const UserName: FC<Props> = React.memo(({ loginUserName }) => {
         name="new_username"
         value={newUsername}
         onChange={handleInputChange}
+        inputProps={{
+          maxLength: 30
+        }}
         error={Boolean(errors.new_username)}
         helperText={errors.new_username}
       />

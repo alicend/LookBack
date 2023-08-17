@@ -1,8 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { AUTHENTICATION } from "@/types/AuthType";
 import { RootState } from "@/store/store";
-import { USER, USER_STATE, USER_UPDATE } from "@/types/UserType";
 import { PAYLOAD } from "@/types/ResponseType";
 import router from "next/router";
 import { USER_GROUP, USER_GROUP_STATE } from "@/types/UserGroupType";
