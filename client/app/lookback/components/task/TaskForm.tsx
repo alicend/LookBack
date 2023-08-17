@@ -36,17 +36,6 @@ import NewCategoryModal from "./categoryModal/NewCategoryModal";
 import EditCategoryModal from "./categoryModal/EditCategoryModal";
 import { CATEGORY } from "@/types/CategoryType";
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
   margin: theme.spacing(2),
   minWidth: 240,
@@ -111,7 +100,6 @@ const TaskForm: React.FC = () => {
   const [newCategoryOpen, setNewCategoryOpen] = useState(false);
   const [editCategoryOpen, setEditCategoryOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CATEGORY>({ ID: 0, Category: '' });
-  const [modalStyle] = useState(getModalStyle);
 
   useEffect(() => {
     const selectedCategoryObj = categories.find((cat) => cat.ID === editedTask.Category);
@@ -270,12 +258,10 @@ const TaskForm: React.FC = () => {
         <NewCategoryModal 
           open={newCategoryOpen}
           onClose={handleNewCategoryClose}
-          modalStyle={modalStyle}
         />
         <EditCategoryModal 
           open={editCategoryOpen}
           onClose={handleEditCategoryClose}
-          modalStyle={modalStyle}
           originalCategory={selectedCategory}
         />
         <br />

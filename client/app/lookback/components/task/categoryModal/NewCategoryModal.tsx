@@ -6,6 +6,17 @@ import { AppDispatch } from '@/store/store';
 import { useDispatch } from 'react-redux';
 import { fetchAsyncCreateCategory } from '@/slices/taskSlice';
 
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
 const CategorySaveButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(4),
   marginLeft: theme.spacing(2),
@@ -36,14 +47,15 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 interface NewCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  modalStyle: React.CSSProperties;
 }
 
-const NewCategoryModal: React.FC<NewCategoryModalProps> = React.memo(({ open, onClose, modalStyle }) => {
+const NewCategoryModal: React.FC<NewCategoryModalProps> = React.memo(({ open, onClose }) => {
   
   const dispatch: AppDispatch = useDispatch();
 
   const [inputText, setInputText] = useState("");
+  const [modalStyle] = useState(getModalStyle);
+
   const isDisabled = inputText.length === 0;
 
   const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {

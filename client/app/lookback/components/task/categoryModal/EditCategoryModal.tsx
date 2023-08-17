@@ -8,6 +8,17 @@ import { useDispatch } from 'react-redux';
 import { fetchAsyncUpdateCategory, fetchAsyncDeleteCategory } from '@/slices/taskSlice';
 import { CATEGORY } from '@/types/CategoryType';
 
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
 const CategoryUpdateButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(4),
   backgroundColor: '#4dabf5 !important',
@@ -46,16 +57,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 interface EditCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  modalStyle: React.CSSProperties;
   originalCategory: CATEGORY
 }
 
-const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, onClose, modalStyle, originalCategory }) => {
+const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, onClose, originalCategory }) => {
   
   const dispatch: AppDispatch = useDispatch();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(originalCategory);
+  const [modalStyle] = useState(getModalStyle);
+
   const isDisabled = editCategory.Category.length === 0;
 
   useEffect(() => {
