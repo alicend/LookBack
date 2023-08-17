@@ -67,6 +67,9 @@ const NewUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ o
           type="text"
           value={inputText}
           onChange={handleInputTextChange}
+          inputProps={{
+            maxLength: 30
+          }}
         />
         <CategorySaveButton
           variant="contained"

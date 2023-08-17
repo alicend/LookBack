@@ -15,7 +15,7 @@ type UserGroup struct {
 
 // ユーザーグループ作成の入力値
 type UserGroupInput struct {
-	UserGroup string `json:"UserGroup" binding:"required,min=1"`
+	UserGroup string `json:"UserGroup" binding:"required,min=1,max=30"`
 }
 
 // ユーザーグループ一覧取得
