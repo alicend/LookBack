@@ -1,5 +1,7 @@
+import { Grid } from "@mui/material";
 import Head from "next/head";
 import type { ReactNode } from 'react';
+import { AuthPageHeader } from "./AuthPageHeader";
 
 type Props = {
   children: ReactNode;
@@ -13,7 +15,12 @@ export const AuthPageLayout = ({children, title}: Props) => {
         <title>{title}</title>
       </Head>
       <main>
-        {children}
+        <div className="text-center text-gray-600 font-serif m-6">
+          <Grid container>
+            <AuthPageHeader title="Look Back"/>
+            {children}
+          </Grid>
+        </div>
       </main>
     </>
   );

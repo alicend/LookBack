@@ -7,7 +7,7 @@ type Props = {
   title: string
 }
 
-export const Header = ({ title }: Props) => {
+export const MainPageHeader = ({ title }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

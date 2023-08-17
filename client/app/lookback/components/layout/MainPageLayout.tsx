@@ -1,7 +1,7 @@
 import Head from "next/head";
 import type { ReactNode } from 'react';
 import { Grid } from "@mui/material";
-import { Header } from "./Header";
+import { MainPageHeader } from "./MainPageHeader";
 
 type Props = {
   children: ReactNode;
@@ -17,7 +17,7 @@ export const MainPageLayout = ({children, title}: Props) => {
       <main>
         <div className="text-center text-gray-600 font-serif m-6">
           <Grid container>
-            <Header title={title}/>
+            <MainPageHeader title={title}/>
             {children}
           </Grid>
         </div>

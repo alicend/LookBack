@@ -29,21 +29,17 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 const UserGroup: FC = React.memo(() => {
   const dispatch = useDispatch<AppDispatch>();
   const userGroups = useSelector(selectUserGroup);
-  const [newUserGroup, setNewUserGroup] = useState("");
-  const [errors, setErrors] = useState({ new_username: "" });
+  const [selectedUserGroup, setSelectedUserGroup] = useState(1);
 
   const handleSelectChange = (e: SelectChangeEvent<any>) => {
-    const value = e.target.value as string;
-    const name = e.target.name;
-    setCredential({ ...credential, [name]: value });
-    setErrors({ ...errors, [name]: "" });
+    setSelectedUserGroup(Number(e.target.value));
   };
 
   const update = async () => {
-    await dispatch(fetchAsyncUpdateLoginUserGroup(newUsername));
+    await dispatch(fetchAsyncUpdateLoginUserGroup(selectedUserGroup));
   }
 
-  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...userGroups].map((userGroup) => (
+  let userGroupOptions = userGroups.map((userGroup) => (
     <MenuItem key={userGroup.ID} value={userGroup.ID} style={{ minHeight: '36px'}}>
       {userGroup.UserGroup}
     </MenuItem>
@@ -52,15 +48,15 @@ const UserGroup: FC = React.memo(() => {
   return (
     <>
       <StyledFormControl>
-          <InputLabel>User Group</InputLabel>
-          <Select
-            name="user_group"
-            // value={credential.user_group}
-            onChange={handleSelectChange}
-          >
-            {userGroupOptions}
-          </Select>
-        </StyledFormControl>
+        <InputLabel>User Group</InputLabel>
+        <Select
+          name="user_group"
+          value={selectedUserGroup}
+          onChange={handleSelectChange}
+        >
+          {userGroupOptions}
+        </Select>
+      </StyledFormControl>
       <br />
       <Grid>
         <UpdateButton
