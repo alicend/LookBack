@@ -40,8 +40,7 @@ const Delete: React.FC<DeleteProps> = React.memo(({ loginUserName }) => {
   
   return (
     <>
-      <Adjust></Adjust>
-      <br></br>
+
       <DeleteButton
         variant="contained"
         color="error"
@@ -53,6 +52,9 @@ const Delete: React.FC<DeleteProps> = React.memo(({ loginUserName }) => {
       >
         DELETE
       </DeleteButton>
+
+      <Adjust/>
+      <br/>
 
       <Dialog open={confirmOpen} onClose={() => handleConfirmClose(false)}>
         <DialogTitle>{"Confirm Delete"}</DialogTitle>

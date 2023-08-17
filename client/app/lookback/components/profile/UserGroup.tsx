@@ -1,19 +1,17 @@
 import React, { FC, useState } from 'react';
-import { useDispatch } from "react-redux";
-import { Button, Grid, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
-import { z } from 'zod';
 import { AppDispatch } from '@/store/store';
+import { selectUserGroup } from '@/slices/userGroupSlice';
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  "& .MuiInputLabel-root": {
-    marginBottom: theme.spacing(1),
-  },
-  "& .MuiInput-root": {
-    marginBottom: theme.spacing(2),
-  },
-  width: '300px',
+const Adjust = styled('div')`
+  height: 22px;
+`;
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  minWidth: 240,
 }));
 
 const UpdateButton = styled(Button)(({ theme }) => ({
@@ -28,77 +26,55 @@ const UpdateButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
-interface Props {
-  loginUserName: string;
-}  
-
-const UserGroup: FC<Props> = React.memo(({ loginUserName }) => {
+const UserGroup: FC = React.memo(() => {
   const dispatch = useDispatch<AppDispatch>();
-  const [newUsername, setNewUsername] = useState("");
+  const userGroups = useSelector(selectUserGroup);
+  const [newUserGroup, setNewUserGroup] = useState("");
   const [errors, setErrors] = useState({ new_username: "" });
 
-  const isDisabled = newUsername.length === 0;
-  
-  const credentialSchema = z.object({
-    new_username: z.string()
-  }).superRefine((data, context) => {
-    if (data.new_username === loginUserName) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['new_username'],
-        message: "新しいユーザー名は現在のユーザー名と異なるものにしてください",
-      });
-    }
-  });
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewUsername(event.target.value);
-    setErrors({ new_username: "" });
+  const handleSelectChange = (e: SelectChangeEvent<any>) => {
+    const value = e.target.value as string;
+    const name = e.target.name;
+    setCredential({ ...credential, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const update = async () => {
-    const result = credentialSchema.safeParse(newUsername);
-    if (!result.success) {
-      const newUsernameError = result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
-      setErrors({ new_username: newUsernameError });
-      return;
-    }
-    await dispatch(fetchAsyncUpdateLoginUsername(newUsername));
+    await dispatch(fetchAsyncUpdateLoginUserGroup(newUsername));
   }
+
+  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...userGroups].map((userGroup) => (
+    <MenuItem key={userGroup.ID} value={userGroup.ID} style={{ minHeight: '36px'}}>
+      {userGroup.UserGroup}
+    </MenuItem>
+  ));
   
   return (
     <>
-      <StyledTextField
-        InputLabelProps={{ shrink: true }}
-        label="Current Username"
-        type="text"
-        name="current_username"
-        value={loginUserName}
-        disabled={true}
-      />
+      <StyledFormControl>
+          <InputLabel>User Group</InputLabel>
+          <Select
+            name="user_group"
+            // value={credential.user_group}
+            onChange={handleSelectChange}
+          >
+            {userGroupOptions}
+          </Select>
+        </StyledFormControl>
       <br />
-      <StyledTextField
-        InputLabelProps={{ shrink: true }}
-        label="New Username"
-        type="text"
-        name="new_username"
-        value={newUsername}
-        onChange={handleInputChange}
-        error={Boolean(errors.new_username)}
-        helperText={errors.new_username}
-      />
       <Grid>
         <UpdateButton
           variant="contained"
           color="primary"
           size="small"
           startIcon={<SaveIcon />}
-          disabled={isDisabled}
           onClick={update}
         >
           UPDATE
         </UpdateButton>
       </Grid>
+      
+      <Adjust/>
     </>
   );
 });
