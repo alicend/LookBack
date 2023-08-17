@@ -13,27 +13,9 @@ import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import NewUserGroupModal from "./NewUserGroupModal";
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
 const Adjust = styled('div')`
   height: 88px;
 `;
-
-const StyledAddIcon = styled(AddIcon)({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%) !important',
-});
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#4dabf5 !important',
@@ -104,7 +86,6 @@ const Auth: React.FC = () => {
   const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
   const [credential, setCredential] = useState({ username: "", password: "", user_group: 0});
   const [errors, setErrors] = useState({ username: "", password: "", user_group: "" });
-  const [modalStyle] = useState(getModalStyle);
 
   const isDisabled = isLoginView
   ? (credential.username.length === 0 || credential.password.length === 0)
@@ -260,7 +241,7 @@ const Auth: React.FC = () => {
                 color="primary"
                 onClick={handleNewUserGroupOpen}
               >
-                <StyledAddIcon />
+                <AddIcon />
               </StyledFab>
             </Grid>
           </Grid>
@@ -295,7 +276,6 @@ const Auth: React.FC = () => {
       <NewUserGroupModal 
         open={newUserGroupOpen}
         onClose={handleNewUserGroupClose}
-        modalStyle={modalStyle}
       />
 
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
