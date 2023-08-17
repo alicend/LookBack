@@ -80,6 +80,7 @@ const Auth: React.FC = () => {
   const message = useSelector(selectMessage);
   const userGroupStatus = useSelector(selectUserGroupStatus);
   const userGroupMessage = useSelector(selectUserGroupMessage);
+  const [severity, setSeverity] = useState<'success' | 'error'>('success');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
@@ -150,6 +151,7 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     if (userGroupStatus === 'succeeded' || userGroupStatus === 'failed') {
+      setSeverity(userGroupStatus === 'failed' ? 'error' : 'success');
       setSnackbarMessage(userGroupMessage);
       setSnackbarOpen(true);
     } else if (userGroupStatus === 'loading') {
@@ -160,6 +162,7 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     if (status === 'succeeded' || status === 'failed') {
+      setSeverity(status === 'failed' ? 'error' : 'success');
       setSnackbarMessage(message);
       setSnackbarOpen(true);
     } else if (status === 'loading') {
@@ -279,7 +282,7 @@ const Auth: React.FC = () => {
       />
 
       <Snackbar open={snackbarOpen} autoHideDuration={6000}>
-        <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
+        <Alert onClose={handleSnackbarClose} severity={severity}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
