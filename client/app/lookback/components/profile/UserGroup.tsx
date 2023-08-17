@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Fab, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Button, Fab, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
 import AddIcon from "@mui/icons-material/Add";
@@ -86,59 +86,59 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
 
   const matchingUserGroup = userGroups.find(userGroup => userGroup.ID === selectedUserGroup);
   
-  if (matchingUserGroup) {
-    return (
-      <>
-        <Grid>
-          <StyledFormControl>
-            <InputLabel>User Group</InputLabel>
-            <Select
-              name="user_group"
-              value={selectedUserGroup}
-              onChange={handleSelectChange}
-            >
-              {userGroupOptions}
-            </Select>
-          </StyledFormControl>
-
-          <StyledFab
-            size="small"
-            color="primary"
-            onClick={selectedUserGroup !== 0 ? handleEditUserGroupOpen : handleNewUserGroupOpen }
+  return (
+    <>
+      <Grid>
+        <StyledFormControl>
+          <InputLabel>User Group</InputLabel>
+          <Select
+            name="user_group"
+            value={selectedUserGroup}
+            onChange={handleSelectChange}
           >
-            {selectedUserGroup !== 0 ? <EditOutlinedIcon /> : <AddIcon />}
-          </StyledFab>
+            {userGroupOptions}
+          </Select>
+        </StyledFormControl>
 
-        </Grid>
-        <br />
-        <Grid>
-          <UpdateButton
-            variant="contained"
-            color="primary"
-            size="small"
-            startIcon={<SaveIcon />}
-            onClick={update}
-          >
-            UPDATE
-          </UpdateButton>
-        </Grid>
-        
-        <Adjust/>
+        <StyledFab
+          size="small"
+          color="primary"
+          onClick={selectedUserGroup !== 0 ? handleEditUserGroupOpen : handleNewUserGroupOpen }
+        >
+          {selectedUserGroup !== 0 ? <EditOutlinedIcon /> : <AddIcon />}
+        </StyledFab>
 
-        <NewUserGroupModal 
-          open={newUserGroupOpen}
-          onClose={handleNewUserGroupClose}
-        />
-        <EditUserGroupModal 
-          open={editUserGroupOpen}
-          onClose={handleEditUserGroupClose}
-          originalUserGroup={matchingUserGroup}
-        />
-      </>
-    );
-  } else {
-    return null;
-  }
+      </Grid>
+      <br />
+      <Grid>
+        <UpdateButton
+          variant="contained"
+          color="primary"
+          size="small"
+          startIcon={<SaveIcon />}
+          onClick={update}
+        >
+          UPDATE
+        </UpdateButton>
+      </Grid>
+      
+      <Adjust/>
+      
+      {
+        matchingUserGroup ?
+          <EditUserGroupModal 
+            open={editUserGroupOpen}
+            onClose={handleEditUserGroupClose}
+            originalUserGroup={matchingUserGroup}
+          />
+        :
+          <NewUserGroupModal 
+            open={newUserGroupOpen}
+            onClose={handleNewUserGroupClose}
+          />
+      }
+    </>
+  );
 });
 
 export default UserGroup;
