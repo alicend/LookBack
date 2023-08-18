@@ -41,6 +41,13 @@ func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
 		return migrateErr
 	}
 
+	// 既存のユーザーグループと重複がないか確認
+	var existingUserGroup UserGroup
+	if err := db.Where("name = ?", userGroup).First(&existingUserGroup).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("UserGroup already exists: %s\n", userGroup)
+		return fmt.Errorf("そのユーザーグループは登録済みです")
+	}
+
 	result := db.Create(userGroup)
 
 	if result.Error != nil {
@@ -86,6 +93,14 @@ func FetchUserGroupIDByUserID(db *gorm.DB, userID uint) (uint, error) {
 }
 
 func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, userGroupID int) error {
+
+	// 既存のユーザーグループと重複がないか確認
+	var existingUserGroup UserGroup
+	if err := db.Where("name = ?", userGroup).First(&existingUserGroup).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("UserGroup already exists: %s\n", userGroup)
+		return fmt.Errorf("そのユーザーグループは登録済みです")
+	}
+	
 	result := db.Model(userGroup).Where("id = ?", userGroupID).Updates(UserGroup{
 		UserGroup: userGroup.UserGroup,
 	})
