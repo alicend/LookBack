@@ -138,8 +138,11 @@ const TaskList: React.FC = () => {
         <StyledTable size="small" >
           <TableHead>
             <TableRow>
-              {columns.map(
-                (column, colIndex) =>
+              {columns.map((column, colIndex) => {
+                const columnLabel =
+                  column === "Estimate" ? "Estimate [days]" : column;
+
+                return (
                   (column === "Task" ||
                     column === "Status" ||
                     column === "Category" ||
@@ -147,17 +150,18 @@ const TaskList: React.FC = () => {
                     column === "Estimate" ||
                     column === "Responsible" ||
                     column === "Creator") && (
-                    <StyledTableCell  key={colIndex}>
+                    <StyledTableCell key={colIndex}>
                       <TableSortLabel
                         active={state.activeKey === column}
                         direction={state.order}
                         onClick={() => handleClickSortColumn(column)}
                       >
-                        <strong>{column}</strong>
+                        <strong>{columnLabel}</strong>
                       </TableSortLabel>
                     </StyledTableCell>
                   )
-              )}
+                );
+              })}
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
