@@ -2,6 +2,7 @@ import { Grid } from "@mui/material";
 import Head from "next/head";
 import type { ReactNode } from 'react';
 import { AuthPageHeader } from "./AuthPageHeader";
+import { MessageBar } from "./MessageBar";
 
 type Props = {
   children: ReactNode;
@@ -21,6 +22,7 @@ export const AuthPageLayout = ({children, title}: Props) => {
             {children}
           </Grid>
         </div>
+        <MessageBar/>
       </main>
     </>
   );

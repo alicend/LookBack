@@ -2,6 +2,7 @@ import Head from "next/head";
 import type { ReactNode } from 'react';
 import { Grid } from "@mui/material";
 import { MainPageHeader } from "./MainPageHeader";
+import { MessageBar } from "./MessageBar";
 
 type Props = {
   children: ReactNode;
@@ -21,6 +22,7 @@ export const MainPageLayout = ({children, title}: Props) => {
             {children}
           </Grid>
         </div>
+        <MessageBar/>
       </main>
     </>
   );

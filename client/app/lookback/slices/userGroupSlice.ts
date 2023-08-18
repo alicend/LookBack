@@ -51,9 +51,9 @@ export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", 
   }
 });
 
-export const fetchAsyncDeleteUserGroup = createAsyncThunk("user-groups/delete", async (_, thunkAPI) => {
+export const fetchAsyncDeleteUserGroup = createAsyncThunk("user-groups/delete", async (id: number, thunkAPI) => {
   try {
-    const res = await axios.delete(`${ENDPOINTS}`, COMMON_HTTP_HEADER);
+    const res = await axios.delete(`${ENDPOINTS}/${id}`, COMMON_HTTP_HEADER);
     return res.data.user;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -133,8 +133,8 @@ export const userGroupSlice = createSlice({
   }
 });
 
-export const selectUserGroup = (state: RootState) => state.userGroup.userGroups;
-export const selectUserGroupStatus    = (state: RootState) => state.userGroup.status;
-export const selectUserGroupMessage   = (state: RootState) => state.userGroup.message;
+export const selectUserGroup        = (state: RootState) => state.userGroup.userGroups;
+export const selectUserGroupStatus  = (state: RootState) => state.userGroup.status;
+export const selectUserGroupMessage = (state: RootState) => state.userGroup.message;
 
 export default userGroupSlice.reducer;

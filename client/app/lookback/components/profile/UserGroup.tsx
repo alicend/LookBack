@@ -80,13 +80,13 @@ const UserGroup: FC<Props> = React.memo(({ loginUserGroupID }) => {
     await dispatch(fetchAsyncUpdateLoginUserGroup(selectedUserGroup));
   }
 
-  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...userGroups].map((userGroup) => (
+  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...(Array.isArray(userGroups) ? userGroups : [])].map((userGroup) => (
     <MenuItem key={userGroup.ID} value={userGroup.ID} style={{ minHeight: '36px'}}>
       {userGroup.UserGroup}
     </MenuItem>
   ));
 
-  const matchingUserGroup = userGroups.find(userGroup => userGroup.ID === selectedUserGroup);
+  const matchingUserGroup = (userGroups?.find(userGroup => userGroup.ID === selectedUserGroup)) || null;
   
   return (
     <>

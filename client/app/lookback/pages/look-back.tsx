@@ -9,16 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchAsyncGetTaskBoardTasks,
-  selectStatus,
-  selectMessage,
-  selectTasks,
-  selectTask,
-  editTask,
-  initialState,
-  fetchAsyncGetLookBackTasks
-} from "@/slices/taskSlice";
+import { selectTasks, selectTask, fetchAsyncGetLookBackTasks } from "@/slices/taskSlice";
 
 import { AppDispatch } from "@/store/store";
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
@@ -50,11 +41,7 @@ const localizer = momentLocalizer(moment);
 export default function LookBack() {
 
   const dispatch: AppDispatch = useDispatch();
-  const status = useSelector(selectStatus);
-  const message = useSelector(selectMessage);
   const tasks = useSelector(selectTasks);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
 
@@ -70,13 +57,6 @@ export default function LookBack() {
     setModalOpen(false);
   };
 
-  const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
   const tasksToEvents = (tasks: READ_TASK[]) => {
     return tasks.map(task => ({
       start: new Date(task.StartDate),
@@ -87,15 +67,6 @@ export default function LookBack() {
   };
 
   const events = tasksToEvents(tasks);
-
-  useEffect(() => {
-    if (status === 'succeeded' || status === 'failed') {
-      setSnackbarMessage(message);
-      setSnackbarOpen(true);
-    } else if (status === 'loading') {
-      setSnackbarOpen(false);
-    }
-  }, [status]);
   
   useEffect(() => {
     const fetchBootLoader = async () => {
@@ -129,12 +100,6 @@ export default function LookBack() {
           modalStyle={modalStyle}
         />
       </ThemeProvider>
-      
-      <Snackbar open={snackbarOpen} autoHideDuration={6000}>
-        <Alert onClose={handleSnackbarClose} severity={status === 'failed' ? 'error' : 'success'}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </MainPageLayout>
   )
 }

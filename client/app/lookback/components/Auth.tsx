@@ -6,8 +6,8 @@ import { TextField, Button, Snackbar, Alert, InputLabel, Select, FormControl, Me
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister, selectMessage, selectStatus } from "@/slices/userSlice";
-import { selectUserGroup, selectUserGroupMessage, selectUserGroupStatus } from "@/slices/userGroupSlice";
+import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
+import { selectUserGroup } from "@/slices/userGroupSlice";
 
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -76,13 +76,6 @@ const loginCredentialSchema = z.object({
 const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const userGroups = useSelector(selectUserGroup);
-  const status = useSelector(selectStatus);
-  const message = useSelector(selectMessage);
-  const userGroupStatus = useSelector(selectUserGroupStatus);
-  const userGroupMessage = useSelector(selectUserGroupMessage);
-  const [severity, setSeverity] = useState<'success' | 'error'>('success');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
   const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
   const [credential, setCredential] = useState({ username: "", password: "", user_group: 0});
@@ -111,13 +104,6 @@ const Auth: React.FC = () => {
     const name = e.target.name;
     setCredential({ ...credential, [name]: value });
     setErrors({ ...errors, [name]: "" });
-  };
-
-  const handleSnackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbarOpen(false);
   };
   
   const login = async () => {
@@ -149,29 +135,7 @@ const Auth: React.FC = () => {
     await dispatch(fetchAsyncRegister(credential));
   }
 
-  useEffect(() => {
-    if (userGroupStatus === 'succeeded' || userGroupStatus === 'failed') {
-      setSeverity(userGroupStatus === 'failed' ? 'error' : 'success');
-      setSnackbarMessage(userGroupMessage);
-      setSnackbarOpen(true);
-    } else if (userGroupStatus === 'loading') {
-      setSnackbarOpen(false);
-    }
-
-  }, [userGroupStatus]);
-
-  useEffect(() => {
-    if (status === 'succeeded' || status === 'failed') {
-      setSeverity(status === 'failed' ? 'error' : 'success');
-      setSnackbarMessage(message);
-      setSnackbarOpen(true);
-    } else if (status === 'loading') {
-      setSnackbarOpen(false);
-    }
-
-  }, [status]);
-
-  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...userGroups].map((userGroup) => (
+  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...(Array.isArray(userGroups) ? userGroups : [])].map((userGroup) => (
     <MenuItem key={userGroup.ID} value={userGroup.ID} style={{ minHeight: '36px'}}>
       {userGroup.UserGroup}
     </MenuItem>
@@ -280,12 +244,6 @@ const Auth: React.FC = () => {
         open={newUserGroupOpen}
         onClose={handleNewUserGroupClose}
       />
-
-      <Snackbar open={snackbarOpen} autoHideDuration={6000}>
-        <Alert onClose={handleSnackbarClose} severity={severity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </>
   );
 };

@@ -184,8 +184,8 @@ export const userSlice = createSlice({
 });
 
 
-export const selectLoginUser = (state: RootState) => state.user.loginUser;
-export const selectStatus    = (state: RootState) => state.user.status;
-export const selectMessage   = (state: RootState) => state.user.message;
+export const selectLoginUser   = (state: RootState) => state.user.loginUser;
+export const selectUserStatus  = (state: RootState) => state.user.status;
+export const selectUserMessage = (state: RootState) => state.user.message;
 
 export default userSlice.reducer;

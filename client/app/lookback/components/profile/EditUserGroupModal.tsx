@@ -5,8 +5,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { AppDispatch } from '@/store/store';
 import { useDispatch } from 'react-redux';
-import { fetchAsyncDeleteCategory } from '@/slices/taskSlice';
 import { USER_GROUP } from '@/types/UserGroupType';
+import { fetchAsyncDeleteUserGroup } from '@/slices/userGroupSlice';
 
 function getModalStyle() {
   const top = 50;
@@ -73,7 +73,7 @@ const EditUserGroupModal: React.FC<NewUserGroupModalModalProps> = React.memo(({ 
   const handleConfirmClose = (shouldDelete: boolean) => {
     setConfirmOpen(false);
     if (shouldDelete) {
-      // dispatch(fetchAsyncDeleteCategory(editCategory.ID));
+      dispatch(fetchAsyncDeleteUserGroup(originalUserGroup.ID));
       onClose();
     }
   };

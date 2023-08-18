@@ -360,6 +360,6 @@ export const selectEditedTask   = (state: RootState) => state.task.editedTask;
 export const selectTasks        = (state: RootState) => state.task.tasks;
 export const selectUsers        = (state: RootState) => state.task.users;
 export const selectCategory     = (state: RootState) => state.task.category;
-export const selectStatus       = (state: RootState) => state.task.status;
-export const selectMessage      = (state: RootState) => state.task.message;
+export const selectTaskStatus   = (state: RootState) => state.task.status;
+export const selectTaskMessage  = (state: RootState) => state.task.message;
 export default taskSlice.reducer;

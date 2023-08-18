@@ -115,6 +115,7 @@ func (category *Category) DeleteCategoryAndRelatedTasks(db *gorm.DB, id int) err
 			return deleteTaskResult.Error
 		}
 	}
+	log.Printf("関連するタスクの削除に成功")
 
 	// カテゴリを削除
 	deleteCategoryResult := db.Unscoped().Delete(category, id)
@@ -123,6 +124,11 @@ func (category *Category) DeleteCategoryAndRelatedTasks(db *gorm.DB, id int) err
 		log.Printf("Error deleting category: %v\n", deleteCategoryResult.Error)
 		tx.Rollback()
 		return deleteCategoryResult.Error
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("Error committing transaction: %v\n", err)
+		return err
 	}
 
 	log.Printf("カテゴリーの削除に成功")

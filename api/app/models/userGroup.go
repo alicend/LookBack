@@ -85,8 +85,8 @@ func FetchUserGroupIDByUserID(db *gorm.DB, userID uint) (uint, error) {
 	return userGroup.ID, nil
 }
 
-func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, id int) error {
-	result := db.Model(userGroup).Where("id = ?", id).Updates(UserGroup{
+func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, userGroupID int) error {
+	result := db.Model(userGroup).Where("id = ?", userGroupID).Updates(UserGroup{
 		UserGroup: userGroup.UserGroup,
 	})
 
@@ -99,7 +99,7 @@ func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, id int) error {
 	return nil
 }
 
-func (userGroup *UserGroup) DeleteUserGroupAndRelatedUsers(db *gorm.DB, id int) error {
+func (userGroup *UserGroup) DeleteUserGroupAndRelatedUsers(db *gorm.DB, userGroupID int) error {
 
 	// トランザクションの開始
 	tx := db.Begin()
@@ -108,36 +108,47 @@ func (userGroup *UserGroup) DeleteUserGroupAndRelatedUsers(db *gorm.DB, id int) 
 		return tx.Error
 	}
 
-	// // 削除するカテゴリに関連するタスクを検索
-	// var relatedTasks []Task
-	// searchTaskResult := db.Where("category_id = ?", id).Find(&relatedTasks)
+	// 関連するユーザーの取得
+	var users []User
+	if err := tx.Where("user_group_id = ?", userGroupID).Find(&users).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 
-	// if searchTaskResult.Error != nil {
-	// 	log.Printf("Error finding related tasks: %v\n", searchTaskResult.Error)
-	// 	tx.Rollback()
-	// 	return searchTaskResult.Error
-	// }
+	// 関連するユーザーに紐づくタスクの削除
+	for _, user := range users {
+		if err := tx.Unscoped().Where("creator = ? OR responsible = ?", user.ID, user.ID).Delete(&Task{}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+		log.Printf("関連するタスクの削除に成功: ユーザーID %d", user.ID)
+	}
 
-	// // 削除するカテゴリに関連するタスクを削除
-	// for _, task := range relatedTasks {
-	// 	deleteTaskResult := db.Unscoped().Delete(&task)
-	// 	if deleteTaskResult.Error != nil {
-	// 		log.Printf("Error deleting task: %v\n", deleteTaskResult.Error)
-	// 		tx.Rollback()
-	// 		return deleteTaskResult.Error
-	// 	}
-	// }
+	// 関連するユーザーの削除
+	if err := tx.Unscoped().Where("user_group_id = ?", userGroupID).Delete(&User{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	log.Printf("関連するユーザーの削除に成功")
 
-	// // カテゴリを削除
-	// deleteCategoryResult := db.Unscoped().Delete(category, id)
+	// 関連するカテゴリの削除
+	if err := tx.Unscoped().Where("user_group_id = ?", userGroupID).Delete(&Category{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	log.Printf("関連するカテゴリの削除に成功")
 
-	// if deleteCategoryResult.Error != nil {
-	// 	log.Printf("Error deleting category: %v\n", deleteCategoryResult.Error)
-	// 	tx.Rollback()
-	// 	return deleteCategoryResult.Error
-	// }
+	// ユーザーグループの削除
+	if err := tx.Unscoped().Delete(&UserGroup{}, userGroupID).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 
-	// log.Printf("カテゴリーの削除に成功")
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("Error committing transaction: %v\n", err)
+		return err
+	}
+	log.Printf("ユーザーグループの削除に成功")
 
 	return nil
 }

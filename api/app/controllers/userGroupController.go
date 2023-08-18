@@ -110,44 +110,22 @@ func (handler *Handler) UpdateUserGroupHandler(c *gin.Context) {
 
 func (handler *Handler) DeleteUserGroupHandler(c *gin.Context) {
 
-	// URLからtaskのidを取得
-	taskID, err := getIdFromURLTail(c)
+	// URLからuser-groupのidを取得
+	userGroupID, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
 	}
 
-	deleteCategory := &models.Category{}
+	deleteUserGroup := &models.UserGroup{}
 
-	err = deleteCategory.DeleteCategoryAndRelatedTasks(handler.DB, taskID)
+	err = deleteUserGroup.DeleteUserGroupAndRelatedUsers(handler.DB, userGroupID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// Cookie内のjwtからUSER_IDを取得
-	userID, err := extractUserID(c)
-	if err != nil {
-		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
-		return
-	}
-
-	categories, err := models.FetchCategory(handler.DB, userID)
-	if err != nil {
-		respondWithError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	tasks, err := models.FetchTaskBoardTasks(handler.DB, userID)
-	if err != nil {
-		respondWithError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"categories" : categories,  // categoriesをレスポンスとして返す
-		"tasks"      : tasks,       // tasksをレスポンスとして返す
-	})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // ==================================================================
