@@ -164,7 +164,7 @@ func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
 	
 	// 既存のユーザーと重複がないか確認
 	if err := db.Where("name = ? AND user_group_id = ?", user.Name, existingUser.UserGroupID).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
-		log.Printf("User with name %s already exists in user group %d", user.Name, user.UserGroupID)
+		log.Printf("User with name %s already exists in user group %d", user.Name, existingUser.UserGroupID)
 		return fmt.Errorf("選択したユーザーグループに入力したユーザー名は登録済みです")
 	}
 
