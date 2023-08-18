@@ -39,6 +39,13 @@ func (category *Category) CreateCategory(db *gorm.DB) error {
 		return migrateErr
 	}
 
+	// 既存のカテゴリと重複がないか確認
+	var existingCategory Category
+	if err := db.Where("category = ? AND user_group_id = ?", category.Category, category.UserGroupID).First(&existingCategory).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("Category with name %s already exists in user group %d", category.Category, category.UserGroupID)
+		return fmt.Errorf("入力したカテゴリ名は登録済みです")
+	}
+
 	result := db.Create(category)
 
 	if result.Error != nil {
@@ -73,8 +80,23 @@ func FetchCategory(db *gorm.DB, userID uint) ([]CategoryResponse, error) {
 	return categories, nil
 }
 
-func (category *Category) UpdateCategory(db *gorm.DB, id int) error {
-	result := db.Model(category).Where("id = ?", id).Updates(Category{
+func (category *Category) UpdateCategory(db *gorm.DB, categoryID int) error {
+
+	// 既存のユーザー情報を取得
+	var existingCategory Category
+	if err := db.Where("id = ?", categoryID).First(&existingCategory).Error; err != nil {
+		log.Printf("Error fetching user with ID %d: %v\n", categoryID, err)
+		return fmt.Errorf("カテゴリーが見つかりません")
+	}
+
+	// 既存のカテゴリと重複がないか確認（更新対象でないカテゴリのみを確認）
+	var duplicateCategory Category
+	if err := db.Where("category = ? AND user_group_id = ? AND id <> ?", category.Category, existingCategory.UserGroupID, categoryID).First(&duplicateCategory).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("Category with name %s already exists in user group %d", category.Category, existingCategory.UserGroupID)
+		return fmt.Errorf("入力したカテゴリー名は登録済みです")
+	}
+
+	result := db.Model(category).Where("id = ?", categoryID).Updates(Category{
 		Category: category.Category,
 	})
 
@@ -82,7 +104,7 @@ func (category *Category) UpdateCategory(db *gorm.DB, id int) error {
 		log.Printf("Error updating category: %v\n", result.Error)
 		return result.Error
 	}
-	log.Printf("カテゴリの更新に成功")
+	log.Printf("カテゴリーの更新に成功")
 
 	return nil
 }
