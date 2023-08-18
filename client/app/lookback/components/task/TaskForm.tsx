@@ -133,6 +133,12 @@ const TaskForm: React.FC = () => {
     const name = e.target.name;
     if (name === "Estimate") {
       value = Number(value);
+      // 範囲外の値を修正
+      if (value < 1) {
+        value = 1;
+      } else if (value > 1000) {
+        value = 1000;
+      }
     }
     dispatch(editTask({ ...editedTask, [name]: value }));
   };
@@ -180,6 +186,7 @@ const TaskForm: React.FC = () => {
           InputProps={{ inputProps: { min: 1, max: 1000 } }}
           InputLabelProps={{
             shrink: true,
+            inputMode: "numeric",
           }}
           value={editedTask.Estimate}
           onChange={handleInputChange}
