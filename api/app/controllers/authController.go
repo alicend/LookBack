@@ -23,16 +23,6 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 		return
 	}
 
-	// ユーザ名が既に使用されていないか確認
-	_, err := models.FindUserByName(handler.DB, signUpInput.Name)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			respondWithError(c, http.StatusBadRequest, err.Error())
-			return
-	} else if err == nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別の名前を入力してください")
-		return
-	}
-
 	newUser := &models.User{
 		Name:        signUpInput.Name,
 		Password:    signUpInput.Password,
@@ -41,7 +31,7 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 
 	user, err := newUser.CreateUser(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Failed to create user")
+		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 

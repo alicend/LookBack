@@ -70,6 +70,13 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 		return nil, migrateErr
 	}
 
+	// 既存のユーザーと重複がないか確認
+	var existingUser User
+	if err := db.Where("name = ? AND user_group_id = ?", user.Name, user.UserGroupID).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("User with name %s already exists in user group %d", user.Name, user.UserGroupID)
+		return nil, fmt.Errorf("選択したユーザーグループに入力したユーザー名は登録済みです")
+	}
+
 	user = &User{
 		Name:        user.Name,
 		Password:    encrypt(user.Password),
@@ -148,6 +155,19 @@ func FindUsersAll(db *gorm.DB, userID uint) ([]UserResponse, error) {
 }
 
 func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
+	// 既存のユーザー情報を取得
+	var existingUser User
+	if err := db.Where("id = ?", userID).First(&existingUser).Error; err != nil {
+		log.Printf("Error fetching user with ID %d: %v\n", userID, err)
+		return fmt.Errorf("ユーザーが見つかりません")
+	}
+	
+	// 既存のユーザーと重複がないか確認
+	if err := db.Where("name = ? AND user_group_id = ?", user.Name, existingUser.UserGroupID).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("User with name %s already exists in user group %d", user.Name, user.UserGroupID)
+		return fmt.Errorf("選択したユーザーグループに入力したユーザー名は登録済みです")
+	}
+
 	result := db.Model(user).Where("id = ?", userID).Updates(User{
 		Name: user.Name,
 	})
