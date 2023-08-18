@@ -56,55 +56,40 @@ func (handler *Handler) GetUserGroupsHandler(c *gin.Context) {
 }
 
 func (handler *Handler) UpdateUserGroupHandler(c *gin.Context) {
-	var updateCategoryInput models.CategoryInput
-	if err := c.ShouldBindJSON(&updateCategoryInput); err != nil {
+	var updateUserGroupInput models.UserGroupInput
+	if err := c.ShouldBindJSON(&updateUserGroupInput); err != nil {
 		log.Printf("Invalid request body: %v", err)
 		log.Printf("リクエスト内容が正しくありません")
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	
-	updateCategory := &models.Category{
-		Category: updateCategoryInput.Category,
+	updateUserGroup := &models.UserGroup{
+		UserGroup: updateUserGroupInput.UserGroup,
 	}
 	
-	// URLからtaskのidを取得
-	taskID, err := getIdFromURLTail(c)
+	// URLからuserGroupのidを取得
+	userGroupID, err := getIdFromURLTail(c)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, err.Error(), "IDのフォーマットが不正です")
 		return
 	}
 
-	err = updateCategory.UpdateCategory(handler.DB, taskID)
+	err = updateUserGroup.UpdateUserGroup(handler.DB, userGroupID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// Cookie内のjwtからUSER_IDを取得
-	userID, err := extractUserID(c)
+	user_groups, err := models.FetchUserGroups(handler.DB)
 	if err != nil {
-		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
-		return
-	}
-	
-	categories, err := models.FetchCategory(handler.DB, userID)
-	if err != nil {
-		log.Printf("Failed to fetch categories: %v", err)
-		log.Printf("カテゴリーの取得に失敗しました")
-		respondWithError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	tasks, err := models.FetchTaskBoardTasks(handler.DB, userID)
-	if err != nil {
+		log.Printf("ユーザーグループの取得に失敗しました")
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"categories" : categories,  // categoriesをレスポンスとして返す
-		"tasks"      : tasks,       // tasksをレスポンスとして返す
+		"user_groups" : user_groups,  // user_groups
 	})
 }
 

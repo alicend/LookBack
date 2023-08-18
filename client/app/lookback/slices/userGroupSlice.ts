@@ -42,10 +42,10 @@ export const fetchAsyncGetUserGroups = createAsyncThunk("user-groups/get", async
   }
 });
 
-export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", async (_, thunkAPI) => {
+export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", async ({ id, userGroup }: {id: number, userGroup: string}, thunkAPI) => {
   try {
-    const res = await axios.put(`${ENDPOINTS}`, COMMON_HTTP_HEADER);
-    return res.data.user;
+    const res = await axios.put(`${ENDPOINTS}/${id}`, {userGroup: userGroup}, COMMON_HTTP_HEADER);
+    return res.data.user_groups;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
   }
@@ -54,7 +54,7 @@ export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", 
 export const fetchAsyncDeleteUserGroup = createAsyncThunk("user-groups/delete", async (id: number, thunkAPI) => {
   try {
     const res = await axios.delete(`${ENDPOINTS}/${id}`, COMMON_HTTP_HEADER);
-    return res.data.user;
+    return res.data;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
   }
