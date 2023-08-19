@@ -12,7 +12,8 @@ import NewUserGroupModal from '../NewUserGroupModal';
 import EditUserGroupModal from './EditUserGroupModal';
 
 const Adjust = styled('div')`
-  height: 22px;
+  width: 1px;
+  height: 79px;
 `;
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({

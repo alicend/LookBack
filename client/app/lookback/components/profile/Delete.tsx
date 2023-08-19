@@ -8,7 +8,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from '@/store/store';
 
 const Adjust = styled('div')`
-  height: 78px;
+  width: 1px;
+  height: 128px;
 `;
 
 const DeleteButton = styled(Button)(({ theme }) => ({
@@ -52,7 +53,7 @@ const Delete: React.FC<Props> = React.memo(({ loginUserName }) => {
         DELETE
       </DeleteButton>
 
-      <Adjust/>
+      <Adjust className='aaaa'/>
       <br/>
 
       <Dialog open={confirmOpen} onClose={() => handleConfirmClose(false)}>
