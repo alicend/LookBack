@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Snackbar, Alert } from '@mui/material';
 import { Grid } from "@mui/material";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -21,14 +19,6 @@ import TaskDisplay from "@/components/task/TaskDisplay";
 
 import { AppDispatch } from "@/store/store";
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
-
-const theme = createTheme({
-  palette: {
-    secondary: {
-      main: "#3cb371",
-    },
-  },
-});
 
 export default function TaskBoard() {
 
@@ -51,23 +41,21 @@ export default function TaskBoard() {
 
   return (
     <MainPageLayout title="Task Board">
-      <ThemeProvider theme={theme}>
-        <Grid item xs={6}>
-          <TaskList />
-        </Grid>
-        <Grid item xs={6}>
-          <Grid
-            container
-            direction="column"
-            alignItems="center"
-            style={{ minHeight: "80vh" }}
-          >
-            <Grid item>
-              {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
-            </Grid>
+      <Grid item xs={6}>
+        <TaskList />
+      </Grid>
+      <Grid item xs={6}>
+        <Grid
+          container
+          direction="column"
+          alignItems="center"
+          style={{ minHeight: "80vh" }}
+        >
+          <Grid item>
+            {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
           </Grid>
         </Grid>
-      </ThemeProvider>
+      </Grid>
     </MainPageLayout>
   )
 }

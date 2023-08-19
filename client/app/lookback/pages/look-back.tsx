@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Snackbar, Alert} from '@mui/material';
 import { Grid } from "@mui/material";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -27,14 +25,6 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`,
   };
 }
-
-const theme = createTheme({
-  palette: {
-    secondary: {
-      main: "#3cb371",
-    },
-  },
-});
 
 const localizer = momentLocalizer(moment);
 
@@ -77,29 +67,27 @@ export default function LookBack() {
 
   return (
     <MainPageLayout title="Look Back">
-      <ThemeProvider theme={theme}>
-        <Grid item xs={12} style={{ minHeight: '800px' }}>
-          <Calendar
-            localizer={localizer}
-            showAllEvents={true}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            titleAccessor="title"
-            tooltipAccessor="desc"
-            views={['month']}
-            components={{
-              toolbar: CustomToolbar
-            }}
-            onSelectEvent={handleModalOpen}
-          />
-        </Grid>
-        <CalenderModal 
-          open={modalOpen}
-          onClose={handleModalClose}
-          modalStyle={modalStyle}
+      <Grid item xs={12} style={{ minHeight: '800px' }}>
+        <Calendar
+          localizer={localizer}
+          showAllEvents={true}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          titleAccessor="title"
+          tooltipAccessor="desc"
+          views={['month']}
+          components={{
+            toolbar: CustomToolbar
+          }}
+          onSelectEvent={handleModalOpen}
         />
-      </ThemeProvider>
+      </Grid>
+      <CalenderModal 
+        open={modalOpen}
+        onClose={handleModalClose}
+        modalStyle={modalStyle}
+      />
     </MainPageLayout>
   )
 }
