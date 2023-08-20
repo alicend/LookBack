@@ -14,7 +14,8 @@ import AddIcon from "@mui/icons-material/Add";
 import NewUserGroupModal from "./NewUserGroupModal";
 
 const Adjust = styled('div')`
-  height: 88px;
+  width: 1px;
+  height: 80px;
 `;
 
 const StyledButton = styled(Button)(({ theme }) => ({
