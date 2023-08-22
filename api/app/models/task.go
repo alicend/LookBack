@@ -60,7 +60,7 @@ func (task *Task) MigrateTasks(db *gorm.DB) error {
 	// 自動マイグレーション(Tasksテーブルを作成)
 	migrateErr := db.AutoMigrate(&Task{})
 	if migrateErr != nil {
-		log.Printf("failed to migrate database: %v", err)
+		log.Printf("failed to migrate database: %v", migrateErr)
 		return migrateErr
 	}
 

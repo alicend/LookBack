@@ -65,7 +65,7 @@ func (user *User) MigrateUser(db *gorm.DB) error {
 	// 自動マイグレーション(Userテーブルを作成)
 	migrateErr := db.AutoMigrate(&User{})
 	if migrateErr != nil {
-		log.Printf("failed to migrate database: %v", err)
+		log.Printf("failed to migrate database: %v", migrateErr)
 		return migrateErr
 	}
 

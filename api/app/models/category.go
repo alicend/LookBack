@@ -35,7 +35,7 @@ func (category *Category) MigrateCategory(db *gorm.DB) error {
 	// 自動マイグレーション(Categoryテーブルを作成)
 	migrateErr := db.AutoMigrate(&Category{})
 	if migrateErr != nil {
-		log.Printf("failed to migrate database: %v", err)
+		log.Printf("failed to migrate database: %v", migrateErr)
 		return migrateErr
 	}
 
