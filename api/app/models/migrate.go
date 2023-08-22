@@ -1,27 +1,26 @@
-package config
+package models
 
 import (
 	"gorm.io/gorm"
-	"github.com/alicend/LookBack/app/models"
 )
 
 func Migrate(db *gorm.DB) error {
-	category := &models.Category{}
+	category := &Category{}
 	if err := category.MigrateCategory(db); err != nil {
 		return err
 	}
 
-	task := &models.Task{}
+	task := &Task{}
 	if err := task.MigrateTasks(db); err != nil {
 		return err
 	}
 
-	user := &models.User{}
+	user := &User{}
 	if err := user.MigrateUser(db); err != nil {
 		return err
 	}
 
-	userGroup := &models.UserGroup{}
+	userGroup := &UserGroup{}
 	if err := userGroup.MigrateUserGroup(db); err != nil {
 		return err
 	}

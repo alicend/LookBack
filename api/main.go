@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"github.com/alicend/LookBack/app/config"
+	"github.com/alicend/LookBack/app/models"
 	"github.com/alicend/LookBack/app/router"
 )
 
@@ -17,7 +18,7 @@ func main() {
 	}
 
 	// マイグレーションの実行
-	config.Migrate(db)
+	models.Migrate(db)
 
 	// ルーティング
 	r := router.SetupRouter(db)
