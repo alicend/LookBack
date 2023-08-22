@@ -37,7 +37,7 @@ func (userGroup *UserGroup) MigrateUserGroup(db *gorm.DB) error {
 	// 自動マイグレーション(UserGroupテーブルを作成)
 	migrateErr := db.AutoMigrate(&UserGroup{})
 	if migrateErr != nil {
-		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
+		log.Printf("failed to migrate database: %v", err)
 		return migrateErr
 	}
 
