@@ -7,8 +7,6 @@ import (
 )
 
 func main() {
-	// database.DBMigrate(DBConnect())
-
 	// DB接続
 	db, err := config.DBConnect()
 	if err != nil {
@@ -17,6 +15,9 @@ func main() {
 	} else {
 		log.Printf("データベースに接続しました: %v", db)
 	}
+
+	// マイグレーションの実行
+	config.Migrate(db)
 
 	// ルーティング
 	r := router.SetupRouter(db)

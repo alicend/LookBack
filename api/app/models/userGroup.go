@@ -33,7 +33,7 @@ func (UserGroupResponse) TableName() string {
 	return "user_groups"
 }
 
-func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
+func (userGroup *UserGroup) MigrateUserGroup(db *gorm.DB) error {
 	// 自動マイグレーション(UserGroupテーブルを作成)
 	migrateErr := db.AutoMigrate(&UserGroup{})
 	if migrateErr != nil {
@@ -41,10 +41,14 @@ func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
 		return migrateErr
 	}
 
+	return nil
+}
+
+func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
 	// 既存のユーザーグループと重複がないか確認
 	var existingUserGroup UserGroup
 	if err := db.Where("name = ?", userGroup).First(&existingUserGroup).Error; err != gorm.ErrRecordNotFound {
-		log.Printf("UserGroup already exists: %s\n", userGroup)
+		log.Printf("UserGroup already exists: %s\n", userGroup.UserGroup)
 		return fmt.Errorf("そのユーザーグループは登録済みです")
 	}
 
@@ -97,10 +101,10 @@ func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, userGroupID int) error 
 	// 既存のユーザーグループと重複がないか確認
 	var existingUserGroup UserGroup
 	if err := db.Where("name = ?", userGroup).First(&existingUserGroup).Error; err != gorm.ErrRecordNotFound {
-		log.Printf("UserGroup already exists: %s\n", userGroup)
+		log.Printf("UserGroup already exists: %s\n", userGroup.UserGroup)
 		return fmt.Errorf("そのユーザーグループは登録済みです")
 	}
-	
+
 	result := db.Model(userGroup).Where("id = ?", userGroupID).Updates(UserGroup{
 		UserGroup: userGroup.UserGroup,
 	})

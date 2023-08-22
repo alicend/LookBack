@@ -31,7 +31,7 @@ func (CategoryResponse) TableName() string {
 	return "categories"
 }
 
-func (category *Category) CreateCategory(db *gorm.DB) error {
+func (category *Category) MigrateCategory(db *gorm.DB) error {
 	// 自動マイグレーション(Categoryテーブルを作成)
 	migrateErr := db.AutoMigrate(&Category{})
 	if migrateErr != nil {
@@ -39,6 +39,10 @@ func (category *Category) CreateCategory(db *gorm.DB) error {
 		return migrateErr
 	}
 
+	return nil
+}
+
+func (category *Category) CreateCategory(db *gorm.DB) error {
 	// 既存のカテゴリと重複がないか確認
 	var existingCategory Category
 	if err := db.Where("category = ? AND user_group_id = ?", category.Category, category.UserGroupID).First(&existingCategory).Error; err != gorm.ErrRecordNotFound {

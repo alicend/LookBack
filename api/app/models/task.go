@@ -56,14 +56,18 @@ func (TaskResponse) TableName() string {
 	return "tasks"
 }
 
-func (task *Task) CreateTask(db *gorm.DB) (error) {
-	// 自動マイグレーション(Userテーブルを作成)
+func (task *Task) MigrateTasks(db *gorm.DB) error {
+	// 自動マイグレーション(Tasksテーブルを作成)
 	migrateErr := db.AutoMigrate(&Task{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
 		return migrateErr
 	}
 
+	return nil
+}
+
+func (task *Task) CreateTask(db *gorm.DB) (error) {
 	result := db.Create(task)
 
 	if result.Error != nil {

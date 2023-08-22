@@ -61,15 +61,18 @@ func (CurrentUserResponse) TableName() string {
 	return "users"
 }
 
-func (user *User) CreateUser(db *gorm.DB) (*User, error) {
-
+func (user *User) MigrateUser(db *gorm.DB) error {
 	// 自動マイグレーション(Userテーブルを作成)
 	migrateErr := db.AutoMigrate(&User{})
 	if migrateErr != nil {
 		panic(fmt.Sprintf("failed to migrate database: %v", migrateErr))
-		return nil, migrateErr
+		return migrateErr
 	}
 
+	return nil
+}
+
+func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	// 既存のユーザーと重複がないか確認
 	var existingUser User
 	if err := db.Where("name = ? AND user_group_id = ?", user.Name, user.UserGroupID).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
