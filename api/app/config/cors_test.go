@@ -1,42 +1,39 @@
-package config_test
+package config
 
 import (
-	"testing"
 	"net/http"
 	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/cors"
-	"github.com/alicend/LookBack/app/config" 
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCorsSetting(t *testing.T) {
 	r := gin.Default()
-	config.CorsSetting(r)
+	CorsSetting(r)
 
-	// テスト用のHTTPリクエストを作成
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatalf("Failed to make a request: %v", err)
-	}
+	// ダミーのハンドラーを追加して200 OKを返す
+	r.OPTIONS("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
 
-	// テスト用のHTTPレスポンスを記録
-	w := httptest.NewRecorder()
+	// CORSヘッダーをチェックするためのテストリクエストを作成します。
+	req, err := http.NewRequest("OPTIONS", "/", nil)
+	assert.NoError(t, err)
+	req.Header.Set("Origin", "http://localhost:3000")
+	rec := httptest.NewRecorder()
 
-	// リクエストを処理
-	r.ServeHTTP(w, req)
+	// テストリクエストをCORSミドルウェアを通して実行
+	r.ServeHTTP(rec, req)
 
-	// CORSヘッダーを確認
-	resp := w.Result()
-	if resp.Header.Get("Access-Control-Allow-Origin") != "http://localhost:3000" {
-		t.Errorf("Unexpected Access-Control-Allow-Origin header: %s", resp.Header.Get("Access-Control-Allow-Origin"))
-	}
-	if resp.Header.Get("Access-Control-Allow-Methods") != "POST, GET, PUT, DELETE, OPTIONS" {
-		t.Errorf("Unexpected Access-Control-Allow-Methods header: %s", resp.Header.Get("Access-Control-Allow-Methods"))
-	}
-	if resp.Header.Get("Access-Control-Allow-Headers") != "Access-Control-Allow-Credentials, Access-Control-Allow-Headers, Content-Type, Content-Length, Accept-Encoding, Authorization" {
-		t.Errorf("Unexpected Access-Control-Allow-Headers header: %s", resp.Header.Get("Access-Control-Allow-Headers"))
-	}
-	if resp.Header.Get("Access-Control-Allow-Credentials") != "true" {
-		t.Errorf("Unexpected Access-Control-Allow-Credentials header: %s", resp.Header.Get("Access-Control-Allow-Credentials"))
-	}
+	// レスポンスのCORSヘッダーをチェック
+	assert.Equal(t, "http://localhost:3000", rec.Header().Get("Access-Control-Allow-Origin"))
+	assert.Equal(t, "POST,GET,PUT,DELETE,OPTIONS", rec.Header().Get("Access-Control-Allow-Methods"))
+	assert.Equal(t, "Access-Control-Allow-Credentials,Access-Control-Allow-Headers,Content-Type,Content-Length,Accept-Encoding,Authorization", rec.Header().Get("Access-Control-Allow-Headers"))
+	assert.Equal(t, "true", rec.Header().Get("Access-Control-Allow-Credentials"))
+	assert.Equal(t, "86400", rec.Header().Get("Access-Control-Max-Age"))
+
+	// HTTPステータスコードをチェック
+	assert.Equal(t, http.StatusNoContent, rec.Code)
 }
