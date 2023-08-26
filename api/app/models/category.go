@@ -122,6 +122,13 @@ func (category *Category) DeleteCategoryAndRelatedTasks(db *gorm.DB, id int) err
 		return tx.Error
 	}
 
+	// 対象のカテゴリが存在するか確認
+	if err := tx.First(category, id).Error; err != nil {
+		log.Printf("Error fetching category with ID %d: %v\n", id, err)
+		tx.Rollback()
+		return fmt.Errorf("カテゴリーが見つかりません")
+	}
+
 	// 削除するカテゴリに関連するタスクを検索
 	var relatedTasks []Task
 	searchTaskResult := db.Where("category_id = ?", id).Find(&relatedTasks)

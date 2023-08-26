@@ -45,12 +45,6 @@ func (userGroup *UserGroup) MigrateUserGroup(db *gorm.DB) error {
 }
 
 func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
-	// 既存のユーザーグループと重複がないか確認
-	var existingUserGroup UserGroup
-	if err := db.Where("name = ?", userGroup).First(&existingUserGroup).Error; err != gorm.ErrRecordNotFound {
-		log.Printf("UserGroup already exists: %s\n", userGroup.UserGroup)
-		return fmt.Errorf("そのユーザーグループは登録済みです")
-	}
 
 	result := db.Create(userGroup)
 
@@ -98,11 +92,11 @@ func FetchUserGroupIDByUserID(db *gorm.DB, userID uint) (uint, error) {
 
 func (userGroup *UserGroup) UpdateUserGroup(db *gorm.DB, userGroupID int) error {
 
-	// 既存のユーザーグループと重複がないか確認
-	var existingUserGroup UserGroup
-	if err := db.Where("name = ?", userGroup).First(&existingUserGroup).Error; err != gorm.ErrRecordNotFound {
-		log.Printf("UserGroup already exists: %s\n", userGroup.UserGroup)
-		return fmt.Errorf("そのユーザーグループは登録済みです")
+	// 更新対象のユーザーグループが存在するか確認
+	var checkUserGroup UserGroup
+	if err := db.Where("id = ?", userGroupID).First(&checkUserGroup).Error; err != nil {
+		log.Printf("UserGroup with ID %d does not exist: %v\n", userGroupID, err)
+		return fmt.Errorf("指定されたユーザーグループは存在しません")
 	}
 
 	result := db.Model(userGroup).Where("id = ?", userGroupID).Updates(UserGroup{
@@ -125,6 +119,13 @@ func (userGroup *UserGroup) DeleteUserGroupAndRelatedUsers(db *gorm.DB, userGrou
 
 	if tx.Error != nil {
 		return tx.Error
+	}
+
+	// 削除対象のユーザーグループが存在するか確認
+	var checkUserGroup UserGroup
+	if err := db.Where("id = ?", userGroupID).First(&checkUserGroup).Error; err != nil {
+		log.Printf("UserGroup with ID %d does not exist: %v\n", userGroupID, err)
+		return fmt.Errorf("指定されたユーザーグループは存在しません")
 	}
 
 	// 関連するユーザーの取得
