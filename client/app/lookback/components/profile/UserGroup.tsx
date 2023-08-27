@@ -4,7 +4,7 @@ import { Button, Fab, Grid, TextField } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
 import { AppDispatch } from '@/store/store';
-import { fetchAsyncUpdateUserGroup } from '@/slices/userGroupSlice';
+import { fetchAsyncUpdateUserGroup } from '@/slices/userSlice';
 import { USER_GROUP } from '@/types/UserGroupType';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -57,6 +57,9 @@ const UserGroup: FC<Props> = React.memo(({ userGroup }) => {
         name="current_user_group"
         value={userGroup.UserGroup}
         disabled={true}
+        inputProps={{
+          style: { overflow: 'auto' }
+        }}
       />
       <br />
       <StyledTextField
