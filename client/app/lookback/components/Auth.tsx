@@ -42,18 +42,20 @@ const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(va
 const pattern = /^[\u0021-\u007e]+$/u; // 半角英数字記号のみ
 
 const registerCredentialSchema = z.object({
-  username: z.string(),
-  password: z.string()
-    .min(8, "パスワードは８文字以上にしてください")
-    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
-    email: z.string()
+  email: z.string()
     .email("無効なメールアドレスです")
     .regex(pattern, "無効なメールアドレスです"),
+    password: z.string()
+    .min(8, "パスワードは８文字以上にしてください")
+    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
+  username: z.string(),
   user_group: z.string()
 });
 
 const loginCredentialSchema = z.object({
-  username: z.string(),
+  email: z.string()
+    .email("無効なメールアドレスです")
+    .regex(pattern, "無効なメールアドレスです"),
   password: z.string()
     .min(8, "パスワードは８文字以上にしてください")
     .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
@@ -66,7 +68,7 @@ const Auth: React.FC = () => {
   const [errors, setErrors] = useState({ username: "", password: "", email: "", user_group: "" });
 
   const isDisabled = isLoginView
-  ? (credential.username.length === 0 || credential.password.length === 0)
+  ? (credential.email.length === 0 || credential.password.length === 0)
   : (credential.username.length === 0 || credential.password.length === 0 || credential.email.length === 0 || credential.user_group.length === 0);
 
   const toggleLoginView = () => {
@@ -85,9 +87,9 @@ const Auth: React.FC = () => {
     // 入力チェック
     const result = loginCredentialSchema.safeParse(credential);
     if (!result.success) {
-      const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
+      const emailError    = result.error.formErrors.fieldErrors["email"]?.[0] || "";
       const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      setErrors({ username: usernameError, password: passwordError, email: "", user_group: "" });
+      setErrors({ email: emailError, password: passwordError, username: "", user_group: "" });
       return;
     }
 
@@ -129,16 +131,13 @@ const Auth: React.FC = () => {
             InputLabelProps={{
               shrink: true,
             }}
-            label="Username"
-            type="text"
-            name="username"
-            value={credential.username}
+            label="Email"
+            type="email"
+            name="email"
+            value={credential.email}
             onChange={handleInputChange}
-            error={Boolean(errors.username)}
-            helperText={errors.username}
-            inputProps={{
-              maxLength: 30
-            }}
+            error={Boolean(errors.email)}
+            helperText={errors.email}
           />
         </Grid>
         <br />
@@ -159,19 +158,22 @@ const Auth: React.FC = () => {
 
         {!isLoginView && 
           <>
-          <br />
+            <br/>
             <Grid item>
               <StyledTextField
                 InputLabelProps={{
                   shrink: true,
                 }}
-                label="Email"
-                type="email"
-                name="email"
-                value={credential.email}
+                label="Username"
+                type="text"
+                name="username"
+                value={credential.username}
                 onChange={handleInputChange}
-                error={Boolean(errors.email)}
-                helperText={errors.email}
+                error={Boolean(errors.username)}
+                helperText={errors.username}
+                inputProps={{
+                  maxLength: 30
+                }}
               />
             </Grid>
             <br />

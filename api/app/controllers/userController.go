@@ -70,20 +70,26 @@ func (handler *Handler) UpdateCurrentUsernameHandler(c *gin.Context) {
 		return
 	}
 
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	user, err := models.FindUserByIDWithoutPassword(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	// ユーザ名が既に使用されていないか確認
-	_, err := models.FindUserByName(handler.DB, usernameUpdateInput.NewName)
+	_, err = models.FindUserByNameAndUserGroup(handler.DB, usernameUpdateInput.NewName, user.UserGroupID)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			respondWithError(c, http.StatusBadRequest, err.Error())
 			return
 	} else if err == nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別の名前を入力してください")
-		return
-	}
-
-	// Cookie内のjwtからUSER_IDを取得
-	userID, err := extractUserID(c)
-	if err != nil {
-		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
 		return
 	}
 

@@ -62,7 +62,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	}
 
 	// ユーザを取得
-	user, err := models.FindUserByName(handler.DB, loginInput.Name)
+	user, err := models.FindUserByEmail(handler.DB, loginInput.Email)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
     respondWithErrAndMsg(c, http.StatusNotFound, err.Error(), "存在しないユーザです")
     return

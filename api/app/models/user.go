@@ -18,8 +18,8 @@ type User struct {
 }
 
 type UserLoginInput struct {
-	Name        string `json:"username" binding:"required,min=1,max=30"`
-	Password    string `json:"password" binding:"required,min=8,max=255"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8,max=255"`
 }
 
 type UserSignUpInput struct {
@@ -86,6 +86,7 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 	user = &User{
 		Name:        user.Name,
 		Password:    encrypt(user.Password),
+		Email:       user.Email,
 		UserGroupID: user.UserGroupID,
 	}
 	result := db.Create(user)
@@ -129,9 +130,22 @@ func FindUserByID(db *gorm.DB, userID uint) (User, error) {
 	return user, nil
 }
 
-func FindUserByName(db *gorm.DB, name string) (User, error) {
+func FindUserByEmail(db *gorm.DB, email string) (User, error) {
 	var user User
-	result := db.Where("name = ?", name).First(&user)
+	result := db.Where("email = ?", email).First(&user)
+
+	if result.Error != nil {
+		log.Printf("Error fetching user: %v", result.Error)
+		return user, result.Error
+	}
+	log.Printf("ユーザーの取得に成功")
+
+	return user, nil
+}
+
+func FindUserByNameAndUserGroup(db *gorm.DB, name string, userGroupID uint) (User, error) {
+	var user User
+	result := db.Where("name = ? AND user_group_id = ?", name, userGroupID).First(&user)
 
 	if result.Error != nil {
 		log.Printf("Error fetching user: %v", result.Error)
