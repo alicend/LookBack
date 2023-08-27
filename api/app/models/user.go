@@ -46,9 +46,10 @@ type UserResponse struct {
 }
 
 type CurrentUserResponse struct {
-	ID   uint
-	Name string
+	ID          uint
+	Name        string
 	UserGroupID uint
+	UserGroup   string
 }
 
 // TableName メソッドを追加して、この構造体がユーザーテーブルに対応することを指定する
@@ -98,7 +99,10 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 
 func FindUserByIDWithoutPassword(db *gorm.DB, userID uint) (CurrentUserResponse, error) {
 	var user CurrentUserResponse
-	result := db.Where("ID = ?", userID).First(&user)
+	result := db.Table("users").Select("users.id, users.name, users.user_group_id, user_groups.user_group").
+		Joins("left join user_groups on user_groups.id = users.user_group_id").
+		Where("users.id = ?", userID).
+		First(&user)
 
 	if result.Error != nil {
 		log.Printf("Error fetching user: %v", result.Error)
@@ -108,6 +112,7 @@ func FindUserByIDWithoutPassword(db *gorm.DB, userID uint) (CurrentUserResponse,
 
 	return user, nil
 }
+
 
 func FindUserByID(db *gorm.DB, userID uint) (User, error) {
 	var user User

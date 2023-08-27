@@ -2,6 +2,7 @@ export interface USER {
   ID: number;
   Name: string;
   UserGroupID: number;
+  UserGroup: string;
 }
 export interface PASSWORD_UPDATE {
   current_password: string;

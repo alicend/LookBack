@@ -196,7 +196,8 @@ export const initialState: TASK_STATE = {
     {
       ID: 0,
       Name: "",
-      UserGroupID: 0
+      UserGroupID: 0,
+      UserGroup:"",
     },
   ],
   category: [

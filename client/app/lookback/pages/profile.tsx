@@ -12,7 +12,6 @@ import Password from "@/components/profile/Password";
 import UserName from "@/components/profile/UserName";
 import Delete from "@/components/profile/Delete";
 import UserGroup from "@/components/profile/UserGroup";
-import { fetchAsyncGetUserGroups } from "@/slices/userGroupSlice";
 
 const StyledContainer = styled('div')`
   color: gray-500;
@@ -39,7 +38,6 @@ export default function Profile() {
   useEffect(() => {
     const fetchBootLoader = async () => {
       await dispatch(fetchAsyncGetLoginUser());
-      await dispatch(fetchAsyncGetUserGroups());
     };
     fetchBootLoader();
   }, [dispatch]);
@@ -65,7 +63,7 @@ export default function Profile() {
           <br />
           {tabValue === 0 && loginUser && <UserName loginUserName={loginUser.Name} />}
           {tabValue === 1 && loginUser && <Password/>}
-          {tabValue === 2 && loginUser && <UserGroup loginUserGroupID={loginUser.UserGroupID}/>}
+          {tabValue === 2 && loginUser && <UserGroup userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}}/>}
           {tabValue === 3 && loginUser && <Delete loginUserName={loginUser.Name} />}          
         </StyledContainer>
       </Grid>

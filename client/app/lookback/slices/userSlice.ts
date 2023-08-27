@@ -99,6 +99,7 @@ const initialState: USER_STATE = {
     ID: 0,
     Name: "",
     UserGroupID: 0,
+    UserGroup:"",
   },
 };
 
