@@ -1,5 +1,6 @@
 export interface USER {
   ID: number;
+  Email: string;
   Name: string;
   UserGroupID: number;
   UserGroup: string;

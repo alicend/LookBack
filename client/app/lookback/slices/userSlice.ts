@@ -56,6 +56,15 @@ export const fetchAsyncGetLoginUser = createAsyncThunk("users/getUser", async (_
   }
 });
 
+export const fetchAsyncUpdateLoginUserEmail = createAsyncThunk("users/updateUserEmail", async (email: string, thunkAPI) => {
+  try {
+    const res = await axios.put(`${ENDPOINTS.USERS}/me/email`, {email: email}, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
 export const fetchAsyncUpdateLoginUsername = createAsyncThunk("users/updateUsername", async (username: string, thunkAPI) => {
   try {
     const res = await axios.put(`${ENDPOINTS.USERS}/me/name`, {username: username}, COMMON_HTTP_HEADER);
@@ -97,6 +106,7 @@ const initialState: USER_STATE = {
   message: "",
   loginUser: {
     ID: 0,
+    Email: "",
     Name: "",
     UserGroupID: 0,
     UserGroup:"",
@@ -152,6 +162,13 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchAsyncGetLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncGetLoginUser.pending, handleLoading);
+    builder.addCase(fetchAsyncUpdateLoginUserEmail.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'メールアドレスの更新に成功しました';
+    });
+    builder.addCase(fetchAsyncUpdateLoginUserEmail.rejected, handleError);
+    builder.addCase(fetchAsyncUpdateLoginUserEmail.pending, handleLoading);
     builder.addCase(fetchAsyncUpdateLoginUsername.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;

@@ -29,6 +29,10 @@ type UserSignUpInput struct {
 	UserGroup string `json:"user_group" binding:"required,min=1,max=30"`
 }
 
+type EmailUpdateInput struct {
+	NewEmail string `json:"email" binding:"required,email"`
+}
+
 type UsernameUpdateInput struct {
 	NewName string `json:"username" binding:"required,min=1,max=30"`
 }
@@ -49,6 +53,7 @@ type UserResponse struct {
 
 type CurrentUserResponse struct {
 	ID          uint
+	Email       string
 	Name        string
 	UserGroupID uint
 	UserGroup   string
@@ -102,7 +107,7 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 
 func FindUserByIDWithoutPassword(db *gorm.DB, userID uint) (CurrentUserResponse, error) {
 	var user CurrentUserResponse
-	result := db.Table("users").Select("users.id, users.name, users.user_group_id, user_groups.user_group").
+	result := db.Table("users").Select("users.id, users.email, users.name, users.user_group_id, user_groups.user_group").
 		Joins("left join user_groups on user_groups.id = users.user_group_id").
 		Where("users.id = ?", userID).
 		First(&user)
@@ -178,6 +183,33 @@ func FindUsersAll(db *gorm.DB, userID uint) ([]UserResponse, error) {
 	return users, nil
 }
 
+func (user *User) UpdateEmail(db *gorm.DB, userID uint) error {
+	// 既存のユーザー情報を取得
+	var existingUser User
+	if err := db.Where("id = ?", userID).First(&existingUser).Error; err != nil {
+		log.Printf("Error fetching user with ID %d: %v\n", userID, err)
+		return fmt.Errorf("ユーザーが見つかりません")
+	}
+	
+	// 既存のユーザーと重複がないか確認
+	if err := db.Where("email = ?", user.Email).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("User with name %s already exists in user group %d", user.Name, existingUser.UserGroupID)
+		return fmt.Errorf("入力したメールアドレス他のユーザーが登録済みです")
+	}
+
+	result := db.Model(user).Where("id = ?", userID).Updates(User{
+		Email: user.Email,
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating user: %v\n", result.Error)
+		return result.Error
+	}
+	log.Printf("ログインユーザーのユーザー名の更新に成功")
+
+	return nil
+}
+
 func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
 	// 既存のユーザー情報を取得
 	var existingUser User
@@ -189,7 +221,7 @@ func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
 	// 既存のユーザーと重複がないか確認
 	if err := db.Where("name = ? AND user_group_id = ?", user.Name, existingUser.UserGroupID).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
 		log.Printf("User with name %s already exists in user group %d", user.Name, existingUser.UserGroupID)
-		return fmt.Errorf("選択したユーザーグループに入力したユーザー名は登録済みです")
+		return fmt.Errorf("入力したユーザー名は現在所属するユーザーグループに登録済みです")
 	}
 
 	result := db.Model(user).Where("id = ?", userID).Updates(User{

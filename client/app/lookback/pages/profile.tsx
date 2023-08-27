@@ -12,6 +12,7 @@ import Password from "@/components/profile/Password";
 import UserName from "@/components/profile/UserName";
 import Delete from "@/components/profile/Delete";
 import UserGroup from "@/components/profile/UserGroup";
+import Email from "@/components/profile/Email";
 
 const StyledContainer = styled('div')`
   color: gray-500;
@@ -23,7 +24,7 @@ const StyledContainer = styled('div')`
 `;
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  width: '470px',
+  width: '550px',
 }));
 
 export default function Profile() {
@@ -54,17 +55,19 @@ export default function Profile() {
               textColor="primary"
               centered
             >
-              <Tab label="User Name" />
+              <Tab label="Email" />
               <Tab label="Password" />
+              <Tab label="User Name" />
               <Tab label="User Group" />
               <Tab label="Delete" />
             </Tabs>
           </StyledPaper>
           <br />
-          {tabValue === 0 && loginUser && <UserName loginUserName={loginUser.Name} />}
+          {tabValue === 0 && loginUser && <Email loginUserEmail={loginUser.Email} />}
           {tabValue === 1 && loginUser && <Password/>}
-          {tabValue === 2 && loginUser && <UserGroup userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}}/>}
-          {tabValue === 3 && loginUser && <Delete loginUserName={loginUser.Name } userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}} />}          
+          {tabValue === 2 && loginUser && <UserName loginUserName={loginUser.Name} />}
+          {tabValue === 3 && loginUser && <UserGroup userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}}/>}
+          {tabValue === 4 && loginUser && <Delete loginUserName={loginUser.Name } userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}} />}          
         </StyledContainer>
       </Grid>
     </MainPageLayout>

@@ -238,6 +238,59 @@ func TestFindUsersAll(t *testing.T) {
 	db.Unscoped().Delete(&userGroup)
 }
 
+func TestUpdateEmail(t *testing.T) {
+	// テスト用MySQLデータベースに接続
+	db, err := gorm.Open(mysql.Open(constant.TEST_DSN), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to connect to database: %v", err)
+	}
+
+	// テストデータ作成
+	userGroup := &UserGroup{
+		UserGroup: "TestUserGroup",
+	}
+	db.Create(userGroup)
+
+	user := &User{
+		Name:        "TestOldUser",
+		Password:    "TestPassword",
+		Email:       "testOld@example.com",
+		UserGroupID: userGroup.ID,
+	}
+	db.Create(user)
+
+	newUser := &User{
+		Email: "testNew@example.com",
+	}
+
+	// メールアドレスを変更
+	err = newUser.UpdateEmail(db, user.ID)
+	assert.Nil(t, err)
+
+	// 更新されたユーザー情報を確認
+	var updatedUser User
+	db.Where("id = ?", user.ID).First(&updatedUser)
+	assert.Equal(t, "testNew@example.com", updatedUser.Email)
+
+	// 既に存在するメールアドレスで更新を試みる
+	existingUser := &User{
+		Name:        "TestExistingUser",
+		Password:    "TestPassword",
+		Email:       "testExist@example.com",
+		UserGroupID: userGroup.ID,
+	}
+	db.Create(existingUser)
+
+	newUser.Email = "testExist@example.com"
+	err = newUser.UpdateEmail(db, user.ID)
+	assert.NotNil(t, err)
+
+	// テストデータの削除
+	db.Unscoped().Delete(&user)
+	db.Unscoped().Delete(&existingUser)
+	db.Unscoped().Delete(&userGroup)
+}
+
 func TestUpdateUsername(t *testing.T) {
 	// テスト用MySQLデータベースに接続
 	db, err := gorm.Open(mysql.Open(constant.TEST_DSN), &gorm.Config{})

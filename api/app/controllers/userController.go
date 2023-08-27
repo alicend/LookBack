@@ -61,6 +61,53 @@ func (handler *Handler) DeleteUserHandler(c *gin.Context) {
 	})
 }
 
+func (handler *Handler) UpdateCurrentUserEmailHandler(c *gin.Context) {
+	var emailUpdateInput models.EmailUpdateInput
+	if err := c.ShouldBindJSON(&emailUpdateInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// メールアドレスが既に使用されていないか確認
+	_, err := models.FindUserByEmail(handler.DB, emailUpdateInput.NewEmail)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			respondWithError(c, http.StatusBadRequest, err.Error())
+			return
+	} else if err == nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別のメールアドレスを入力してください")
+		return
+	}
+
+	updateUser := &models.User{
+		Email:     emailUpdateInput.NewEmail,
+	}
+
+	// Cookie内のjwtからUSER_IDを取得
+	userID, err := extractUserID(c)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Failed to extract user ID")
+		return
+	}
+
+	err = updateUser.UpdateEmail(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	updatedUser, err := models.FindUserByIDWithoutPassword(handler.DB, userID)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user" : updatedUser,  // userをレスポンスとして返す
+	})
+}
+
 func (handler *Handler) UpdateCurrentUsernameHandler(c *gin.Context) {
 	var usernameUpdateInput models.UsernameUpdateInput
 	if err := c.ShouldBindJSON(&usernameUpdateInput); err != nil {
