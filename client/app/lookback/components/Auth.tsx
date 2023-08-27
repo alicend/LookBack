@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
-import { TextField, Button, Snackbar, Alert, InputLabel, Select, FormControl, MenuItem, SelectChangeEvent, Fab } from "@mui/material";
+import { TextField, Button, SelectChangeEvent, Fab } from "@mui/material";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
-import { selectUserGroup } from "@/slices/userGroupSlice";
 
 import { Grid } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import NewUserGroupModal from "./NewUserGroupModal";
 
 const Adjust = styled('div')`
   width: 1px;
-  height: 80px;
+  height: 88px;
 `;
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -40,22 +37,6 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   width: '300px',
 }));
 
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  margin: theme.spacing(2),
-  minWidth: 240,
-}));
-
-const StyledFab = styled(Fab)(({ theme }) => ({
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
-  },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
-  },
-}));
-
 // 少なくとも1つの英字と1つの数字を含む
 const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(val);
 
@@ -76,32 +57,16 @@ const loginCredentialSchema = z.object({
 
 const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const userGroups = useSelector(selectUserGroup);
   const [isLoginView, setIsLoginView] = useState(true);
-  const [newUserGroupOpen, setNewUserGroupOpen] = useState(false);
-  const [credential, setCredential] = useState({ username: "", password: "", user_group: 0});
+  const [credential, setCredential] = useState({ username: "", password: "", user_group: ""});
   const [errors, setErrors] = useState({ username: "", password: "", user_group: "" });
 
   const isDisabled = isLoginView
   ? (credential.username.length === 0 || credential.password.length === 0)
-  : (credential.username.length === 0 || credential.password.length === 0 || credential.user_group === 0);
-
-  const handleNewUserGroupOpen = () => {
-    setNewUserGroupOpen(true);
-  };
-  const handleNewUserGroupClose = () => {
-    setNewUserGroupOpen(false);
-  };
+  : (credential.username.length === 0 || credential.password.length === 0 || credential.user_group.length === 0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const name = e.target.name;
-    setCredential({ ...credential, [name]: value });
-    setErrors({ ...errors, [name]: "" });
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<any>) => {
-    const value = e.target.value as string;
     const name = e.target.name;
     setCredential({ ...credential, [name]: value });
     setErrors({ ...errors, [name]: "" });
@@ -135,12 +100,6 @@ const Auth: React.FC = () => {
     // 登録処理
     await dispatch(fetchAsyncRegister(credential));
   }
-
-  let userGroupOptions = [{ ID: 0, UserGroup: '' }, ...(Array.isArray(userGroups) ? userGroups : [])].map((userGroup) => (
-    <MenuItem key={userGroup.ID} value={userGroup.ID} style={{ minHeight: '36px'}}>
-      {userGroup.UserGroup}
-    </MenuItem>
-  ));
 
   return (
     <>
@@ -189,30 +148,23 @@ const Auth: React.FC = () => {
         </Grid>
 
         {!isLoginView && 
-          <Grid container item alignItems="center" justifyContent="center">
-            <Grid>
-              <StyledFormControl>
-                <InputLabel>User Group</InputLabel>
-                <Select
-                  name="user_group"
-                  value={credential.user_group}
-                  onChange={handleSelectChange}
-                >
-                  {userGroupOptions}
-                </Select>
-              </StyledFormControl>
+          <>
+            <br />
+            <Grid item>
+              <StyledTextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                label="User Group"
+                type="text"
+                name="user_group"
+                value={credential.user_group}
+                onChange={handleInputChange}
+                error={Boolean(errors.user_group)}
+                helperText={errors.user_group}
+              />
             </Grid>
-
-            <Grid>
-              <StyledFab
-                size="small"
-                color="primary"
-                onClick={handleNewUserGroupOpen}
-              >
-                <AddIcon />
-              </StyledFab>
-            </Grid>
-          </Grid>
+          </>
         }
 
         <Grid item>
@@ -241,10 +193,6 @@ const Auth: React.FC = () => {
 
       </Grid>
 
-      <NewUserGroupModal 
-        open={newUserGroupOpen}
-        onClose={handleNewUserGroupClose}
-      />
     </>
   );
 };
