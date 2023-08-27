@@ -12,7 +12,7 @@ import { Grid } from "@mui/material";
 
 const Adjust = styled('div')`
   width: 1px;
-  height: 88px;
+  height: 175px;
 `;
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -39,13 +39,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 // 少なくとも1つの英字と1つの数字を含む
 const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(val);
+const pattern = /^[\u0021-\u007e]+$/u; // 半角英数字記号のみ
 
 const registerCredentialSchema = z.object({
   username: z.string(),
   password: z.string()
     .min(8, "パスワードは８文字以上にしてください")
     .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
-  user_group: z.number().positive("ユーザーグループを選択してください").int("user_groupは整数でなければなりません")
+    email: z.string()
+    .email("無効なメールアドレスです")
+    .regex(pattern, "無効なメールアドレスです"),
+  user_group: z.string()
 });
 
 const loginCredentialSchema = z.object({
@@ -58,12 +62,17 @@ const loginCredentialSchema = z.object({
 const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [isLoginView, setIsLoginView] = useState(true);
-  const [credential, setCredential] = useState({ username: "", password: "", user_group: ""});
-  const [errors, setErrors] = useState({ username: "", password: "", user_group: "" });
+  const [credential, setCredential] = useState({ username: "", password: "", email: "", user_group: ""});
+  const [errors, setErrors] = useState({ username: "", password: "", email: "", user_group: "" });
 
   const isDisabled = isLoginView
   ? (credential.username.length === 0 || credential.password.length === 0)
-  : (credential.username.length === 0 || credential.password.length === 0 || credential.user_group.length === 0);
+  : (credential.username.length === 0 || credential.password.length === 0 || credential.email.length === 0 || credential.user_group.length === 0);
+
+  const toggleLoginView = () => {
+    setIsLoginView(!isLoginView);
+    setErrors({ username: "", password: "", email: "", user_group: "" });
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -78,7 +87,7 @@ const Auth: React.FC = () => {
     if (!result.success) {
       const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
       const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      setErrors({ username: usernameError, password: passwordError, user_group: "" });
+      setErrors({ username: usernameError, password: passwordError, email: "", user_group: "" });
       return;
     }
 
@@ -90,10 +99,11 @@ const Auth: React.FC = () => {
     // 入力チェック
     const result = registerCredentialSchema.safeParse(credential);
     if (!result.success) {
-      const usernameError = result.error.formErrors.fieldErrors["username"]?.[0] || "";
-      const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
+      const usernameError  = result.error.formErrors.fieldErrors["username"]?.[0] || "";
+      const passwordError  = result.error.formErrors.fieldErrors["password"]?.[0] || "";
+      const emailError     = result.error.formErrors.fieldErrors["email"]?.[0] || "";
       const userGroupError = result.error.formErrors.fieldErrors["user_group"]?.[0] || "";
-      setErrors({ username: usernameError, password: passwordError, user_group: userGroupError });
+      setErrors({ username: usernameError, password: passwordError, email: emailError, user_group: userGroupError });
       return;
     }
 
@@ -149,6 +159,21 @@ const Auth: React.FC = () => {
 
         {!isLoginView && 
           <>
+          <br />
+            <Grid item>
+              <StyledTextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                label="Email"
+                type="email"
+                name="email"
+                value={credential.email}
+                onChange={handleInputChange}
+                error={Boolean(errors.email)}
+                helperText={errors.email}
+              />
+            </Grid>
             <br />
             <Grid item>
               <StyledTextField
@@ -180,7 +205,7 @@ const Auth: React.FC = () => {
         </Grid>
 
         <Grid item>
-          <span onClick={() => setIsLoginView(!isLoginView)} className="cursor-pointer">
+          <span onClick={() => toggleLoginView()} className="cursor-pointer">
             {isLoginView ? "Create new account ?" : "Back to Login"}
           </span>
         </Grid>

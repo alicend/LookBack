@@ -12,6 +12,7 @@ type User struct {
 	gorm.Model
 	Name        string    `gorm:"size:255;not null" validate:"required,min=1,max=30"`
 	Password    string    `gorm:"size:255;not null" validate:"required,min=8,max=255"`
+	Email       string    `gorm:"size:255;not null;unique" validate:"required,email"`
 	UserGroupID uint      `gorm:"not null"`
 	UserGroup   UserGroup `gorm:"foreignKey:UserGroupID;"`
 }
@@ -22,9 +23,10 @@ type UserLoginInput struct {
 }
 
 type UserSignUpInput struct {
-	Name        string `json:"username" binding:"required,min=1,max=30"`
-	Password    string `json:"password" binding:"required,min=8,max=255"`
-	UserGroupID uint   `json:"user_group" binding:"required,min=1"`
+	Name      string `json:"username" binding:"required,min=1,max=30"`
+	Password  string `json:"password" binding:"required,min=8,max=255"`
+	Email     string `json:"email" binding:"required,email"`
+	UserGroup string `json:"user_group" binding:"required,min=1,max=30"`
 }
 
 type UsernameUpdateInput struct {
@@ -74,11 +76,11 @@ func (user *User) MigrateUser(db *gorm.DB) error {
 }
 
 func (user *User) CreateUser(db *gorm.DB) (*User, error) {
-	// 既存のユーザーと重複がないか確認
+	// 既存のユーザーとメールアドレスが重複がないか確認
 	var existingUser User
-	if err := db.Where("name = ? AND user_group_id = ?", user.Name, user.UserGroupID).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
-		log.Printf("User with name %s already exists in user group %d", user.Name, user.UserGroupID)
-		return nil, fmt.Errorf("選択したユーザーグループに入力したユーザー名は登録済みです")
+	if err := db.Where("email = ?", user.Email).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
+		log.Printf("User with email %s already exists", user.Email)
+		return nil, fmt.Errorf("入力したメールアドレスは登録済みです")
 	}
 
 	user = &User{

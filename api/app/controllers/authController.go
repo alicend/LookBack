@@ -23,10 +23,21 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 		return
 	}
 
+	newUserGroup := &models.UserGroup{
+		UserGroup:   signUpInput.UserGroup,
+	}
+
+	userGroupID, err := newUserGroup.CreateUserGroup(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	newUser := &models.User{
 		Name:        signUpInput.Name,
 		Password:    signUpInput.Password,
-		UserGroupID: signUpInput.UserGroupID,
+		Email:       signUpInput.Email,
+		UserGroupID: userGroupID,
 	}
 
 	user, err := newUser.CreateUser(handler.DB)
