@@ -41,7 +41,7 @@ func TestCreateUserGroup(t *testing.T) {
 	}
 
 	// CreateUserGroup関数を呼び出す
-	err = userGroup.CreateUserGroup(db)
+	_, err = userGroup.CreateUserGroup(db)
 	assert.Nil(t, err)
 
 	// DBから同じ名前のUserGroupが作成されたかを確認

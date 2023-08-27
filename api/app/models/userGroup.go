@@ -44,17 +44,15 @@ func (userGroup *UserGroup) MigrateUserGroup(db *gorm.DB) error {
 	return nil
 }
 
-func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) error {
-
+func (userGroup *UserGroup) CreateUserGroup(db *gorm.DB) (uint, error) {
 	result := db.Create(userGroup)
-
 	if result.Error != nil {
 		log.Printf("Error creating userGroup: %v\n", result.Error)
-		return result.Error
+		return 0, result.Error  // エラーの場合はIDとして0を返す
 	}
-	log.Printf("ユーザーグループの作成に成功")
+	log.Printf("ユーザーグループの作成に成功, ID: %d", userGroup.ID)
 
-	return nil
+	return userGroup.ID, nil  // 成功した場合は作成されたIDを返す
 }
 
 func FetchUserGroups(db *gorm.DB) ([]UserGroupResponse, error) {

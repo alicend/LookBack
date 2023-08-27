@@ -22,7 +22,7 @@ func (handler *Handler) CreateUserGroupHandler(c *gin.Context) {
 		UserGroup:   createUserGroupInput.UserGroup,
 	}
 
-	err := newUserGroup.CreateUserGroup(handler.DB)
+	_, err := newUserGroup.CreateUserGroup(handler.DB)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
