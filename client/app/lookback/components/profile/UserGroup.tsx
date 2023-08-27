@@ -7,11 +7,6 @@ import { AppDispatch } from '@/store/store';
 import { fetchAsyncUpdateUserGroup } from '@/slices/userGroupSlice';
 import { USER_GROUP } from '@/types/UserGroupType';
 
-const Adjust = styled('div')`
-  width: 1px;
-  height: 79px;
-`;
-
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputLabel-root": {
     marginBottom: theme.spacing(1),
@@ -20,19 +15,6 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     marginBottom: theme.spacing(2),
   },
   width: '300px',
-}));
-
-const StyledFab = styled(Fab)(({ theme }) => ({
-  marginTop: theme.spacing(1),
-  marginLeft: theme.spacing(2),
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
-  },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
-  },
 }));
 
 const UpdateButton = styled(Button)(({ theme }) => ({
