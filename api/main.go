@@ -18,7 +18,10 @@ func main() {
 	}
 
 	// マイグレーションの実行
-	models.Migrate(db)
+	err = models.Migrate(db)
+	if err != nil {
+		log.Fatalf("マイグレーションに失敗しました: %v", err)
+	}
 
 	// ルーティング
 	r := router.SetupRouter(db)
