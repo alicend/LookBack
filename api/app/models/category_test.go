@@ -86,6 +86,7 @@ func TestFetchCategory(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword123",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)
@@ -199,6 +200,7 @@ func TestDeleteCategoryAndRelatedTasks(t *testing.T) {
 	creatorUser := &User{
 		Name:        "Creator",
 		Password:    "password123",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(creatorUser)
@@ -206,6 +208,7 @@ func TestDeleteCategoryAndRelatedTasks(t *testing.T) {
 	responsibleUser := &User{
 		Name:        "Responsible",
 		Password:    "password456",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(responsibleUser)

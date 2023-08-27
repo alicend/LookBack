@@ -45,6 +45,7 @@ func TestCreateTask(t *testing.T) {
 	user := &User{
 		Name:        "Test User",
 		Password:    "testPassword123",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	if err := db.Create(&user).Error; err != nil {
@@ -104,7 +105,8 @@ func TestFetchTaskBoardTasks(t *testing.T) {
 
 	user := &User{
 		Name:        "Test User",
-		Password:    "testPassword123", 
+		Password:    "testPassword123",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	if err := db.Create(&user).Error; err != nil {
@@ -171,6 +173,7 @@ func TestFetchLookBackTasks(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "testPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)

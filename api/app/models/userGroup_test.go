@@ -101,6 +101,7 @@ func TestFetchUserGroupIDByUserID(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)
@@ -169,6 +170,7 @@ func TestDeleteUserGroupAndRelatedUsers(t *testing.T) {
 	user1 := &User{
 		Name:        "TestUser1",
 		Password:    "TestPassword1",
+		Email:       "test1@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user1)
@@ -176,6 +178,7 @@ func TestDeleteUserGroupAndRelatedUsers(t *testing.T) {
 	user2 := &User{
 		Name:        "TestUser2",
 		Password:    "TestPassword2",
+		Email:       "test2@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user2)

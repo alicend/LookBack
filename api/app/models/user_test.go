@@ -43,16 +43,18 @@ func TestCreateUser(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	createdUser, err := user.CreateUser(db)
 	assert.Nil(t, err, "CreateUser should not return an error")
 	assert.Equal(t, "TestUser", createdUser.Name, "Created user name should match the input")
 
-	// 既存のユーザー名でのユーザー作成
+	// 既存のメールアドレスでのユーザー作成
 	user2 := &User{
-		Name:        "TestUser",
+		Name:        "AnotherTestUser",
 		Password:    "AnotherPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	_, err = user2.CreateUser(db)
@@ -79,6 +81,7 @@ func TestFindUserByIDWithoutPassword(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(&user)
@@ -114,6 +117,7 @@ func TestFindUserByID(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)
@@ -130,7 +134,7 @@ func TestFindUserByID(t *testing.T) {
 	db.Unscoped().Delete(&userGroup)
 }
 
-func TestFindUserByName(t *testing.T) {
+func TestFindUserByEmail(t *testing.T) {
 	// テスト用MySQLデータベースに接続
 	db, err := gorm.Open(mysql.Open(constant.TEST_DSN), &gorm.Config{})
 	if err != nil {
@@ -146,11 +150,12 @@ func TestFindUserByName(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)
 
-	fetchedUser, err := FindUserByName(db, "TestUser")
+	fetchedUser, err := FindUserByEmail(db, "test@example.com")
 	assert.Nil(t, err)
 	assert.Equal(t, user.Name, fetchedUser.Name)
 
@@ -158,6 +163,39 @@ func TestFindUserByName(t *testing.T) {
 	db.Unscoped().Delete(&user)
 	db.Unscoped().Delete(&userGroup)
 }
+
+func TestFindUserByNameAndUserGroup(t *testing.T) {
+	// テスト用MySQLデータベースに接続
+	db, err := gorm.Open(mysql.Open(constant.TEST_DSN), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to connect to database: %v", err)
+	}
+
+	// テストデータ作成
+	userGroup := &UserGroup{
+		UserGroup: "TestUserGroup",
+	}
+	db.Create(userGroup)
+
+	user := &User{
+		Name:        "TestUser",
+		Password:    "TestPassword",
+		Email:       "test@example.com",
+		UserGroupID: userGroup.ID,
+	}
+	db.Create(user)
+
+	// FindUserByNameAndUserGroup関数をテスト
+	fetchedUser, err := FindUserByNameAndUserGroup(db, "TestUser", userGroup.ID)
+	assert.Nil(t, err, "FindUserByNameAndUserGroup should not return an error")
+	assert.Equal(t, user.Name, fetchedUser.Name, "Fetched user name should match")
+	assert.Equal(t, user.UserGroupID, fetchedUser.UserGroupID, "Fetched user group ID should match")
+
+	// テストデータの削除
+	db.Unscoped().Delete(&user)
+	db.Unscoped().Delete(&userGroup)
+}
+
 
 func TestFindUsersAll(t *testing.T) {
 	// テスト用MySQLデータベースに接続
@@ -175,6 +213,7 @@ func TestFindUsersAll(t *testing.T) {
 	user1 := &User{
 		Name:        "TestUser1",
 		Password:    "TestPassword",
+		Email:       "test1@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user1)
@@ -182,6 +221,7 @@ func TestFindUsersAll(t *testing.T) {
 	user2 := &User{
 		Name:        "TestUser2",
 		Password:    "TestPassword",
+		Email:       "test2@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user2)
@@ -214,6 +254,7 @@ func TestUpdateUsername(t *testing.T) {
 	user := &User{
 		Name:        "TestOldUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)
@@ -250,6 +291,7 @@ func TestUpdateUserPassword(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestOldPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(user)
@@ -286,6 +328,7 @@ func TestDeleteUserAndRelatedTasks(t *testing.T) {
 	user := &User{
 		Name:        "TestUser",
 		Password:    "TestPassword",
+		Email:       "test@example.com",
 		UserGroupID: userGroup.ID,
 	}
 	db.Create(&user)
