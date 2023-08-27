@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid } from "@mui/material";
 import { styled } from '@mui/system';
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { editTask, initialState, selectTask } from '@/slices/taskSlice';
 import { fetchAsyncDeleteLoginUser } from '@/slices/userSlice';
 import { useDispatch } from "react-redux";
 import { AppDispatch } from '@/store/store';
+import { USER_GROUP } from '@/types/UserGroupType';
+import { fetchAsyncDeleteUserGroup } from '@/slices/userGroupSlice';
 
 const Adjust = styled('div')`
   width: 1px;
@@ -22,41 +24,64 @@ const DeleteButton = styled(Button)(({ theme }) => ({
 
 interface Props {
   loginUserName: string;
+  userGroup: USER_GROUP;
 }  
 
-const Delete: React.FC<Props> = React.memo(({ loginUserName }) => {
+const Delete: React.FC<Props> = React.memo(({ loginUserName, userGroup }) => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmUserOpen, setConfirmUserOpen] = useState(false);
+  const [confirmUserGroupOpen, setConfirmUserGroupOpen] = useState(false);
 
-  const handleConfirmClose = (shouldDelete: boolean) => {
-    setConfirmOpen(false);
+  const handleConfirmUserClose = (shouldDelete: boolean) => {
+    setConfirmUserOpen(false);
     if (shouldDelete) {
       dispatch(fetchAsyncDeleteLoginUser());
       dispatch(editTask(initialState.editedTask));
       dispatch(selectTask(initialState.selectedTask));
     }
   };
+
+  const handleConfirmUserGroupClose = (shouldDelete: boolean) => {
+    setConfirmUserGroupOpen(false);
+    if (shouldDelete) {
+      dispatch(fetchAsyncDeleteUserGroup(userGroup.ID));
+    }
+  };
   
   return (
     <>
+    <Grid> 
       <DeleteButton
         variant="contained"
         color="error"
         size="small"
         startIcon={<DeleteOutlineOutlinedIcon />}
         onClick={() => {
-          setConfirmOpen(true)
+          setConfirmUserOpen(true)
         }}
       >
-        DELETE
+        USER DELETE
       </DeleteButton>
 
-      <Adjust className='aaaa'/>
+      <DeleteButton
+        variant="contained"
+        color="error"
+        size="small"
+        startIcon={<DeleteOutlineOutlinedIcon />}
+        onClick={() => {
+          setConfirmUserGroupOpen(true)
+        }}
+      >
+        USER GROUP DELETE
+      </DeleteButton>
+    </Grid>
+
+      <Adjust/>
       <br/>
 
-      <Dialog open={confirmOpen} onClose={() => handleConfirmClose(false)}>
+      <Dialog open={confirmUserOpen} onClose={() => handleConfirmUserClose(false)}>
         <DialogTitle>{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -64,10 +89,27 @@ const Delete: React.FC<Props> = React.memo(({ loginUserName }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleConfirmClose(false)} color="primary">
+          <Button onClick={() => handleConfirmUserClose(false)} color="primary">
             No
           </Button>
-          <Button onClick={() => handleConfirmClose(true)} color="primary" autoFocus>
+          <Button onClick={() => handleConfirmUserClose(true)} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={confirmUserGroupOpen} onClose={() => handleConfirmUserGroupClose(false)}>
+        <DialogTitle>{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {`ユーザーグループ「${userGroup.UserGroup}」に所属するユーザーも削除されますが本当に削除してよろしいですか？`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleConfirmUserGroupClose(false)} color="primary">
+            No
+          </Button>
+          <Button onClick={() => handleConfirmUserGroupClose(true)} color="primary" autoFocus>
             Yes
           </Button>
         </DialogActions>
