@@ -25,7 +25,7 @@ const handleHttpError = (err: any, thunkAPI: any) => {
 const ENDPOINTS = {
   LOGIN: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/login`,
   REGISTER: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
-  REGISTER_REQUEST: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup-request`,
+  REGISTER_REQUEST: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup/request`,
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
 }
 
@@ -181,7 +181,7 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncUpdateLoginUserEmail.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;
-      state.message = 'メールアドレスの更新に成功しました';
+      state.message = 'メールを送信しました';
     });
     builder.addCase(fetchAsyncUpdateLoginUserEmail.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUserEmail.pending, handleLoading);
