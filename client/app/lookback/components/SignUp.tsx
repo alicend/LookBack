@@ -6,7 +6,7 @@ import { TextField, Button, SelectChangeEvent, Fab } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncRegister } from "@/slices/userSlice";
+import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
 
 import { Grid } from "@mui/material";
 
@@ -77,7 +77,12 @@ const SignUp: React.FC<Props> = ({email}) => {
     }
 
     // 登録処理
-    await dispatch(fetchAsyncRegister(credential));
+    const action = await dispatch(fetchAsyncRegister(credential));
+
+    if (fetchAsyncRegister.fulfilled.match(action)) {
+      // 登録成功時、自動的にログインを行う
+      await dispatch(fetchAsyncLogin(credential));
+    }
   }
 
   return (
