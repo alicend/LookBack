@@ -174,7 +174,7 @@ func sendSignUpMailFromGmail(email string) error {
 		log.Printf("Token generation failed: %v", err)
 		return err
 	}
-	registrationURL := fmt.Sprintf("%s/sign-up?t&email=%s", os.Getenv("FRONTEND_ORIGIN"), emailToken)
+	registrationURL := fmt.Sprintf("%s/sign-up?&email=%s", os.Getenv("FRONTEND_ORIGIN"), emailToken)
 
 	// メールの受信者と本文
 	to := []string{email}

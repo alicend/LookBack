@@ -52,8 +52,8 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	{
 		users.GET("", handler.GetUsersAllHandler)
 		users.GET("/me", handler.GetCurrentUserHandler)
+		users.PUT("/me/email/request", handler.SendEmailUpdateEmailHandler)
 		users.PUT("/me/email", handler.UpdateCurrentUserEmailHandler)
-		users.PUT("/me/email/request", handler.UpdateCurrentUserEmailHandler)
 		users.PUT("/me/name", handler.UpdateCurrentUsernameHandler)
 		users.PUT("/me/password", handler.UpdateCurrentUserPasswordHandler)
 		users.PUT("/me/user-group", handler.UpdateCurrentUserGroupHandler)
