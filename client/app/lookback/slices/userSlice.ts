@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { AUTHENTICATION } from "@/types/AuthType";
+import { LOGIN_AUTH, SIGN_UP_AUTH } from "@/types/AuthType";
 import { RootState } from "@/store/store";
 import { USER, USER_STATE, PASSWORD_UPDATE } from "@/types/UserType";
 import { PAYLOAD } from "@/types/ResponseType";
@@ -29,7 +29,7 @@ const ENDPOINTS = {
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
 }
 
-export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: AUTHENTICATION, thunkAPI) => {
+export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: LOGIN_AUTH, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS.LOGIN, auth, COMMON_HTTP_HEADER);
     return res.data;
@@ -47,7 +47,7 @@ export const fetchAsyncRegisterRequest = createAsyncThunk("auth/register-request
   }
 });
 
-export const fetchAsyncRegister = createAsyncThunk("auth/register", async (auth: AUTHENTICATION, thunkAPI) => {
+export const fetchAsyncRegister = createAsyncThunk("auth/register", async (auth: SIGN_UP_AUTH, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS.REGISTER, auth, COMMON_HTTP_HEADER);
     return res.data;

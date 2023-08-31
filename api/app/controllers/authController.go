@@ -1,9 +1,6 @@
 package controllers
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"encoding/base64"
 	"net/http"
 	"net/smtp"
 	"errors"
@@ -43,7 +40,7 @@ func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 		return
 	}
 
-	err = sendSignUpMailFromGmail(userPreSignUpInput.Email, token);
+	err = sendSignUpMailFromGmail(userPreSignUpInput.Email);
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
 		return
@@ -51,7 +48,7 @@ func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 
 	// 生成したトークンをJSONレスポンスとして返す
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
+		
 	})
 }
 
@@ -161,7 +158,7 @@ func respondWithErrAndMsg(c *gin.Context, status int, err string, msg string) {
 	})
 }
 
-func sendSignUpMailFromGmail(email string, token string) error {
+func sendSignUpMailFromGmail(email string) error {
 	// SMTPサーバーの設定
 	smtpServer := "smtp.gmail.com"
 	port := "587"
@@ -172,13 +169,12 @@ func sendSignUpMailFromGmail(email string, token string) error {
 
 	// URLを生成
 	// トークンを生成
-	emailToken, err := utils.GenerateEmailToken(userPreSignUpInput.Email)
+	emailToken, err := utils.GenerateEmailToken(email)
 	if err != nil {
 		log.Printf("Token generation failed: %v", err)
-		respondWithError(c, http.StatusInternalServerError, err.Error())
-		return
+		return err
 	}
-	registrationURL := fmt.Sprintf("%s/sign-up?token=%s&email=%s", os.Getenv("FRONTEND_ORIGIN"), token, emailToken)
+	registrationURL := fmt.Sprintf("%s/sign-up?t&email=%s", os.Getenv("FRONTEND_ORIGIN"), emailToken)
 
 	// メールの受信者と本文
 	to := []string{email}
