@@ -37,7 +37,6 @@ export default function EmailUpdate() {
       }
 
       update(decodedToken.email);
-      router.push("/");
     } catch (err) {
       console.error("Error decoding token:", err);
       router.push("/");

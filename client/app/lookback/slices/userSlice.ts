@@ -215,6 +215,7 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncUpdateLoginUserEmail.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUserEmail.pending, handleLoading);
     builder.addCase(fetchAsyncUpdateCompleteLoginUserEmail.fulfilled, (state, action: PayloadAction<USER>) => {
+      router.push("/");
       state.status = 'succeeded';
       state.loginUser = action.payload;
       state.message = 'メールの更新に完了しました';
@@ -243,10 +244,10 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncUpdateUserGroup.rejected, handleError);
     builder.addCase(fetchAsyncUpdateUserGroup.pending, handleLoading);
     builder.addCase(fetchAsyncDeleteLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
+      router.push("/");
       state.status = 'succeeded';
       state.loginUser = action.payload;
       state.message = 'ユーザーの削除に成功しました';
-      router.push("/");
     });
     builder.addCase(fetchAsyncDeleteLoginUser.rejected, handleError);
     builder.addCase(fetchAsyncDeleteLoginUser.pending, handleLoading);
