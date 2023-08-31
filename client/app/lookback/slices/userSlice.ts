@@ -24,6 +24,7 @@ const handleHttpError = (err: any, thunkAPI: any) => {
 // APIエンドポイントの定義
 const ENDPOINTS = {
   LOGIN: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/login`,
+  LOGOUT: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
   REGISTER: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
   REGISTER_REQUEST: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup/request`,
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
@@ -32,6 +33,15 @@ const ENDPOINTS = {
 export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: LOGIN_AUTH, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS.LOGIN, auth, COMMON_HTTP_HEADER);
+    return res.data;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
+export const fetchAsyncLogout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+  try {
+    const res = await axios.get(ENDPOINTS.LOGOUT, COMMON_HTTP_HEADER);
     return res.data;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -163,11 +173,21 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
-      state.loginUser = action.payload;
       router.push("/task-board");
+      state.message = 'ログインしました';
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
     });
     builder.addCase(fetchAsyncLogin.rejected, handleLoginError);
     builder.addCase(fetchAsyncLogin.pending, handleLoading);
+    builder.addCase(fetchAsyncLogout.fulfilled, (state, action: PayloadAction<USER>) => {
+      router.push("/");
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'ログアウトしました';
+    });
+    builder.addCase(fetchAsyncLogout.rejected, handleLoginError);
+    builder.addCase(fetchAsyncLogout.pending, handleLoading);
     builder.addCase(fetchAsyncRegisterRequest.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;

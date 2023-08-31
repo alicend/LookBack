@@ -7,23 +7,16 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import { useRouter } from 'next/router';
-import axios from 'axios';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store/store';
+import { fetchAsyncLogout } from '@/slices/userSlice';
 
 export const IconMenu: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
 
-  const router = useRouter();
   const Logout = async () => {
-    try {
-      const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
-          { headers: { "Content-Type": "application/json" } }
-      );
-    } catch (err: any) {
-      console.log(err);
-    }
-    router.push("/");
+    await dispatch(fetchAsyncLogout());
   };
   
   return (
