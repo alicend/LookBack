@@ -54,7 +54,7 @@ func (handler *Handler) GetCurrentUserHandler(c *gin.Context) {
 }
 
 func (handler *Handler) DeleteUserHandler(c *gin.Context) {
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("DOMAIN"), false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully deleted task",
@@ -76,7 +76,7 @@ func (handler *Handler) UpdateCurrentUserEmailHandler(c *gin.Context) {
 			respondWithError(c, http.StatusBadRequest, err.Error())
 			return
 	} else if err == nil {
-		respondWithErrAndMsg(c, http.StatusBadRequest, "", "別のユーザーが使用しているので別のメールアドレスを入力してください")
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "他のユーザーが使用しているので別のメールアドレスを入力してください")
 		return
 	}
 
@@ -267,7 +267,7 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 	}
 
 	// Clear the cookie named "access_token"
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("DOMAIN"), false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 	
 	c.JSON(http.StatusOK, gin.H{})
 }

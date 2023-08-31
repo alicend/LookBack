@@ -263,7 +263,7 @@ func extractUserID(c *gin.Context) (uint, error) {
 		return 0, err
 	}
 
-	token, _ := utils.ParseToken(tokenString)
+	token, _ := utils.ParseSessionToken(tokenString)
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return 0, errors.New("failed to parse claims")

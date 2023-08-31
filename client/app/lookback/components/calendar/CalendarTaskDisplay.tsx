@@ -57,7 +57,7 @@ const CalendarTaskDisplay: React.FC<CalendarTaskDisplayProps> = ({ onClose }) =>
           onClose();
         }}
       >
-        Move to Completed
+        To Task Board
       </UpdateButton>
     </>
   );

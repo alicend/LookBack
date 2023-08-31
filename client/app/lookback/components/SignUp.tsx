@@ -6,14 +6,9 @@ import { TextField, Button, SelectChangeEvent, Fab } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegisterRequest } from "@/slices/userSlice";
+import { fetchAsyncRegister } from "@/slices/userSlice";
 
 import { Grid } from "@mui/material";
-
-const Adjust = styled('div')`
-  width: 1px;
-  height: 88px;
-`;
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#4dabf5 !important',
@@ -52,49 +47,22 @@ const registerCredentialSchema = z.object({
   user_group: z.string()
 });
 
-const loginCredentialSchema = z.object({
-  email: z.string()
-    .email("無効なメールアドレスです")
-    .regex(pattern, "無効なメールアドレスです"),
-  password: z.string()
-    .min(8, "パスワードは８文字以上にしてください")
-    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
-});
+interface Props {
+  email: string;
+}
 
-const Auth: React.FC = () => {
+const SignUp: React.FC<Props> = ({email}) => {
   const dispatch: AppDispatch = useDispatch();
-  const [isLoginView, setIsLoginView] = useState(true);
-  const [credential, setCredential] = useState({ username: "", password: "", email: "", user_group: ""});
-  const [errors, setErrors] = useState({ username: "", password: "", email: "", user_group: "" });
+  const [credential, setCredential] = useState({ email: email, password: "", username: "", user_group: ""});
+  const [errors, setErrors] = useState({ username: "", password: "", user_group: "" });
 
-  const isDisabled = isLoginView
-  ? (credential.email.length === 0 || credential.password.length === 0)
-  : (credential.username.length === 0 || credential.password.length === 0 || credential.email.length === 0 || credential.user_group.length === 0);
-
-  const toggleLoginView = () => {
-    setIsLoginView(!isLoginView);
-    setErrors({ username: "", password: "", email: "", user_group: "" });
-  };
+  const isDisabled = credential.username.length === 0 || credential.password.length === 0 || credential.email.length === 0 || credential.user_group.length === 0;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const name = e.target.name;
     setCredential({ ...credential, [name]: value });
     setErrors({ ...errors, [name]: "" });
-  };
-  
-  const login = async () => {
-    // 入力チェック
-    const result = loginCredentialSchema.safeParse(credential);
-    if (!result.success) {
-      const emailError    = result.error.formErrors.fieldErrors["email"]?.[0] || "";
-      const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      setErrors({ email: emailError, password: passwordError, username: "", user_group: "" });
-      return;
-    }
-
-    // ログイン処理
-    await dispatch(fetchAsyncLogin(credential));
   };
 
   const register = async () => {
@@ -103,14 +71,13 @@ const Auth: React.FC = () => {
     if (!result.success) {
       const usernameError  = result.error.formErrors.fieldErrors["username"]?.[0] || "";
       const passwordError  = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      const emailError     = result.error.formErrors.fieldErrors["email"]?.[0] || "";
       const userGroupError = result.error.formErrors.fieldErrors["user_group"]?.[0] || "";
-      setErrors({ username: usernameError, password: passwordError, email: emailError, user_group: userGroupError });
+      setErrors({ username: usernameError, password: passwordError, user_group: userGroupError });
       return;
     }
 
     // 登録処理
-    await dispatch(fetchAsyncRegisterRequest(credential.email));
+    await dispatch(fetchAsyncRegister(credential));
   }
 
   return (
@@ -123,7 +90,7 @@ const Auth: React.FC = () => {
         style={{ minHeight: '80vh', padding: '12px' }}
       >
         <Grid item>
-          <h1>{isLoginView ? "Login" : "Register"}</h1>
+          <h1>Sign Up</h1>
         </Grid>
         <br />
         <Grid item>
@@ -135,32 +102,58 @@ const Auth: React.FC = () => {
             type="email"
             name="email"
             value={credential.email}
-            onChange={handleInputChange}
-            error={Boolean(errors.email)}
-            helperText={errors.email}
+            disabled={true}
           />
         </Grid>
-        
+        <br />
+        <Grid item>
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Password"
+            type="password"
+            name="password"
+            value={credential.password}
+            onChange={handleInputChange}
+            error={Boolean(errors.password)}
+            helperText={errors.password}
+          />
+        </Grid>
 
-        {isLoginView && 
-          <>
+            <br/>
+            <Grid item>
+              <StyledTextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                label="Username"
+                type="text"
+                name="username"
+                value={credential.username}
+                onChange={handleInputChange}
+                error={Boolean(errors.username)}
+                helperText={errors.username}
+                inputProps={{
+                  maxLength: 30
+                }}
+              />
+            </Grid>
             <br />
             <Grid item>
               <StyledTextField
                 InputLabelProps={{
                   shrink: true,
                 }}
-                label="Password"
-                type="password"
-                name="password"
-                value={credential.password}
+                label="User Group"
+                type="text"
+                name="user_group"
+                value={credential.user_group}
                 onChange={handleInputChange}
-                error={Boolean(errors.password)}
-                helperText={errors.password}
+                error={Boolean(errors.user_group)}
+                helperText={errors.user_group}
               />
             </Grid>
-          </>
-        }
 
         <Grid item>
           <StyledButton
@@ -168,28 +161,15 @@ const Auth: React.FC = () => {
             color="primary"
             size="small"
             disabled={isDisabled}
-            onClick={isLoginView ? login : register}
+            onClick={register}
           >
-            {isLoginView ? "Login" : "Send Sign-up Email"}
+            Sign Up
           </StyledButton>
         </Grid>
-
-        <Grid item>
-          <span onClick={() => toggleLoginView()} className="cursor-pointer">
-            {isLoginView ? "Create new account ?" : "Back to Login"}
-          </span>
-        </Grid>
-
-        {!isLoginView && 
-          <Grid item>
-            <Adjust/>
-          </Grid>
-        }
-
       </Grid>
 
     </>
   );
 };
 
-export default Auth;
+export default SignUp;

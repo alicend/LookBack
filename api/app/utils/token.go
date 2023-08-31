@@ -12,8 +12,8 @@ import (
 	"github.com/alicend/LookBack/app/constant"
 )
 
-func GenerateToken(userId uint) (string, error) {
-	secretKey := os.Getenv("SECRET_KEY") // 暗号化、復号化するためのキー
+func GenerateSessionToken(userId uint) (string, error) {
+	secretKey := os.Getenv("SESSION_SECRET_KEY") // 暗号化、復号化するためのキー
 	tokenLifeTime, err := strconv.Atoi(constant.JWT_TOKEN_LIFETIME)
 	if err != nil {
 		return "", err
@@ -32,12 +32,23 @@ func GenerateToken(userId uint) (string, error) {
 	return tokenString, nil
 }
 
-func ParseToken(tokenString string) (*jwt.Token, error) {
+func GenerateEmailToken(email string) (string, error) {
+	secretKey := os.Getenv("EMAIL_SECRET_KEY") // 暗号化、復号化するためのキー
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"email": email,
+			"exp":  time.Now().Add(time.Hour * 1).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(secretKey))
+	return tokenString, err
+}
+
+func ParseSessionToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("SECRET_KEY")), nil
+		return []byte(os.Getenv("SESSION_SECRET_KEY")), nil
 	})
 	if err != nil {
 		return nil, err

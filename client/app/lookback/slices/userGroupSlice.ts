@@ -33,15 +33,6 @@ export const fetchAsyncCreateUserGroup = createAsyncThunk("user-groups/create", 
   }
 });
 
-export const fetchAsyncGetUserGroups = createAsyncThunk("user-groups/get", async (_, thunkAPI) => {
-  try {
-    const res = await axios.get(ENDPOINTS, COMMON_HTTP_HEADER);
-    return res.data.user_groups;
-  } catch (err :any) {
-    return handleHttpError(err, thunkAPI);
-  }
-});
-
 export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", async ({ id, userGroup }: {id: number, userGroup: string}, thunkAPI) => {
   try {
     const res = await axios.put(`${ENDPOINTS}/${id}`, {userGroup: userGroup}, COMMON_HTTP_HEADER);
@@ -110,11 +101,6 @@ export const userGroupSlice = createSlice({
     });
     builder.addCase(fetchAsyncCreateUserGroup.rejected, handleLoginError);
     builder.addCase(fetchAsyncCreateUserGroup.pending, handleLoading);
-    builder.addCase(fetchAsyncGetUserGroups.fulfilled, (state, action: PayloadAction<USER_GROUP[]>) => {
-      state.userGroups = action.payload;
-    });
-    builder.addCase(fetchAsyncGetUserGroups.rejected, handleError);
-    builder.addCase(fetchAsyncGetUserGroups.pending, handleLoading);
     builder.addCase(fetchAsyncUpdateUserGroup.fulfilled, (state, action: PayloadAction<USER_GROUP[]>) => {
       state.status = 'succeeded';
       state.userGroups = action.payload;

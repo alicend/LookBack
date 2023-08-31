@@ -25,6 +25,7 @@ const handleHttpError = (err: any, thunkAPI: any) => {
 const ENDPOINTS = {
   LOGIN: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/login`,
   REGISTER: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
+  REGISTER_REQUEST: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup-request`,
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
 }
 
@@ -37,9 +38,17 @@ export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: AUTHE
   }
 });
 
+export const fetchAsyncRegisterRequest = createAsyncThunk("auth/register-request", async (email: string, thunkAPI) => {
+  try {
+    const res = await axios.post(ENDPOINTS.REGISTER_REQUEST, {email: email}, COMMON_HTTP_HEADER);
+    return res.data;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
 export const fetchAsyncRegister = createAsyncThunk("auth/register", async (auth: AUTHENTICATION, thunkAPI) => {
   try {
-    console.log(auth)
     const res = await axios.post(ENDPOINTS.REGISTER, auth, COMMON_HTTP_HEADER);
     return res.data;
   } catch (err :any) {
@@ -150,6 +159,13 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchAsyncLogin.rejected, handleLoginError);
     builder.addCase(fetchAsyncLogin.pending, handleLoading);
+    builder.addCase(fetchAsyncRegisterRequest.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'メールを送信しました';
+    });
+    builder.addCase(fetchAsyncRegisterRequest.rejected, handleLoginError);
+    builder.addCase(fetchAsyncRegisterRequest.pending, handleLoading);
     builder.addCase(fetchAsyncRegister.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;

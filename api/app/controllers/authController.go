@@ -1,8 +1,13 @@
 package controllers
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
 	"net/http"
+	"net/smtp"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
@@ -13,6 +18,42 @@ import (
 	"github.com/alicend/LookBack/app/models"
 	"github.com/alicend/LookBack/app/utils"
 )
+
+type UserPreSignUpInput struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
+
+	var userPreSignUpInput UserPreSignUpInput
+	if err := c.ShouldBindJSON(&userPreSignUpInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// メールアドレスが既に使用されていないか確認
+	_, err := models.FindUserByEmail(handler.DB, userPreSignUpInput.Email)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			respondWithError(c, http.StatusBadRequest, err.Error())
+			return
+	} else if err == nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "他のユーザーが使用しているので別のメールアドレスを入力してください")
+		return
+	}
+
+	err = sendSignUpMailFromGmail(userPreSignUpInput.Email, token);
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
+		return
+	}
+
+	// 生成したトークンをJSONレスポンスとして返す
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+	})
+}
 
 func (handler *Handler) SignUpHandler(c *gin.Context) {
 	var signUpInput models.UserSignUpInput
@@ -79,14 +120,14 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	}
 
 	// クッキーにJWT(中身はユーザID)をセットする
-	token, err := utils.GenerateToken(user.ID)
+	token, err := utils.GenerateSessionToken(user.ID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// JWT_TOKEN_NAMEはクライアントで設定した名称
-	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", os.Getenv("DOMAIN"), false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 	
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
@@ -95,7 +136,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 
 func (handler *Handler) LogoutHandler(c *gin.Context) {
 	// Clear the cookie named "access_token"
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("DOMAIN"), false, true)
+	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully logged out",
@@ -118,4 +159,53 @@ func respondWithErrAndMsg(c *gin.Context, status int, err string, msg string) {
 		"error"  : err,
 		"message": msg,
 	})
+}
+
+func sendSignUpMailFromGmail(email string, token string) error {
+	// SMTPサーバーの設定
+	smtpServer := "smtp.gmail.com"
+	port := "587"
+
+	// 認証情報
+	from := "lookbackcalendar2023@gmail.com"
+	password := os.Getenv("GMAIL_PASSWORD")
+
+	// URLを生成
+	// トークンを生成
+	emailToken, err := utils.GenerateEmailToken(userPreSignUpInput.Email)
+	if err != nil {
+		log.Printf("Token generation failed: %v", err)
+		respondWithError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	registrationURL := fmt.Sprintf("%s/sign-up?token=%s&email=%s", os.Getenv("FRONTEND_ORIGIN"), token, emailToken)
+
+	// メールの受信者と本文
+	to := []string{email}
+	subject := "【Look Back Calendar】登録のお願い"
+	body := fmt.Sprintf("登録を完了するには、以下のリンクにアクセスしてください。\n%s", registrationURL)
+
+	// メールヘッダーと本文を結合
+	header := make(map[string]string)
+	header["From"] = from
+	header["To"] = to[0]
+	header["Subject"] = subject
+
+	message := ""
+	for k, v := range header {
+		message += k + ": " + v + "\r\n"
+	}
+	message += "\r\n" + body
+
+	// 認証
+	auth := smtp.PlainAuth("", from, password, smtpServer)
+
+	// メール送信
+	err = smtp.SendMail(smtpServer+":"+port, auth, from, to, []byte(message))
+	if err != nil {
+		log.Fatal("Failed to send the email:", err)
+		return err
+	}
+
+	return nil
 }

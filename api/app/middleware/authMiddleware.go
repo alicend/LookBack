@@ -24,7 +24,7 @@ func AuthMiddleware(c *gin.Context) {
 	}
 
 	// 正しいトークンか確認
-	_, err = utils.ParseToken(tokenString)
+	_, err = utils.ParseSessionToken(tokenString)
 	if err != nil {
 		log.Printf("Error parsing token: %v", err)
 		log.Printf("認証情報が正しくありません")
