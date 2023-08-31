@@ -39,9 +39,17 @@ const Email: FC<Props> = React.memo(({ loginUserEmail }) => {
   const [errors, setErrors] = useState({ new_email: "" });
 
   const isDisabled = newEmail.length === 0;
-  
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewEmail(event.target.value);
+    setErrors({ new_email: "" });
+  };
+
+  const pattern = /^[\u0021-\u007e]+$/u; // 半角英数字記号のみ
   const credentialSchema = z.object({
     new_email: z.string()
+      .email("無効なメールアドレスです")
+      .regex(pattern, "無効なメールアドレスです"),
   }).superRefine((data, context) => {
     if (data.new_email === loginUserEmail) {
       context.addIssue({
@@ -50,12 +58,7 @@ const Email: FC<Props> = React.memo(({ loginUserEmail }) => {
         message: "新しいメールアドレスは現在のメールアドレスと異なるものにしてください",
       });
     }
-  });
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewEmail(event.target.value);
-    setErrors({ new_email: "" });
-  };
+});
 
   const update = async () => {
     const result = credentialSchema.safeParse({ new_email: newEmail });
