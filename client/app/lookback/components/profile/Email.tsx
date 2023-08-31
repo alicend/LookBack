@@ -103,7 +103,7 @@ const Email: FC<Props> = React.memo(({ loginUserEmail }) => {
           disabled={isDisabled}
           onClick={update}
         >
-          UPDATE
+          SEND UPDATE MAIL
         </UpdateButton>
       </Grid>
     </>
