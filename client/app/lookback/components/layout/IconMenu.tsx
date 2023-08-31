@@ -11,9 +11,14 @@ import Link from 'next/link';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/store';
 import { fetchAsyncLogout } from '@/slices/userSlice';
+import { useRouter } from 'next/router';
 
 export const IconMenu: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
+
+  // URLの末尾を取得
+  const lastPath = router.asPath.split('/').pop();
 
   const Logout = async () => {
     await dispatch(fetchAsyncLogout());
@@ -27,30 +32,36 @@ export const IconMenu: React.FC = () => {
         </ListItemIcon>
         <ListItemText>Log out</ListItemText>
       </MenuItem>
-      <Link href="/look-back">
-        <MenuItem>
-          <ListItemIcon>
-            <CalendarMonthOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Look Back</ListItemText>
-        </MenuItem>
-      </Link>
-      <Link href="/task-board">
-        <MenuItem>
-          <ListItemIcon>
-            <AssignmentOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Task Board</ListItemText>
-        </MenuItem>
-      </Link>
-      <Link href="/profile">
-        <MenuItem>
-          <ListItemIcon>
-            <ManageAccountsIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Profile Edit</ListItemText>
-        </MenuItem>
-      </Link>
+      {lastPath !== 'look-back' && (
+        <Link href="/look-back">
+          <MenuItem>
+            <ListItemIcon>
+              <CalendarMonthOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Look Back</ListItemText>
+          </MenuItem>
+        </Link>
+      )}
+      {lastPath !== 'task-board' && (
+        <Link href="/task-board">
+          <MenuItem>
+            <ListItemIcon>
+              <AssignmentOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Task Board</ListItemText>
+          </MenuItem>
+        </Link>
+      )}
+      {lastPath !== 'profile' && (
+        <Link href="/profile">
+          <MenuItem>
+            <ListItemIcon>
+              <ManageAccountsIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Profile Edit</ListItemText>
+          </MenuItem>
+        </Link>
+      )}
     </MenuList>
   );
 }
