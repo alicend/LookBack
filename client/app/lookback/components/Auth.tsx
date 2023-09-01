@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from '@mui/material/Link';
 import { z } from 'zod';
 
 import { styled } from '@mui/system';
@@ -12,7 +13,7 @@ import { Grid } from "@mui/material";
 
 const Adjust = styled('div')`
   width: 1px;
-  height: 88px;
+  height: 90px;
 `;
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -41,16 +42,22 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 const passwordCheck = (val: string) => /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/.test(val);
 const pattern = /^[\u0021-\u007e]+$/u; // 半角英数字記号のみ
 
+const loginCredentialSchema = z.object({
+  email: z.string()
+  .email("無効なメールアドレスです")
+  .regex(pattern, "無効なメールアドレスです"),
+  password: z.string()
+  .min(8, "パスワードは８文字以上にしてください")
+  .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
+});
+
 const registerCredentialSchema = z.object({
   email: z.string()
     .email("無効なメールアドレスです")
     .regex(pattern, "無効なメールアドレスです"),
 });
 
-const loginCredentialSchema = z.object({
-  email: z.string()
-    .email("無効なメールアドレスです")
-    .regex(pattern, "無効なメールアドレスです"),
+const passwordResetCredentialSchema = z.object({
   password: z.string()
     .min(8, "パスワードは８文字以上にしてください")
     .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
@@ -58,17 +65,19 @@ const loginCredentialSchema = z.object({
 
 const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const [isLoginView, setIsLoginView] = useState(true);
+  const [loginViewValue, setLoginViewValue] = useState(0);
   const [credential, setCredential] = useState({ password: "", email: "" });
   const [errors, setErrors] = useState({ password: "", email: "" });
 
-  const isDisabled = isLoginView
-  ? (credential.email.length === 0 || credential.password.length === 0)
-  : (credential.email.length === 0);
+  const isDisabled = 
+  (loginViewValue === 0 && (credential.email.length === 0 || credential.password.length === 0)) ||
+  (loginViewValue === 1 && credential.email.length === 0) ||
+  (loginViewValue === 2 && credential.password.length === 0);
 
-  const toggleLoginView = () => {
-    setIsLoginView(!isLoginView);
-    setErrors({ password: "", email: "" });
+
+  const handleLoginViewChange = (newValue: number) => {
+    setLoginViewValue(newValue);
+    setErrors({ password: "", email: "" }); // エラーメッセージをリセット
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +101,7 @@ const Auth: React.FC = () => {
     await dispatch(fetchAsyncLogin(credential));
   };
 
-  const register = async () => {
+  const signUp = async () => {
     // 入力チェック
     const result = registerCredentialSchema.safeParse(credential);
     if (!result.success) {
@@ -105,6 +114,19 @@ const Auth: React.FC = () => {
     await dispatch(fetchAsyncRegisterRequest(credential.email));
   }
 
+  const passwordReset = async () => {
+    // 入力チェック
+    const result = passwordResetCredentialSchema.safeParse(credential);
+    if (!result.success) {
+      const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
+      setErrors({  password: passwordError, email: "" });
+      return;
+    }
+
+    // 登録処理
+    // await dispatch(fetchAsyncRegisterRequest(credential.password));
+  }
+
   return (
     <>
       <Grid
@@ -115,26 +137,31 @@ const Auth: React.FC = () => {
         style={{ minHeight: '80vh', padding: '12px' }}
       >
         <Grid item>
-          <h1>{isLoginView ? "Login" : "Register"}</h1>
+          <h1>
+            {loginViewValue  === 0 && ("Login")}
+            {loginViewValue  === 1 && ("Sign Up")}
+            {loginViewValue  === 2 && ("Password Reset")}
+          </h1>
         </Grid>
         <br />
-        <Grid item>
-          <StyledTextField
-            InputLabelProps={{
-              shrink: true,
-            }}
-            label="Email"
-            type="email"
-            name="email"
-            value={credential.email}
-            onChange={handleInputChange}
-            error={Boolean(errors.email)}
-            helperText={errors.email}
-          />
-        </Grid>
-        
+        {(loginViewValue === 0 || loginViewValue === 1) && (
+          <Grid item>
+            <StyledTextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              label="Email"
+              type="email"
+              name="email"
+              value={credential.email}
+              onChange={handleInputChange}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
+            />
+          </Grid>
+        )}
 
-        {isLoginView && 
+        {(loginViewValue === 0 || loginViewValue === 2) && (
           <>
             <br />
             <Grid item>
@@ -152,7 +179,7 @@ const Auth: React.FC = () => {
               />
             </Grid>
           </>
-        }
+        )}
 
         <Grid item>
           <StyledButton
@@ -160,23 +187,48 @@ const Auth: React.FC = () => {
             color="primary"
             size="small"
             disabled={isDisabled}
-            onClick={isLoginView ? login : register}
+            onClick={loginViewValue === 0 ? login : loginViewValue === 1 ? signUp : passwordReset}
           >
-            {isLoginView ? "Login" : "Send Sign-up Email"}
+            {loginViewValue  === 0 && ("Login")}
+            {loginViewValue  === 1 && ("Send Sign-up Email")}
+            {loginViewValue  === 2 && ("Send Password-Reset Email")}
           </StyledButton>
         </Grid>
 
         <Grid item>
-          <span onClick={() => toggleLoginView()} className="cursor-pointer">
-            {isLoginView ? "Create new account ?" : "Back to Login"}
-          </span>
+          {loginViewValue  === 0 && (
+            <p>
+              If you forgot your password
+              <span> </span>
+              <Link onClick={() => handleLoginViewChange(2)} className="cursor-pointer">
+                click here
+              </Link>
+            </p>
+          )}
+          {loginViewValue  === 0 && (
+            <p>
+              Do you have an account ?
+              <span> </span>
+              <Link onClick={() => handleLoginViewChange(1)} className="cursor-pointer">
+                Create account
+              </Link>
+            </p>
+          )}
+          {(loginViewValue === 1 || loginViewValue === 2) && (
+            <p>
+              <Link onClick={() => handleLoginViewChange(0)} className="cursor-pointer">
+                Back to Login
+              </Link>
+            </p>
+          )}        
+          
         </Grid>
 
-        {!isLoginView && 
+        {(loginViewValue === 1 || loginViewValue === 2) && (
           <Grid item>
             <Adjust/>
           </Grid>
-        }
+        )}
 
       </Grid>
 
