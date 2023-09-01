@@ -9,7 +9,8 @@ RUN apk upgrade --update && \
 RUN go get github.com/gin-gonic/gin \
     github.com/jinzhu/gorm \
     github.com/jinzhu/gorm/dialects/mysql \
-    github.com/joho/godotenv
+    github.com/joho/godotenv \
+    github.com/resendlabs/resend-go
 
 RUN go mod tidy
 

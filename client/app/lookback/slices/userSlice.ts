@@ -174,7 +174,6 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
       router.push("/task-board");
-      state.message = 'ログインしました';
       state.status = 'succeeded';
       state.loginUser = action.payload;
     });

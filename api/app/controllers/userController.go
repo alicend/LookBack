@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"net/smtp"
 	"errors"
 	"fmt"
 	"log"
@@ -10,6 +9,7 @@ import (
 
 	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
+	"github.com/resendlabs/resend-go"
 
 	"github.com/alicend/LookBack/app/constant"
 	"github.com/alicend/LookBack/app/models"
@@ -323,13 +323,8 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 // ==================================================================
 
 func sendUpdateEmailMailFromGmail(email string) error {
-	// SMTPサーバーの設定
-	smtpServer := "smtp.gmail.com"
-	port := "587"
 
-	// 認証情報
-	from := "lookbackcalendar2023@gmail.com"
-	password := os.Getenv("GMAIL_PASSWORD")
+	client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
 
 	// URLを生成
 	// トークンを生成
@@ -340,32 +335,26 @@ func sendUpdateEmailMailFromGmail(email string) error {
 	}
 	registrationURL := fmt.Sprintf("%s/update/email?&email=%s", os.Getenv("FRONTEND_ORIGIN"), emailToken)
 
-	// メールの受信者と本文
-	to := []string{email}
+	body := fmt.Sprintf(`
+		<p>メールアドレスの更新を完了するには、以下のリンクにアクセスしてください。</p>
+		<a href="%s">%s</a>
+	`, registrationURL, registrationURL)
+
 	subject := "【Look Back Calendar】メールアドレス更新のお願い"
-	body := fmt.Sprintf("メールアドレスの更新を完了するには、以下のリンクにアクセスしてください。\n%s", registrationURL)
 
-	// メールヘッダーと本文を結合
-	header := make(map[string]string)
-	header["From"] = from
-	header["To"] = to[0]
-	header["Subject"] = subject
+    params := &resend.SendEmailRequest{
+        From:    "Look Back Calendar <update@lookback-calendar.com>",
+        To:      []string{email},
+        Html:    body,
+        Subject: subject,
+    }
 
-	message := ""
-	for k, v := range header {
-		message += k + ": " + v + "\r\n"
-	}
-	message += "\r\n" + body
-
-	// 認証
-	auth := smtp.PlainAuth("", from, password, smtpServer)
-
-	// メール送信
-	err = smtp.SendMail(smtpServer+":"+port, auth, from, to, []byte(message))
-	if err != nil {
-		log.Fatal("Failed to send the email:", err)
-		return err
-	}
+    sent, err := client.Emails.Send(params)
+    if err != nil {
+        log.Println(err.Error())
+        return err
+    }
+    fmt.Println(sent.Id)
 
 	return nil
 }
