@@ -358,7 +358,43 @@ func TestUpdateUserPassword(t *testing.T) {
 
 	var updatedUser User
 	db.Where("id = ?", user.ID).First(&updatedUser)
-	assert.Equal(t, "NewPassword", updatedUser.Password)
+	assert.Equal(t, encrypt("NewPassword"), updatedUser.Password)
+
+	// テストデータの削除
+	db.Unscoped().Delete(&user)
+	db.Unscoped().Delete(&userGroup)
+}
+
+func TestResetUserPassword(t *testing.T) {
+	// テスト用MySQLデータベースに接続
+	db, err := gorm.Open(mysql.Open(constant.TEST_DSN), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to connect to database: %v", err)
+	}
+
+	// テストデータ作成
+	userGroup := &UserGroup{
+		UserGroup: "TestUserGroup",
+	}
+	db.Create(userGroup)
+
+	user := &User{
+		Name:     "TestUser",
+		Password: "TestOldPassword",
+		Email:    "test@example.com",
+		UserGroupID: userGroup.ID,
+	}
+	db.Create(user)
+
+	// パスワードリセット
+	err = user.ResetUserPassword(db)
+	assert.Nil(t, err)
+
+	// 更新後のデータ取得
+	var updatedUser User
+	db.Where("id = ?", user.ID).First(&updatedUser)
+	// パスワードが更新されていることを確認
+	assert.NotEqual(t, "TestOldPassword", updatedUser.Password)
 
 	// テストデータの削除
 	db.Unscoped().Delete(&user)
