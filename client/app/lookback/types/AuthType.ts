@@ -4,7 +4,6 @@ export interface SIGN_UP_AUTH {
   password: string;
   user_group: string;
 }
-
 export interface LOGIN_AUTH {
   email: string;
   password: string;

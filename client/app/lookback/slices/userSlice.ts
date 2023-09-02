@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { LOGIN_AUTH, SIGN_UP_AUTH } from "@/types/AuthType";
 import { RootState } from "@/store/store";
-import { USER, USER_STATE, PASSWORD_UPDATE } from "@/types/UserType";
+import { USER, USER_STATE, PASSWORD_UPDATE, PASSWORD_RESET } from "@/types/UserType";
 import { PAYLOAD } from "@/types/ResponseType";
 import router from "next/router";
 
@@ -48,7 +48,7 @@ export const fetchAsyncLogout = createAsyncThunk("auth/logout", async (_, thunkA
   }
 });
 
-export const fetchAsyncRegisterRequest = createAsyncThunk("auth/register-request", async (email: string, thunkAPI) => {
+export const fetchAsyncRegisterRequest = createAsyncThunk("auth/register/request", async (email: string, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS.REGISTER_REQUEST, {email: email}, COMMON_HTTP_HEADER);
     return res.data;
@@ -105,6 +105,24 @@ export const fetchAsyncUpdateLoginUsername = createAsyncThunk("users/updateUsern
 export const fetchAsyncUpdateLoginUserPassword = createAsyncThunk("users/updateUserPassword", async (passwords: PASSWORD_UPDATE, thunkAPI) => {
   try {
     const res = await axios.put(`${ENDPOINTS.USERS}/me/password`, passwords, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
+export const fetchAsyncResetPasswordRequest = createAsyncThunk("users/updateUserPassword/request", async (email: string, thunkAPI) => {
+  try {
+    const res = await axios.post(`${ENDPOINTS.USERS}/password/request`, {email: email}, COMMON_HTTP_HEADER);
+    return res.data.user;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
+export const fetchAsyncResetPassword = createAsyncThunk("users/resetPassword", async (reset: PASSWORD_RESET, thunkAPI) => {
+  try {
+    const res = await axios.put(`${ENDPOINTS.USERS}/password`, reset, COMMON_HTTP_HEADER);
     return res.data.user;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -174,7 +192,6 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
       router.push("/task-board");
-      state.status = 'succeeded';
       state.loginUser = action.payload;
     });
     builder.addCase(fetchAsyncLogin.rejected, handleLoginError);
@@ -235,6 +252,21 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchAsyncUpdateLoginUserPassword.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUserPassword.pending, handleLoading);
+    builder.addCase(fetchAsyncResetPasswordRequest.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'メールを送信しました';
+    });
+    builder.addCase(fetchAsyncResetPasswordRequest.rejected, handleError);
+    builder.addCase(fetchAsyncResetPasswordRequest.pending, handleLoading);
+    builder.addCase(fetchAsyncResetPassword.fulfilled, (state, action: PayloadAction<USER>) => {
+      router.push("/");
+      state.status = 'succeeded';
+      state.loginUser = action.payload;
+      state.message = 'パスワードをリセットしました';
+    });
+    builder.addCase(fetchAsyncResetPassword.rejected, handleError);
+    builder.addCase(fetchAsyncResetPassword.pending, handleLoading);
     builder.addCase(fetchAsyncUpdateUserGroup.fulfilled, (state, action: PayloadAction<USER>) => {
       state.status = 'succeeded';
       state.loginUser = action.payload;

@@ -17,3 +17,8 @@ export interface USER_STATE {
   message: string;
   loginUser: USER;
 };
+
+export interface PASSWORD_RESET {
+  email: string;
+  password: string;
+}

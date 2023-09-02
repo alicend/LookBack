@@ -7,7 +7,7 @@ import { TextField, Button, SelectChangeEvent, Fab } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegisterRequest } from "@/slices/userSlice";
+import { fetchAsyncLogin, fetchAsyncRegisterRequest, fetchAsyncResetPasswordRequest } from "@/slices/userSlice";
 
 import { Grid } from "@mui/material";
 
@@ -51,16 +51,10 @@ const loginCredentialSchema = z.object({
   .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
 });
 
-const registerCredentialSchema = z.object({
+const emailSchema = z.object({
   email: z.string()
     .email("無効なメールアドレスです")
     .regex(pattern, "無効なメールアドレスです"),
-});
-
-const passwordResetCredentialSchema = z.object({
-  password: z.string()
-    .min(8, "パスワードは８文字以上にしてください")
-    .refine(passwordCheck, "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"),
 });
 
 const Auth: React.FC = () => {
@@ -72,7 +66,7 @@ const Auth: React.FC = () => {
   const isDisabled = 
   (loginViewValue === 0 && (credential.email.length === 0 || credential.password.length === 0)) ||
   (loginViewValue === 1 && credential.email.length === 0) ||
-  (loginViewValue === 2 && credential.password.length === 0);
+  (loginViewValue === 2 && credential.email.length === 0);
 
 
   const handleLoginViewChange = (newValue: number) => {
@@ -103,7 +97,7 @@ const Auth: React.FC = () => {
 
   const signUp = async () => {
     // 入力チェック
-    const result = registerCredentialSchema.safeParse(credential);
+    const result = emailSchema.safeParse(credential);
     if (!result.success) {
       const emailError     = result.error.formErrors.fieldErrors["email"]?.[0] || "";
       setErrors({  password: "", email: emailError });
@@ -116,15 +110,15 @@ const Auth: React.FC = () => {
 
   const passwordReset = async () => {
     // 入力チェック
-    const result = passwordResetCredentialSchema.safeParse(credential);
+    const result = emailSchema.safeParse(credential);
     if (!result.success) {
-      const passwordError = result.error.formErrors.fieldErrors["password"]?.[0] || "";
-      setErrors({  password: passwordError, email: "" });
+      const emailError     = result.error.formErrors.fieldErrors["email"]?.[0] || "";
+      setErrors({  password: "", email: emailError });
       return;
     }
 
     // 登録処理
-    // await dispatch(fetchAsyncRegisterRequest(credential.password));
+    await dispatch(fetchAsyncResetPasswordRequest(credential.email));
   }
 
   return (
@@ -144,7 +138,7 @@ const Auth: React.FC = () => {
           </h1>
         </Grid>
         <br />
-        {(loginViewValue === 0 || loginViewValue === 1) && (
+        {(loginViewValue === 0 || loginViewValue === 1 || loginViewValue === 2) && (
           <Grid item>
             <StyledTextField
               InputLabelProps={{
@@ -161,7 +155,7 @@ const Auth: React.FC = () => {
           </Grid>
         )}
 
-        {(loginViewValue === 0 || loginViewValue === 2) && (
+        {(loginViewValue === 0) && (
           <>
             <br />
             <Grid item>

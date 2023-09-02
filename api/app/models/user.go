@@ -42,6 +42,11 @@ type UserPasswordUpdateInput struct {
 	NewPassword     string `json:"new_password" binding:"required,min=8,max=255"`
 }
 
+type UserPasswordResetInput struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8,max=255"`
+}
+
 type UserGroupUpdateInput struct {
 	NewUserGroupID uint `json:"user_group_id" binding:"required,min=1,max=30"`
 }
@@ -239,7 +244,7 @@ func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
 
 func (user *User) UpdateUserPassword(db *gorm.DB, userID uint) error {
 	result := db.Model(user).Where("id = ?", userID).Updates(User{
-		Password: user.Password,
+		Password: encrypt(user.Password),
 	})
 
 	if result.Error != nil {
@@ -247,6 +252,20 @@ func (user *User) UpdateUserPassword(db *gorm.DB, userID uint) error {
 		return result.Error
 	}
 	log.Printf("ログインユーザーのパスワードの更新に成功")
+
+	return nil
+}
+
+func (user *User) ResetUserPassword(db *gorm.DB) error {
+	result := db.Model(user).Where("email = ?", user.Email).Updates(User{
+		Password: encrypt(user.Password),
+	})
+
+	if result.Error != nil {
+		log.Printf("Error updating user: %v\n", result.Error)
+		return result.Error
+	}
+	log.Printf("パスワードのリセットに成功")
 
 	return nil
 }

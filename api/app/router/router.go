@@ -48,6 +48,8 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	}
 
 	users := api.Group("/users")
+	users.PUT("/password", handler.ResetPasswordHandler)
+	users.POST("/password/request", handler.SendEmailResetPasswordHandler)
 	users.Use(middleware.AuthMiddleware)
 	{
 		users.GET("", handler.GetUsersAllHandler)
