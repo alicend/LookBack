@@ -45,6 +45,7 @@ export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", 
 export const fetchAsyncDeleteUserGroup = createAsyncThunk("user-groups/delete", async (id: number, thunkAPI) => {
   try {
     const res = await axios.delete(`${ENDPOINTS}/${id}`, COMMON_HTTP_HEADER);
+    await router.push("/");
     return res.data;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -112,7 +113,6 @@ export const userGroupSlice = createSlice({
       state.status = 'succeeded';
       state.userGroups = action.payload;
       state.message = 'ユーザーグループの削除に成功しました';
-      router.push("/");
     });
     builder.addCase(fetchAsyncDeleteUserGroup.rejected, handleError);
     builder.addCase(fetchAsyncDeleteUserGroup.pending, handleLoading);

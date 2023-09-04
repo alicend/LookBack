@@ -299,7 +299,6 @@ export const taskSlice = createSlice({
         } : initialState.editedTask,
         selectedTask: isTaskPresent ? state.selectedTask : initialState.selectedTask,
         category: action.payload.categories,
-        tasks: action.payload.tasks, 
         status: 'succeeded',
         message: 'カテゴリを削除しました',
       };

@@ -33,6 +33,7 @@ const ENDPOINTS = {
 export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: LOGIN_AUTH, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS.LOGIN, auth, COMMON_HTTP_HEADER);
+    await router.push("/task-board");
     return res.data;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -42,6 +43,7 @@ export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: LOGIN
 export const fetchAsyncLogout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   try {
     const res = await axios.get(ENDPOINTS.LOGOUT, COMMON_HTTP_HEADER);
+    await router.push("/");
     return res.data;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -87,6 +89,7 @@ export const fetchAsyncUpdateLoginUserEmail = createAsyncThunk("users/updateUser
 export const fetchAsyncUpdateCompleteLoginUserEmail = createAsyncThunk("users/updateUserEmail/complete", async (email: string, thunkAPI) => {
   try {
     const res = await axios.put(`${ENDPOINTS.USERS}/me/email`, {email: email}, COMMON_HTTP_HEADER);
+    await router.push("/");
     return res.data.user;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -123,6 +126,7 @@ export const fetchAsyncResetPasswordRequest = createAsyncThunk("users/updateUser
 export const fetchAsyncResetPassword = createAsyncThunk("users/resetPassword", async (reset: PASSWORD_RESET, thunkAPI) => {
   try {
     const res = await axios.put(`${ENDPOINTS.USERS}/password`, reset, COMMON_HTTP_HEADER);
+    await router.push("/");
     return res.data.user;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -141,6 +145,7 @@ export const fetchAsyncUpdateUserGroup = createAsyncThunk("user-groups/update", 
 export const fetchAsyncDeleteLoginUser = createAsyncThunk("users/deleteUser", async (_, thunkAPI) => {
   try {
     const res = await axios.delete(`${ENDPOINTS.USERS}/me`, COMMON_HTTP_HEADER);
+    await router.push("/");
     return res.data.user;
   } catch (err :any) {
     return handleHttpError(err, thunkAPI);
@@ -191,13 +196,12 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
-      router.push("/task-board");
       state.loginUser = action.payload;
+      state.message = 'ログインに成功しました';
     });
     builder.addCase(fetchAsyncLogin.rejected, handleLoginError);
     builder.addCase(fetchAsyncLogin.pending, handleLoading);
     builder.addCase(fetchAsyncLogout.fulfilled, (state, action: PayloadAction<USER>) => {
-      router.push("/");
       state.status = 'succeeded';
       state.loginUser = action.payload;
       state.message = 'ログアウトしました';
@@ -231,7 +235,6 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncUpdateLoginUserEmail.rejected, handleError);
     builder.addCase(fetchAsyncUpdateLoginUserEmail.pending, handleLoading);
     builder.addCase(fetchAsyncUpdateCompleteLoginUserEmail.fulfilled, (state, action: PayloadAction<USER>) => {
-      router.push("/");
       state.status = 'succeeded';
       state.loginUser = action.payload;
       state.message = 'メールの更新に完了しました';
@@ -260,7 +263,6 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncResetPasswordRequest.rejected, handleError);
     builder.addCase(fetchAsyncResetPasswordRequest.pending, handleLoading);
     builder.addCase(fetchAsyncResetPassword.fulfilled, (state, action: PayloadAction<USER>) => {
-      router.push("/");
       state.status = 'succeeded';
       state.loginUser = action.payload;
       state.message = 'パスワードをリセットしました';
@@ -275,7 +277,6 @@ export const userSlice = createSlice({
     builder.addCase(fetchAsyncUpdateUserGroup.rejected, handleError);
     builder.addCase(fetchAsyncUpdateUserGroup.pending, handleLoading);
     builder.addCase(fetchAsyncDeleteLoginUser.fulfilled, (state, action: PayloadAction<USER>) => {
-      router.push("/");
       state.status = 'succeeded';
       state.loginUser = action.payload;
       state.message = 'ユーザーの削除に成功しました';
