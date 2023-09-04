@@ -32,7 +32,7 @@ const ENDPOINTS = {
 
 export const fetchAsyncGuestLogin = createAsyncThunk("auth/login/guest", async (_, thunkAPI) => {
   try {
-    const res = await axios.post(`${ENDPOINTS.LOGIN}/guest`, COMMON_HTTP_HEADER);
+    const res = await axios.get(`${ENDPOINTS.LOGIN}/guest`, COMMON_HTTP_HEADER);
     await router.push("/task-board");
     return res.data;
   } catch (err :any) {

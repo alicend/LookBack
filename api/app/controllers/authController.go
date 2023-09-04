@@ -47,9 +47,7 @@ func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 	}
 
 	// 生成したトークンをJSONレスポンスとして返す
-	c.JSON(http.StatusOK, gin.H{
-		
-	})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 func (handler *Handler) SignUpHandler(c *gin.Context) {
@@ -120,6 +118,44 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	token, err := utils.GenerateSessionToken(user.ID)
 	if err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// JWT_TOKEN_NAMEはクライアントで設定した名称
+	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
+	
+	c.JSON(http.StatusOK, gin.H{
+		"user": user,
+	})
+}
+
+func (handler *Handler) GuestLoginHandler(c *gin.Context) {	
+	// ゲストユーザーがあるかチェック
+	guestUserExists, err := models.CheckIfGuestUserExists(handler.DB)
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "ゲストログインに失敗しました")
+		return
+	}
+	if(guestUserExists){
+		// ゲストユーザーと関連するカテゴリ、タスク、ユーザーグループを削除
+		err := models.DeleteGuestUser(handler.DB)
+		if err != nil {
+			respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "ゲストログインに失敗しました")
+			return
+		}
+	}
+
+	// ゲストユーザーと関連するカテゴリ、タスク、ユーザーグループを作成
+	user, err := models.CreateGuestUser(handler.DB)
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "ゲストログインに失敗しました")
+		return
+	}
+
+	// クッキーにJWT(中身はユーザID)をセットする
+	token, err := utils.GenerateSessionToken(user.ID)
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "ゲストログインに失敗しました")
 		return
 	}
 
