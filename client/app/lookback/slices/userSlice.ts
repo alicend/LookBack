@@ -30,6 +30,16 @@ const ENDPOINTS = {
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
 }
 
+export const fetchAsyncGuestLogin = createAsyncThunk("auth/login/guest", async (_, thunkAPI) => {
+  try {
+    const res = await axios.post(`${ENDPOINTS.LOGIN}/guest`, COMMON_HTTP_HEADER);
+    await router.push("/task-board");
+    return res.data;
+  } catch (err :any) {
+    return handleHttpError(err, thunkAPI);
+  }
+});
+
 export const fetchAsyncLogin = createAsyncThunk("auth/login", async (auth: LOGIN_AUTH, thunkAPI) => {
   try {
     const res = await axios.post(ENDPOINTS.LOGIN, auth, COMMON_HTTP_HEADER);
@@ -195,6 +205,12 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchAsyncGuestLogin.fulfilled, (state, action: PayloadAction<USER>) => {
+      state.loginUser = action.payload;
+      state.message = 'ログインに成功しました';
+    });
+    builder.addCase(fetchAsyncGuestLogin.rejected, handleLoginError);
+    builder.addCase(fetchAsyncGuestLogin.pending, handleLoading);
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action: PayloadAction<USER>) => {
       state.loginUser = action.payload;
       state.message = 'ログインに成功しました';

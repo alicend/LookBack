@@ -7,7 +7,7 @@ import { TextField, Button, SelectChangeEvent, Fab } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegisterRequest, fetchAsyncResetPasswordRequest } from "@/slices/userSlice";
+import { fetchAsyncGuestLogin, fetchAsyncLogin, fetchAsyncRegisterRequest, fetchAsyncResetPasswordRequest } from "@/slices/userSlice";
 
 import { Grid } from "@mui/material";
 
@@ -108,6 +108,11 @@ const Auth: React.FC = () => {
     await dispatch(fetchAsyncRegisterRequest(credential.email));
   }
 
+  const guestLogin = async () => {
+    // ゲストログイン処理
+    await dispatch(fetchAsyncGuestLogin());
+  };
+
   const passwordReset = async () => {
     // 入力チェック
     const result = emailSchema.safeParse(credential);
@@ -187,6 +192,17 @@ const Auth: React.FC = () => {
             {loginViewValue  === 1 && ("Send Sign-up Email")}
             {loginViewValue  === 2 && ("Send Password-Reset Email")}
           </StyledButton>
+          {loginViewValue  === 0 &&
+            <StyledButton
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={guestLogin}
+          >
+            Login as a Guest
+          </StyledButton>
+          }
+          
         </Grid>
 
         <Grid item>
