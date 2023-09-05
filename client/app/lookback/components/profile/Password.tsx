@@ -29,7 +29,11 @@ const UpdateButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
-const Password: FC = React.memo(() => {
+interface Props {
+  loginStatus: boolean;
+}  
+
+const Password: FC<Props> = React.memo(({ loginStatus }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [credential, setCredential] = useState({ current_password: "", new_password: "" });
   const [errors, setErrors] = useState({ current_password: "", new_password: "" });
@@ -88,6 +92,7 @@ const Password: FC = React.memo(() => {
         label="Current Password"
         type="password"
         name="current_password"
+        disabled={loginStatus}
         value={credential.current_password}
         onChange={handleInputChange}
         error={Boolean(errors.current_password)}
@@ -101,6 +106,7 @@ const Password: FC = React.memo(() => {
         label="New Password"
         type="password"
         name="new_password"
+        disabled={loginStatus}
         value={credential.new_password}
         onChange={handleInputChange}
         error={Boolean(errors.new_password)}

@@ -25,9 +25,10 @@ const DeleteButton = styled(Button)(({ theme }) => ({
 interface Props {
   loginUserName: string;
   userGroup: USER_GROUP;
-}  
+  loginStatus: boolean;
+}
 
-const Delete: React.FC<Props> = React.memo(({ loginUserName, userGroup }) => {
+const Delete: React.FC<Props> = React.memo(({ loginUserName, userGroup, loginStatus }) => {
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -57,6 +58,7 @@ const Delete: React.FC<Props> = React.memo(({ loginUserName, userGroup }) => {
         variant="contained"
         color="error"
         size="small"
+        disabled={loginStatus}
         startIcon={<DeleteOutlineOutlinedIcon />}
         onClick={() => {
           setConfirmUserOpen(true)
@@ -69,6 +71,7 @@ const Delete: React.FC<Props> = React.memo(({ loginUserName, userGroup }) => {
         variant="contained"
         color="error"
         size="small"
+        disabled={loginStatus}
         startIcon={<DeleteOutlineOutlinedIcon />}
         onClick={() => {
           setConfirmUserGroupOpen(true)

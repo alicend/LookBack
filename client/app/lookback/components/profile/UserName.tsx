@@ -31,9 +31,10 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 
 interface Props {
   loginUserName: string;
+  loginStatus: boolean;
 }  
 
-const UserName: FC<Props> = React.memo(({ loginUserName }) => {
+const UserName: FC<Props> = React.memo(({ loginUserName, loginStatus }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [newUsername, setNewUsername] = useState("");
   const [errors, setErrors] = useState({ new_username: "" });
@@ -84,6 +85,7 @@ const UserName: FC<Props> = React.memo(({ loginUserName }) => {
         type="text"
         name="new_username"
         value={newUsername}
+        disabled={loginStatus}
         onChange={handleInputChange}
         inputProps={{
           maxLength: 30

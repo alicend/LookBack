@@ -31,9 +31,10 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 
 interface Props {
   userGroup: USER_GROUP;
+  loginStatus: boolean;
 }  
 
-const UserGroup: FC<Props> = React.memo(({ userGroup }) => {
+const UserGroup: FC<Props> = React.memo(({ userGroup, loginStatus }) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const [newUserGroup, setNewUserGroup] = useState("");
@@ -67,6 +68,7 @@ const UserGroup: FC<Props> = React.memo(({ userGroup }) => {
         label="New User Group"
         type="text"
         name="new_user_group"
+        disabled={loginStatus}
         value={newUserGroup}
         onChange={handleInputChange}
         inputProps={{

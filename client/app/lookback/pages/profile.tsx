@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from 'universal-cookie';
 
 import { styled } from '@mui/system';
 import { Grid, Paper, Tab, Tabs } from "@mui/material";
@@ -30,6 +31,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 export default function Profile() {
   const dispatch: AppDispatch = useDispatch();
   const loginUser = useSelector(selectLoginUser);
+  const cookies = new Cookies();
+  const isGuestLogin = cookies.get('guest_login');
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -63,11 +66,11 @@ export default function Profile() {
             </Tabs>
           </StyledPaper>
           <br />
-          {tabValue === 0 && loginUser && <Email loginUserEmail={loginUser.Email} />}
-          {tabValue === 1 && loginUser && <Password/>}
-          {tabValue === 2 && loginUser && <UserName loginUserName={loginUser.Name} />}
-          {tabValue === 3 && loginUser && <UserGroup userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}}/>}
-          {tabValue === 4 && loginUser && <Delete loginUserName={loginUser.Name } userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}} />}          
+          {tabValue === 0 && loginUser && <Email loginUserEmail={loginUser.Email} loginStatus={isGuestLogin} />}
+          {tabValue === 1 && loginUser && <Password loginStatus={isGuestLogin} />}
+          {tabValue === 2 && loginUser && <UserName loginUserName={loginUser.Name} loginStatus={isGuestLogin}/>}
+          {tabValue === 3 && loginUser && <UserGroup userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}} loginStatus={isGuestLogin} />}
+          {tabValue === 4 && loginUser && <Delete loginUserName={loginUser.Name } userGroup={{ID: loginUser.UserGroupID, UserGroup: loginUser.UserGroup}} loginStatus={isGuestLogin} />}          
         </StyledContainer>
       </Grid>
     </MainPageLayout>

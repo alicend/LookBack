@@ -31,9 +31,10 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 
 interface Props {
   loginUserEmail: string;
+  loginStatus: boolean;
 }  
 
-const Email: FC<Props> = React.memo(({ loginUserEmail }) => {
+const Email: FC<Props> = React.memo(({ loginUserEmail, loginStatus }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [newEmail, setNewEmail] = useState("");
   const [errors, setErrors] = useState({ new_email: "" });
@@ -87,6 +88,7 @@ const Email: FC<Props> = React.memo(({ loginUserEmail }) => {
         type="text"
         name="new_email"
         value={newEmail}
+        disabled={loginStatus}
         onChange={handleInputChange}
         inputProps={{
           maxLength: 30
