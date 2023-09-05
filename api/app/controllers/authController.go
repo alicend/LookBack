@@ -121,9 +121,12 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	// JWT_TOKEN_NAMEはクライアントで設定した名称
+	// JWTでセッション管理する
 	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 	
+	// ゲストログインでないことをクッキーに登録
+	c.SetCookie(constant.GUEST_LOGIN, "false", constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, false)
+
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
 	})
@@ -151,8 +154,11 @@ func (handler *Handler) GuestLoginHandler(c *gin.Context) {
 		return
 	}
 
-	// JWT_TOKEN_NAMEはクライアントで設定した名称
+	// JWTでセッション管理する
 	c.SetCookie(constant.JWT_TOKEN_NAME, token, constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
+
+	// ゲストログインであることをクッキーに登録
+	c.SetCookie(constant.GUEST_LOGIN, "true", constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, false)
 	
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
@@ -160,8 +166,9 @@ func (handler *Handler) GuestLoginHandler(c *gin.Context) {
 }
 
 func (handler *Handler) LogoutHandler(c *gin.Context) {
-	// Clear the cookie named "access_token"
+	// クッキーの値を削除
 	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
+	c.SetCookie(constant.GUEST_LOGIN, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully logged out",
