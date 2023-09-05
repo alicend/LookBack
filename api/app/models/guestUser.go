@@ -86,6 +86,26 @@ func CreateGuestUser(db *gorm.DB) (User, error) {
 			Estimate:    uintPtr(15),
 			StartDate:   timePtr(time.Now().AddDate(0, 0, 7)),
 		},
+		{
+			Task:        "データバックアップ",
+			Description: "月末のデータバックアップ",
+			Creator:     users[0].ID,
+			CategoryID:  categories[0].ID,
+			Status:      4,
+			Responsible: users[0].ID,
+			Estimate:    uintPtr(2),
+			StartDate:   timePtr(time.Now()),
+		},
+		{
+			Task:        "UI改善",
+			Description: "ユーザーフレンドリーなインターフェースにする",
+			Creator:     users[1].ID,
+			CategoryID:  categories[1].ID,
+			Status:      4,
+			Responsible: users[1].ID,
+			Estimate:    uintPtr(5),
+			StartDate:   timePtr(time.Now().AddDate(0, 0, -3)),
+		},
 	}
 	if err := tx.Create(&tasks).Error; err != nil {
 		tx.Rollback()
@@ -102,19 +122,6 @@ func CreateGuestUser(db *gorm.DB) (User, error) {
 	log.Printf("ゲストユーザーの作成に成功")
 
 	return users[0], nil
-}
-
-func CheckIfGuestUserExists(tx *gorm.DB) (bool, error) {
-	var count int64
-	if err := tx.Model(&UserGroup{}).Where("id = ?", 0).Count(&count).Error; err != nil {
-		log.Printf("Error checking user group: %v\n", err)
-		return false, err
-	}
-	if count > 0 {
-		return true, nil
-	}
-
-	return false, nil
 }
 
 func DeleteGuestUser(db *gorm.DB) error {
@@ -139,7 +146,7 @@ func DeleteGuestUser(db *gorm.DB) error {
 		log.Printf("Error deleting tasks linked to users: %v\n", err)
 		return err
 	}
-	
+
 	// UserGroupIDが0であるCategoryを削除
 	if err := tx.Unscoped().Where("user_group_id = ?", 0).Delete(&Category{}).Error; err != nil {
 		tx.Rollback()
