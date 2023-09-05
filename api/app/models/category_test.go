@@ -268,5 +268,5 @@ func TestDeleteCategoryAndRelatedTasks(t *testing.T) {
 	db.Unscoped().Delete(&creatorUser)
 	db.Unscoped().Delete(&responsibleUser)
 	db.Unscoped().Delete(&category)
-	db.Unscoped().Delete(userGroup)
+	db.Unscoped().Delete(&userGroup)
 }
