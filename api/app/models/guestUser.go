@@ -69,7 +69,7 @@ func CreateGuestUser(db *gorm.DB) (User, error) {
 		{
 			Task:        "新しいマーケティングキャンペーンの立ち上げ",
 			Description: "夏のセール向けマーケティング",
-			Creator:     users[1].ID,
+			Creator:     users[0].ID,
 			CategoryID:  categories[1].ID,
 			Status:      2,
 			Responsible: users[1].ID,
@@ -79,7 +79,7 @@ func CreateGuestUser(db *gorm.DB) (User, error) {
 		{
 			Task:        "財務監査",
 			Description: "最後の四半期の監査",
-			Creator:     users[2].ID,
+			Creator:     users[0].ID,
 			CategoryID:  categories[1].ID,
 			Status:      1,
 			Responsible: users[2].ID,
@@ -89,7 +89,7 @@ func CreateGuestUser(db *gorm.DB) (User, error) {
 		{
 			Task:        "データバックアップ",
 			Description: "月末のデータバックアップ",
-			Creator:     users[0].ID,
+			Creator:     users[2].ID,
 			CategoryID:  categories[0].ID,
 			Status:      4,
 			Responsible: users[0].ID,
@@ -102,7 +102,7 @@ func CreateGuestUser(db *gorm.DB) (User, error) {
 			Creator:     users[1].ID,
 			CategoryID:  categories[1].ID,
 			Status:      4,
-			Responsible: users[1].ID,
+			Responsible: users[0].ID,
 			Estimate:    uintPtr(5),
 			StartDate:   timePtr(time.Now().AddDate(0, 0, -3)),
 		},
