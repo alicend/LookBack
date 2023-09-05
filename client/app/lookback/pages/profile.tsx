@@ -50,6 +50,11 @@ export default function Profile() {
     <MainPageLayout title="Profile Edit">
       <Grid item xs={12}>
         <StyledContainer>
+          {isGuestLogin && 
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded" role="alert">
+              <p>You cannot edit your profile while logged in as a guest.</p>
+            </div>
+          }
           <StyledPaper elevation={0}>
             <Tabs
               value={tabValue}
