@@ -10,7 +10,8 @@ import {
   selectEditedTask,
   editTask,
   initialState,
-  selectTask
+  selectTask,
+  selectSelectedTask
 } from "@/slices/taskSlice";
 
 import TaskList from '@/components/task/TaskList';
@@ -24,6 +25,9 @@ export default function TaskBoard() {
 
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
+  const selectedTask = useSelector(selectSelectedTask);
+  console.log(selectedTask.Task)
+  console.log(editedTask.Status)
   
   useEffect(() => {
     const fetchBootLoader = async () => {
@@ -41,21 +45,31 @@ export default function TaskBoard() {
 
   return (
     <MainPageLayout title="Task Board">
-      <Grid item xs={6}>
-        <TaskList />
-      </Grid>
-      <Grid item xs={6}>
-        <Grid
-          container
-          direction="column"
-          alignItems="center"
-          style={{ minHeight: "80vh" }}
-        >
-          <Grid item>
-            {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
-          </Grid>
+      
+      {!editedTask.Status && !selectedTask.Task ?
+        <Grid item xs={12}>
+          <TaskList />
         </Grid>
-      </Grid>
+        :
+        <>
+          <Grid item xs={6}>
+            <TaskList />
+          </Grid>
+          <Grid item xs={6}>
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              style={{ minHeight: "80vh" }}
+            >
+              <Grid item>
+                {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
+              </Grid>
+            </Grid>
+          </Grid>
+        </>
+      }
+      
     </MainPageLayout>
   )
 }
