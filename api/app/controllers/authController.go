@@ -130,19 +130,11 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 }
 
 func (handler *Handler) GuestLoginHandler(c *gin.Context) {	
-	// ゲストユーザーがあるかチェック
-	guestUserExists, err := models.CheckIfGuestUserExists(handler.DB)
+	// ゲストユーザーと関連するカテゴリ、タスク、ユーザーグループを削除
+	err := models.DeleteGuestUser(handler.DB)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "ゲストログインに失敗しました")
 		return
-	}
-	if(guestUserExists){
-		// ゲストユーザーと関連するカテゴリ、タスク、ユーザーグループを削除
-		err := models.DeleteGuestUser(handler.DB)
-		if err != nil {
-			respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "ゲストログインに失敗しました")
-			return
-		}
 	}
 
 	// ゲストユーザーと関連するカテゴリ、タスク、ユーザーグループを作成
