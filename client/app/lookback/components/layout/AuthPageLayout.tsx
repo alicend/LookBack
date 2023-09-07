@@ -15,15 +15,13 @@ export const AuthPageLayout = ({children, title}: Props) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <main>
-        <div className="text-center text-gray-600 font-serif m-6">
-          <Grid container>
-            <AuthPageHeader title="Look Back"/>
-            {children}
-          </Grid>
-        </div>
-        <MessageBar/>
+      <main className="text-center text-gray-600 font-serif m-6">
+        <Grid container>
+          <AuthPageHeader title="Look Back"/>
+          {children}
+        </Grid>
       </main>
+      <MessageBar/>
     </>
   );
 };

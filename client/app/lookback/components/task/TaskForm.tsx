@@ -12,7 +12,8 @@ import {
   Select,
   Button,
   Fab,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Grid
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -37,28 +38,27 @@ import EditCategoryModal from "./categoryModal/EditCategoryModal";
 import { CATEGORY } from "@/types/CategoryType";
 
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  margin: theme.spacing(2),
+  width: '90%',
   minWidth: 240,
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
-  margin: theme.spacing(2),
+  width: '90%',
   minWidth: 240,
 }));
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  margin: theme.spacing(2),
+  width: '90%',
   minWidth: 240,
 }));
 
-const ButtonGroup = styled('div')(({ theme }) => ({
-  marginLeft: theme.spacing(15),
-  marginRight: theme.spacing(15),
-  display: 'flex',
-  justifyContent: 'space-between',
+const StyledCategoryFormControl = styled(FormControl)(({ theme }) => ({
+  width: '45%',
+  minWidth: 240,
 }));
 
 const TaskSaveButton = styled(Button)(({ theme }) => ({
+  marginRight: theme.spacing(1),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
     backgroundColor: '#1769aa !important',
@@ -78,7 +78,6 @@ const TaskDeleteButton = styled(Button)(({ theme }) => ({
 }));
 
 const StyledFab = styled(Fab)(({ theme }) => ({
-  marginTop: theme.spacing(3),
   marginLeft: theme.spacing(2),
   backgroundColor: '#4dabf5 !important',
   '&:hover': {
@@ -168,156 +167,185 @@ const TaskForm: React.FC = () => {
     </MenuItem>
   ));
   return (
-    <div>
-      <h2>{editedTask.ID ? "Update Task" : "New Task"}</h2>
+    <Grid
+      container
+      direction="column"
+      style={{ minHeight: "80vh" }}
+    >
+      <h2 className="toScroll">{editedTask.ID ? "Update Task" : "New Task"}</h2>
       <form>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale.name}>
-          <StyledDatePicker
-            label="Start Date"
-            value={dayjs(editedTask.StartDate)}
-            onChange={handleSelectDateChange}
-            format="YYYY/MM/DD"
-          />
-        </LocalizationProvider>
-        <StyledTextField
-          label="Estimate [days]"
-          type="number"
-          name="Estimate"
-          InputProps={{ inputProps: { min: 1, max: 1000 } }}
-          InputLabelProps={{
-            shrink: true,
-            inputMode: "numeric",
-          }}
-          value={editedTask.Estimate}
-          onChange={handleInputChange}
-        />
-        <br />
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Task"
-          type="text"
-          name="Task"
-          value={editedTask.Task}
-          onChange={handleInputChange}
-          inputProps={{
-            maxLength: 30
-          }}
-        />
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Description"
-          type="text"
-          name="Description"
-          value={editedTask.Description}
-          onChange={handleInputChange}
-          inputProps={{
-            maxLength: 30
-          }}
-        />
-        <br />
-        <StyledFormControl>
-          <InputLabel>Responsible</InputLabel>
-          <Select
-            name="Responsible"
-            onChange={handleSelectChange}
-            value={editedTask.Responsible}
-          >
-            {userOptions}
-          </Select>
-        </StyledFormControl>
-        <StyledFormControl>
-          <InputLabel>Status</InputLabel>
-          <Select
-            name="Status"
-            value={editedTask.Status}
-            onChange={handleSelectChange}
-          >
-            <MenuItem value={1}>未着</MenuItem>
-            <MenuItem value={2}>進行中</MenuItem>
-            <MenuItem value={3}>完了</MenuItem>
-            <MenuItem value={4}>Look Back</MenuItem>
-          </Select>
-        </StyledFormControl>
-        <br />
-        <StyledFormControl>
-          <InputLabel>Category</InputLabel>
-          <Select
-            name="Category"
-            value={editedTask.Category}
-            onChange={handleSelectChange}
-          >
-            {categoryOptions}
-          </Select>
-        </StyledFormControl>
-
-        <StyledFab
-          size="small"
-          color="primary"
-          onClick={editedTask.Category ? handleEditCategoryOpen : handleNewCategoryOpen }
-        >
-          {editedTask.Category ? <EditOutlinedIcon /> : <AddIcon />}
-        </StyledFab>
-
-        <NewCategoryModal 
-          open={newCategoryOpen}
-          onClose={handleNewCategoryClose}
-        />
-        <EditCategoryModal 
-          open={editCategoryOpen}
-          onClose={handleEditCategoryClose}
-          originalCategory={selectedCategory}
-        />
-        <br />
-        <ButtonGroup>
-          <TaskSaveButton
-            variant="contained"
-            color="primary"
-            size="small"
-            startIcon={<SaveIcon />}
-            disabled={isDisabled}
-            onClick={
-              editedTask.ID !== 0
-                ? () => dispatch(fetchAsyncUpdateTask(editedTask))
-                : () => dispatch(fetchAsyncCreateTask(editedTask))
-            }
-          >
-            {editedTask.ID !== 0 ? "Update" : "Save"}
-          </TaskSaveButton>
-          {editedTask.ID !== 0 ?
-            <TaskDeleteButton
-              variant="contained"
-              color="error"
-              size="small"
-              startIcon={<DeleteOutlineOutlinedIcon />}
-              onClick={() => {
-                dispatch(fetchAsyncDeleteTask(editedTask.ID));
-                dispatch(editTask(initialState.editedTask));
-                dispatch(selectTask(initialState.selectedTask));
+        <Grid container spacing={5}>
+          <Grid item xs={12} md={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale.name}>
+              <StyledDatePicker
+                label="Start Date"
+                value={dayjs(editedTask.StartDate)}
+                onChange={handleSelectDateChange}
+                format="YYYY/MM/DD"
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              label="Estimate [days]"
+              type="number"
+              name="Estimate"
+              InputProps={{ inputProps: { min: 1, max: 1000 } }}
+              InputLabelProps={{
+                shrink: true,
+                inputMode: "numeric",
               }}
-            >
-              DELETE
-            </TaskDeleteButton>
-            :
-            ""
-          }
-          <Button
-            variant="contained"
-            color="inherit"
-            size="small"
-            onClick={() => {
-              dispatch(editTask(initialState.editedTask));
-              dispatch(selectTask(initialState.selectedTask));
+              value={editedTask.Estimate}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
             }}
-          >
-            Cancel
-          </Button>
-        </ButtonGroup>
+            label="Task"
+            type="text"
+            name="Task"
+            value={editedTask.Task}
+            onChange={handleInputChange}
+            inputProps={{
+              maxLength: 30
+            }}
+          />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledTextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              label="Description"
+              type="text"
+              name="Description"
+              value={editedTask.Description}
+              onChange={handleInputChange}
+              inputProps={{
+                maxLength: 30
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledFormControl>
+              <InputLabel>Responsible</InputLabel>
+              <Select
+                name="Responsible"
+                onChange={handleSelectChange}
+                value={editedTask.Responsible}
+              >
+                {userOptions}
+              </Select>
+            </StyledFormControl>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledFormControl>
+              <InputLabel>Status</InputLabel>
+              <Select
+                name="Status"
+                value={editedTask.Status}
+                onChange={handleSelectChange}
+              >
+                <MenuItem value={1}>未着</MenuItem>
+                <MenuItem value={2}>進行中</MenuItem>
+                <MenuItem value={3}>完了</MenuItem>
+                <MenuItem value={4}>Look Back</MenuItem>
+              </Select>
+            </StyledFormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+            >
+              <StyledCategoryFormControl>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  name="Category"
+                  value={editedTask.Category}
+                  onChange={handleSelectChange}
+                >
+                  {categoryOptions}
+                </Select>
+              </StyledCategoryFormControl>
+
+              <StyledFab
+                size="small"
+                color="primary"
+                onClick={editedTask.Category ? handleEditCategoryOpen : handleNewCategoryOpen }
+              >
+                {editedTask.Category ? <EditOutlinedIcon /> : <AddIcon />}
+              </StyledFab>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+            >
+              <TaskSaveButton
+                variant="contained"
+                color="primary"
+                size="small"
+                startIcon={<SaveIcon />}
+                disabled={isDisabled}
+                onClick={
+                  editedTask.ID !== 0
+                    ? () => dispatch(fetchAsyncUpdateTask(editedTask))
+                    : () => dispatch(fetchAsyncCreateTask(editedTask))
+                }
+              >
+                {editedTask.ID !== 0 ? "Update" : "Save"}
+              </TaskSaveButton>
+              {editedTask.ID !== 0 ?
+                <TaskDeleteButton
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  startIcon={<DeleteOutlineOutlinedIcon />}
+                  onClick={() => {
+                    dispatch(fetchAsyncDeleteTask(editedTask.ID));
+                    dispatch(editTask(initialState.editedTask));
+                    dispatch(selectTask(initialState.selectedTask));
+                  }}
+                >
+                  DELETE
+                </TaskDeleteButton>
+                :
+                ""
+              }
+              <Button
+                variant="contained"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  dispatch(editTask(initialState.editedTask));
+                  dispatch(selectTask(initialState.selectedTask));
+                }}
+              >
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
       </form>
-    </div>
+
+      <NewCategoryModal 
+        open={newCategoryOpen}
+        onClose={handleNewCategoryClose}
+      />
+      <EditCategoryModal 
+        open={editCategoryOpen}
+        onClose={handleEditCategoryClose}
+        originalCategory={selectedCategory}
+      />
+    </Grid>
   );
 };
 

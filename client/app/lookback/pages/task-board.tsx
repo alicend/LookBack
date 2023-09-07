@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -26,8 +26,6 @@ export default function TaskBoard() {
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
   const selectedTask = useSelector(selectSelectedTask);
-  console.log(selectedTask.Task)
-  console.log(editedTask.Status)
   
   useEffect(() => {
     const fetchBootLoader = async () => {
@@ -47,25 +45,18 @@ export default function TaskBoard() {
     <MainPageLayout title="Task Board">
       
       {!editedTask.Status && !selectedTask.Task ?
-        <Grid item xs={12}>
+        <Grid item >
           <TaskList />
         </Grid>
         :
         <>
-          <Grid item xs={6}>
-            <TaskList />
+          <Grid item xs={12} sm={6}>
+            <Box marginBottom={4}>
+              <TaskList />
+            </Box>
           </Grid>
-          <Grid item xs={6}>
-            <Grid
-              container
-              direction="column"
-              alignItems="center"
-              style={{ minHeight: "80vh" }}
-            >
-              <Grid item>
-                {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
-              </Grid>
-            </Grid>
+          <Grid item xs={12} sm={6}>
+            {editedTask.Status ? <TaskForm /> : <TaskDisplay />}
           </Grid>
         </>
       }

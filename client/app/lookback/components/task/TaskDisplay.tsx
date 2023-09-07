@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { editTask, initialState, selectSelectedTask, selectTask } from "@/slices/taskSlice";
-import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { Button, Grid, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { AppDispatch } from "@/store/store";
 
 const TaskDisplay: React.FC = () => {
@@ -25,9 +25,14 @@ const TaskDisplay: React.FC = () => {
   }
 
   return (
-    <>
-      <h2>Task details</h2>
-      <Table>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      style={{ minHeight: "80vh" }}
+    >
+      <h2 className="toScroll">Task details</h2>
+      <Table style={{ width: "90%" }}>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.item}>
@@ -51,7 +56,7 @@ const TaskDisplay: React.FC = () => {
       >
         Cancel
       </Button>
-    </>
+    </Grid>
   );
 };
 

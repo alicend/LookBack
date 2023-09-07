@@ -15,15 +15,13 @@ export const MainPageLayout = ({children, title}: Props) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <main>
-        <div className="text-center text-gray-600 font-serif m-6">
-          <Grid container>
-            <MainPageHeader title={title}/>
-            {children}
-          </Grid>
-        </div>
-        <MessageBar/>
+      <main className="text-center text-gray-600 font-serif m-6">
+        <Grid container >
+          <MainPageHeader title={title}/>
+          {children}
+        </Grid>
       </main>
+      <MessageBar/>
     </>
   );
 };

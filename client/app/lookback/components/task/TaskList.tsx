@@ -13,6 +13,7 @@ import {
   TableRow,
   TableBody,
   TableSortLabel,
+  Hidden,
 } from "@mui/material";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -135,79 +136,150 @@ const TaskList: React.FC = () => {
         Add new
       </StyledButton>
       {tasks[0]?.Task && (
-        <StyledTable size="small" >
-          <TableHead>
-            <TableRow>
-              {columns.map((column, colIndex) => {
-                const columnLabel =
-                  column === "Estimate" ? "Estimate [days]" : column;
+        <>
+        {/* Table for PC */}
+          <Hidden smDown>
+            <StyledTable size="small" >
+              <TableHead>
+                <TableRow>
+                  {columns.map((column, colIndex) => {
+                    const columnLabel =
+                      column === "Estimate" ? "Estimate [days]" : column;
 
-                return (
-                  (column === "Task" ||
-                    column === "Status" ||
-                    column === "Category" ||
-                    column === "StartDate" ||
-                    column === "Estimate" ||
-                    column === "Responsible" ||
-                    column === "Creator") && (
-                    <StyledTableCell key={colIndex}>
-                      <TableSortLabel
-                        active={state.activeKey === column}
-                        direction={state.order}
-                        onClick={() => handleClickSortColumn(column)}
-                      >
-                        <strong>{columnLabel}</strong>
-                      </TableSortLabel>
-                    </StyledTableCell>
-                  )
-                );
-              })}
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {state.rows.map((row, rowIndex) => (
-              <TableRow hover key={rowIndex}>
-                {Object.keys(row).map(
-                  (key, colIndex) =>
-                    (key === "Task" ||
-                      key === "StatusName" ||
-                      key === "CategoryName" ||
-                      key === "Estimate" ||
-                      key === "StartDate" ||
-                      key === "ResponsibleUserName" ||
-                      key === "CreatorUserName") && (
-                        <TableCell
-                          key={`${rowIndex}+${colIndex}`}
-                          onClick={() => {
-                              dispatch(selectTask(row));
-                              dispatch(editTask(initialState.editedTask));
-                          }}
-                      >
-                          {key === "StatusName" ? (
-                              renderSwitch(row[key])
-                          ) : key === "Estimate" ? (
-                              <span>{row[key]} {row[key] === 1 ? "day" : "days"}</span>
-                          ) : (
-                              <span>{row[key]}</span>
-                          )}
-                        </TableCell>
-                    )
-                )}
-                <TableCell>
-                  <div className="text-gray-400 cursor-not-allowed">
-                    <button
-                      className="cursor-pointer bg-transparent border-none outline-none text-lg text-gray-500"
-                      onClick={() => dispatch(editTask(row))}
-                    >
-                      <EditOutlinedIcon />
-                    </button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </StyledTable>
+                    return (
+                      (column === "Task" ||
+                        column === "Status" ||
+                        column === "Category" ||
+                        column === "StartDate" ||
+                        column === "Estimate" ||
+                        column === "Responsible" ||
+                        column === "Creator") && (
+                        <StyledTableCell className="break-words" key={colIndex}>
+                          <TableSortLabel
+                            active={state.activeKey === column}
+                            direction={state.order}
+                            onClick={() => handleClickSortColumn(column)}
+                          >
+                            <strong>{columnLabel}</strong>
+                          </TableSortLabel>
+                        </StyledTableCell>
+                      )
+                    );
+                  })}
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {state.rows.map((row, rowIndex) => (
+                  <TableRow hover key={rowIndex}>
+                    {Object.keys(row).map(
+                      (key, colIndex) =>
+                        (key === "Task" ||
+                          key === "StatusName" ||
+                          key === "CategoryName" ||
+                          key === "Estimate" ||
+                          key === "StartDate" ||
+                          key === "ResponsibleUserName" ||
+                          key === "CreatorUserName") && (
+                            <TableCell
+                              className="break-words"
+                              key={`${rowIndex}+${colIndex}`}
+                              onClick={() => {
+                                  dispatch(selectTask(row));
+                                  dispatch(editTask(initialState.editedTask));
+                              }}
+                          >
+                              {key === "StatusName" ? (
+                                  renderSwitch(row[key])
+                              ) : key === "Estimate" ? (
+                                  <span>{row[key]} {row[key] === 1 ? "day" : "days"}</span>
+                              ) : (
+                                  <span>{row[key]}</span>
+                              )}
+                            </TableCell>
+                        )
+                    )}
+                    <TableCell>
+                      <div className="text-gray-400 cursor-not-allowed">
+                        <button
+                          className="cursor-pointer bg-transparent border-none outline-none text-lg text-gray-500"
+                          onClick={() => dispatch(editTask(row))}
+                        >
+                          <EditOutlinedIcon />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </StyledTable>
+          </Hidden>
+          {/* Table for Mobile */}
+          <Hidden mdUp>
+          <StyledTable size="small" >
+              <TableHead>
+                <TableRow>
+                  {columns.map((column, colIndex) => {
+                    const columnLabel =
+                      column === "Estimate" ? "Estimate [days]" : column;
+
+                    return (
+                      (column === "Task" ||
+                        column === "Status") && (
+                        <StyledTableCell className="break-words" key={colIndex}>
+                          <TableSortLabel
+                            active={state.activeKey === column}
+                            direction={state.order}
+                            onClick={() => handleClickSortColumn(column)}
+                          >
+                            <strong>{columnLabel}</strong>
+                          </TableSortLabel>
+                        </StyledTableCell>
+                      )
+                    );
+                  })}
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {state.rows.map((row, rowIndex) => (
+                  <TableRow hover key={rowIndex}>
+                    {Object.keys(row).map(
+                      (key, colIndex) =>
+                        (key === "Task" ||
+                          key === "StatusName") && (
+                            <TableCell
+                              className="break-words"
+                              key={`${rowIndex}+${colIndex}`}
+                              onClick={() => {
+                                  dispatch(selectTask(row));
+                                  dispatch(editTask(initialState.editedTask));
+                              }}
+                          >
+                              {key === "StatusName" ? (
+                                renderSwitch(row[key])
+                              ) : (
+                                <span>{row[key]}</span>
+                              )}
+                            </TableCell>
+                        )
+                    )}
+                    <TableCell>
+                      <div className="text-gray-400 cursor-not-allowed">
+                        <button
+                          className="cursor-pointer bg-transparent border-none outline-none text-lg text-gray-500"
+                          onClick={() => dispatch(editTask(row))}
+                        >
+                          <EditOutlinedIcon />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </StyledTable>
+          </Hidden>
+        </>
       )}
     </>
   );
