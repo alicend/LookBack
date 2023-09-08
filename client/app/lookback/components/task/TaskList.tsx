@@ -215,7 +215,7 @@ const TaskList: React.FC = () => {
             </StyledTable>
           </Hidden>
           {/* Table for Mobile */}
-          <Hidden mdUp>
+          <Hidden smUp>
           <StyledTable size="small" >
               <TableHead>
                 <TableRow>
