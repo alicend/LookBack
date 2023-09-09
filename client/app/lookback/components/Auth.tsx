@@ -208,26 +208,25 @@ const Auth: React.FC = () => {
         <Grid item>
           {loginViewValue  === 0 && (
             <p>
-              If you forgot your password
-              <span> </span>
+              パスワードを忘れた方は
               <Link onClick={() => handleLoginViewChange(2)} className="cursor-pointer">
-                click here
+                こちら
               </Link>
             </p>
           )}
           {loginViewValue  === 0 && (
             <p>
-              Do you have an account ?
+              アカウントをお持ちですか？
               <span> </span>
               <Link onClick={() => handleLoginViewChange(1)} className="cursor-pointer">
-                Create account
+                アカウントを作成
               </Link>
             </p>
           )}
           {(loginViewValue === 1 || loginViewValue === 2) && (
             <p>
               <Link onClick={() => handleLoginViewChange(0)} className="cursor-pointer">
-                Back to Login
+                ログインに戻る
               </Link>
             </p>
           )}        
