@@ -45,7 +45,7 @@ export default function TaskBoard() {
     <MainPageLayout title="Task Board">
       
       {!editedTask.Status && !selectedTask.Task ?
-        <Grid item >
+        <Grid container justifyContent="center">
           <TaskList />
         </Grid>
         :

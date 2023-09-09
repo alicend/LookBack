@@ -6,10 +6,12 @@ import CalendarTaskDisplay from './CalendarTaskDisplay';
 const StyledPaper = styled('div')(({ theme }) => ({
   position: "absolute",
   textAlign: "center",
-  width: 400,
   backgroundColor: theme.palette.background.paper,
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
   padding: theme.spacing(2, 4, 3),
+  overflow: 'auto',
+  maxHeight: '90vh',
+  maxWidth: '90vh',
 }));
 
 interface EditCategoryModalProps {
@@ -21,7 +23,7 @@ interface EditCategoryModalProps {
 const CalenderModal: React.FC<EditCategoryModalProps> = React.memo(({ open, onClose, modalStyle }) => {
   
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} >
       <StyledPaper style={modalStyle}>
         <CalendarTaskDisplay onClose={onClose}/>
       </StyledPaper>

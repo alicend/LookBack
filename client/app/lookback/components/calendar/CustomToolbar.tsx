@@ -50,7 +50,7 @@ export const CustomToolbar = ({ label, onNavigate }: CustomToolbarProps) => {
       {/* Toolbar for Mobile */}
       <Hidden smUp>
         <Grid className="rbc-toolbar">
-          <Grid item xs={12} className="rbc-toolbar-label text-2xl">
+          <Grid item xs={12} mb={1} className="rbc-toolbar-label text-2xl">
             {label}
           </Grid>
           <Grid item xs={12} className="rbc-btn-group">

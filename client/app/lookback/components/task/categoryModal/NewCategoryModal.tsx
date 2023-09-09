@@ -1,5 +1,5 @@
 import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { TextField, Button, Modal } from "@mui/material";
+import { TextField, Button, Modal, Grid } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from '@mui/icons-material/Save';
 import { AppDispatch } from '@/store/store';
@@ -33,7 +33,6 @@ const CategorySaveButton = styled(Button)(({ theme }) => ({
 const StyledPaper = styled('div')(({ theme }) => ({
   position: "absolute",
   textAlign: "center",
-  width: 400,
   backgroundColor: theme.palette.background.paper,
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
   padding: theme.spacing(2, 4, 3),
@@ -71,31 +70,35 @@ const NewCategoryModal: React.FC<NewCategoryModalProps> = React.memo(({ open, on
   return (
     <Modal open={open} onClose={onClose}>
       <StyledPaper style={modalStyle}>
-        <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="New category"
-          type="text"
-          value={inputText}
-          onChange={handleInputTextChange}
-          inputProps={{
-            maxLength: 30
-          }}
-        />
-        <CategorySaveButton
-          variant="contained"
-          color="primary"
-          size="small"
-          startIcon={<SaveIcon />}
-          disabled={isDisabled}
-          onClick={() => {
-            dispatch(fetchAsyncCreateCategory(inputText));
-            onClose();
-          }}
-        >
-          SAVE
-        </CategorySaveButton>
+        <Grid>
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="New category"
+            type="text"
+            value={inputText}
+            onChange={handleInputTextChange}
+            inputProps={{
+              maxLength: 30
+            }}
+          />
+        </Grid>
+        <Grid>
+          <CategorySaveButton
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<SaveIcon />}
+            disabled={isDisabled}
+            onClick={() => {
+              dispatch(fetchAsyncCreateCategory(inputText));
+              onClose();
+            }}
+          >
+            SAVE
+          </CategorySaveButton>
+        </Grid>
       </StyledPaper>
     </Modal>
   );

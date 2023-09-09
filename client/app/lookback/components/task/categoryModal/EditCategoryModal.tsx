@@ -1,5 +1,5 @@
 import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { TextField, Button, Modal, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { TextField, Button, Modal, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid } from "@mui/material";
 import { styled } from '@mui/system';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -43,7 +43,6 @@ const CategoryDeleteButton = styled(Button)(({ theme }) => ({
 const StyledPaper = styled('div')(({ theme }) => ({
   position: "absolute",
   textAlign: "center",
-  width: 400,
   backgroundColor: theme.palette.background.paper,
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
   padding: theme.spacing(2, 4, 3),
@@ -90,19 +89,23 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
     <>
     <Modal open={open} onClose={onClose}>
       <StyledPaper style={modalStyle}>
+      <Grid>
         <StyledTextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Edit category"
-          type="text"
-          value={editCategory.Category}
-          onChange={handleInputTextChange}
-          inputProps={{
-            maxLength: 30
-          }}
-        />
-        <CategoryUpdateButton
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Edit category"
+            type="text"
+            value={editCategory.Category}
+            onChange={handleInputTextChange}
+            inputProps={{
+              maxLength: 30
+            }}
+          />
+      </Grid>
+      
+      <Grid>
+      <CategoryUpdateButton
           variant="contained"
           color="primary"
           size="small"
@@ -126,6 +129,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = React.memo(({ open, 
           >
             DELETE
           </CategoryDeleteButton>
+      </Grid>        
       </StyledPaper>
     </Modal>
     
