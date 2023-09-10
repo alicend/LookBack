@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react';
-import { useDispatch } from "react-redux";
-import { Button, Grid, TextField } from "@mui/material";
-import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
-import { z } from 'zod';
-import { AppDispatch } from '@/store/store';
-import { fetchAsyncUpdateLoginUsername } from '@/slices/userSlice';
+import { Button, Grid, TextField } from "@mui/material";
+import { styled } from "@mui/system";
+import React, { FC, useState } from "react";
+import { useDispatch } from "react-redux";
+import { z } from "zod";
+import { fetchAsyncUpdateLoginUsername } from "@/slices/userSlice";
+import { AppDispatch } from "@/store/store";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputLabel-root": {
@@ -14,17 +14,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInput-root": {
     marginBottom: theme.spacing(2),
   },
-  width: '300px',
+  width: "300px",
 }));
 
 const UpdateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
+  "&:disabled": {
+    backgroundColor: "#ccc !important",
+    cursor: "not-allowed",
   },
   margin: theme.spacing(2),
 }));
@@ -32,7 +32,7 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 interface Props {
   loginUserName: string;
   loginStatus: boolean;
-}  
+}
 
 const UserName: FC<Props> = React.memo(({ loginUserName, loginStatus }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,18 +40,21 @@ const UserName: FC<Props> = React.memo(({ loginUserName, loginStatus }) => {
   const [errors, setErrors] = useState({ new_username: "" });
 
   const isDisabled = newUsername.length === 0;
-  
-  const credentialSchema = z.object({
-    new_username: z.string()
-  }).superRefine((data, context) => {
-    if (data.new_username === loginUserName) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['new_username'],
-        message: "新しいユーザー名は現在のユーザー名と異なるものにしてください",
-      });
-    }
-  });
+
+  const credentialSchema = z
+    .object({
+      new_username: z.string(),
+    })
+    .superRefine((data, context) => {
+      if (data.new_username === loginUserName) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["new_username"],
+          message:
+            "新しいユーザー名は現在のユーザー名と異なるものにしてください",
+        });
+      }
+    });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewUsername(event.target.value);
@@ -61,13 +64,14 @@ const UserName: FC<Props> = React.memo(({ loginUserName, loginStatus }) => {
   const update = async () => {
     const result = credentialSchema.safeParse({ new_username: newUsername });
     if (!result.success) {
-      const newUsernameError = result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
+      const newUsernameError =
+        result.error.formErrors.fieldErrors["new_username"]?.[0] || "";
       setErrors({ new_username: newUsernameError });
       return;
     }
     await dispatch(fetchAsyncUpdateLoginUsername(newUsername));
-  }
-  
+  };
+
   return (
     <>
       <StyledTextField
@@ -88,7 +92,7 @@ const UserName: FC<Props> = React.memo(({ loginUserName, loginStatus }) => {
         disabled={loginStatus}
         onChange={handleInputChange}
         inputProps={{
-          maxLength: 30
+          maxLength: 30,
         }}
         error={Boolean(errors.new_username)}
         helperText={errors.new_username}

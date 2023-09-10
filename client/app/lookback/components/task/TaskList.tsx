@@ -1,7 +1,3 @@
-import React, { useState, useEffect } from "react";
-import dayjs from 'dayjs';
-
-import { styled } from '@mui/system';
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
@@ -15,32 +11,35 @@ import {
   TableSortLabel,
   Hidden,
 } from "@mui/material";
+import { styled } from "@mui/system";
+import dayjs from "dayjs";
+import React, { useState, useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectTasks,
   editTask,
   selectTask,
+  initialState,
 } from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
-import { initialState } from "@/slices/taskSlice";
 import { SORT_STATE, READ_TASK } from "@/types/TaskType";
 
 const StyledTableCell = styled(TableCell)({
-  overflow: 'hidden',
-  textOverflow: 'clip',
-  whiteSpace: 'normal'
+  overflow: "hidden",
+  textOverflow: "clip",
+  whiteSpace: "normal",
 });
 
 const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3),
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
+  "&:disabled": {
+    backgroundColor: "#ccc !important",
+    cursor: "not-allowed",
   },
 }));
 
@@ -125,10 +124,10 @@ const TaskList: React.FC = () => {
               Description: "",
               StartDate: dayjs().toISOString(),
               Responsible: 0,
-              Status:   1,
+              Status: 1,
               Category: 0,
               Estimate: 1,
-            })
+            }),
           );
           dispatch(selectTask(initialState.selectedTask));
         }}
@@ -137,9 +136,9 @@ const TaskList: React.FC = () => {
       </StyledButton>
       {tasks[0]?.Task && (
         <>
-        {/* Table for PC */}
+          {/* Table for PC */}
           <Hidden smDown>
-            <StyledTable size="small" >
+            <StyledTable size="small">
               <TableHead>
                 <TableRow>
                   {columns.map((column, colIndex) => {
@@ -181,23 +180,25 @@ const TaskList: React.FC = () => {
                           key === "StartDate" ||
                           key === "ResponsibleUserName" ||
                           key === "CreatorUserName") && (
-                            <TableCell
-                              className="break-words"
-                              key={`${rowIndex}+${colIndex}`}
-                              onClick={() => {
-                                  dispatch(selectTask(row));
-                                  dispatch(editTask(initialState.editedTask));
-                              }}
+                          <TableCell
+                            className="break-words"
+                            key={`${rowIndex}+${colIndex}`}
+                            onClick={() => {
+                              dispatch(selectTask(row));
+                              dispatch(editTask(initialState.editedTask));
+                            }}
                           >
-                              {key === "StatusName" ? (
-                                  renderSwitch(row[key])
-                              ) : key === "Estimate" ? (
-                                  <span>{row[key]} {row[key] === 1 ? "day" : "days"}</span>
-                              ) : (
-                                  <span>{row[key]}</span>
-                              )}
-                            </TableCell>
-                        )
+                            {key === "StatusName" ? (
+                              renderSwitch(row[key])
+                            ) : key === "Estimate" ? (
+                              <span>
+                                {row[key]} {row[key] === 1 ? "day" : "days"}
+                              </span>
+                            ) : (
+                              <span>{row[key]}</span>
+                            )}
+                          </TableCell>
+                        ),
                     )}
                     <TableCell>
                       <div className="text-gray-400 cursor-not-allowed">
@@ -216,7 +217,7 @@ const TaskList: React.FC = () => {
           </Hidden>
           {/* Table for Mobile */}
           <Hidden smUp>
-          <StyledTable size="small" >
+            <StyledTable size="small">
               <TableHead>
                 <TableRow>
                   {columns.map((column, colIndex) => {
@@ -224,8 +225,7 @@ const TaskList: React.FC = () => {
                       column === "Estimate" ? "Estimate [days]" : column;
 
                     return (
-                      (column === "Task" ||
-                        column === "Status") && (
+                      (column === "Task" || column === "Status") && (
                         <StyledTableCell className="break-words" key={colIndex}>
                           <TableSortLabel
                             active={state.activeKey === column}
@@ -246,23 +246,22 @@ const TaskList: React.FC = () => {
                   <TableRow hover key={rowIndex}>
                     {Object.keys(row).map(
                       (key, colIndex) =>
-                        (key === "Task" ||
-                          key === "StatusName") && (
-                            <TableCell
-                              className="break-words"
-                              key={`${rowIndex}+${colIndex}`}
-                              onClick={() => {
-                                  dispatch(selectTask(row));
-                                  dispatch(editTask(initialState.editedTask));
-                              }}
+                        (key === "Task" || key === "StatusName") && (
+                          <TableCell
+                            className="break-words"
+                            key={`${rowIndex}+${colIndex}`}
+                            onClick={() => {
+                              dispatch(selectTask(row));
+                              dispatch(editTask(initialState.editedTask));
+                            }}
                           >
-                              {key === "StatusName" ? (
-                                renderSwitch(row[key])
-                              ) : (
-                                <span>{row[key]}</span>
-                              )}
-                            </TableCell>
-                        )
+                            {key === "StatusName" ? (
+                              renderSwitch(row[key])
+                            ) : (
+                              <span>{row[key]}</span>
+                            )}
+                          </TableCell>
+                        ),
                     )}
                     <TableCell>
                       <div className="text-gray-400 cursor-not-allowed">

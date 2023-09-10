@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import jwtDecode from "jwt-decode";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-import SignUp from '@/components/SignUp';
-import { AuthPageLayout } from '@/components/layout/AuthPageLayout';
+import SignUp from "@/components/SignUp";
+import { AuthPageLayout } from "@/components/layout/AuthPageLayout";
 import { EmailTokenPayload } from "@/types/URLParamType";
 
 const getQueryParams = (param: string) => {
@@ -16,7 +16,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const tokenFromURL = getQueryParams('email');
+    const tokenFromURL = getQueryParams("email");
 
     // tokenが配列または未定義の場合にリダイレクト
     if (!tokenFromURL) {
@@ -36,7 +36,7 @@ const SignUpPage = () => {
         return;
       }
 
-      setEmail(decodedToken.email);      
+      setEmail(decodedToken.email);
     } catch (err) {
       console.error("Error decoding token:", err);
       router.push("/");

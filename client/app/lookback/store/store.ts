@@ -1,13 +1,13 @@
-import taskReducer from '@/slices/taskSlice';
-import userReducer from '@/slices/userSlice';
-import userGroupReducer from '@/slices/userGroupSlice';
+import taskReducer from "@/slices/taskSlice";
+import userReducer from "@/slices/userSlice";
+import userGroupReducer from "@/slices/userGroupSlice";
 
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 
 export const store = configureStore({
   reducer: {
-    task:      taskReducer,
-    user:      userReducer,
+    task: taskReducer,
+    user: userReducer,
     userGroup: userGroupReducer,
   },
 });

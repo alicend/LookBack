@@ -1,7 +1,19 @@
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  styled,
+} from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAsyncUpdateTask, fetchAsyncUpdateTaskToMoveToCompleted, selectEditedTask, selectSelectedTask } from "@/slices/taskSlice";
-import { Button, Table, TableBody, TableCell, TableRow, styled } from "@mui/material";
+import {
+  fetchAsyncUpdateTask,
+  fetchAsyncUpdateTaskToMoveToCompleted,
+  selectEditedTask,
+  selectSelectedTask,
+} from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
 
 interface CalendarTaskDisplayProps {
@@ -9,14 +21,16 @@ interface CalendarTaskDisplayProps {
 }
 
 const UpdateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
   margin: theme.spacing(2),
 }));
 
-const CalendarTaskDisplay: React.FC<CalendarTaskDisplayProps> = ({ onClose }) => {
+const CalendarTaskDisplay: React.FC<CalendarTaskDisplayProps> = ({
+  onClose,
+}) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedTask = useSelector(selectSelectedTask);
 

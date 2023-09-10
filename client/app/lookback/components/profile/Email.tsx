@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react';
-import { useDispatch } from "react-redux";
-import { Button, Grid, TextField } from "@mui/material";
-import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
-import { z } from 'zod';
-import { AppDispatch } from '@/store/store';
-import { fetchAsyncUpdateLoginUserEmail } from '@/slices/userSlice';
+import { Button, Grid, TextField } from "@mui/material";
+import { styled } from "@mui/system";
+import React, { FC, useState } from "react";
+import { useDispatch } from "react-redux";
+import { z } from "zod";
+import { fetchAsyncUpdateLoginUserEmail } from "@/slices/userSlice";
+import { AppDispatch } from "@/store/store";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputLabel-root": {
@@ -14,17 +14,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInput-root": {
     marginBottom: theme.spacing(2),
   },
-  width: '300px',
+  width: "300px",
 }));
 
 const UpdateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
+  "&:disabled": {
+    backgroundColor: "#ccc !important",
+    cursor: "not-allowed",
   },
   margin: theme.spacing(2),
 }));
@@ -32,7 +32,7 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 interface Props {
   loginUserEmail: string;
   loginStatus: boolean;
-}  
+}
 
 const Email: FC<Props> = React.memo(({ loginUserEmail, loginStatus }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -47,30 +47,35 @@ const Email: FC<Props> = React.memo(({ loginUserEmail, loginStatus }) => {
   };
 
   const pattern = /^[\u0021-\u007e]+$/u; // 半角英数字記号のみ
-  const credentialSchema = z.object({
-    new_email: z.string()
-      .email("無効なメールアドレスです")
-      .regex(pattern, "無効なメールアドレスです"),
-  }).superRefine((data, context) => {
-    if (data.new_email === loginUserEmail) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['new_email'],
-        message: "新しいメールアドレスは現在のメールアドレスと異なるものにしてください",
-      });
-    }
-});
+  const credentialSchema = z
+    .object({
+      new_email: z
+        .string()
+        .email("無効なメールアドレスです")
+        .regex(pattern, "無効なメールアドレスです"),
+    })
+    .superRefine((data, context) => {
+      if (data.new_email === loginUserEmail) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["new_email"],
+          message:
+            "新しいメールアドレスは現在のメールアドレスと異なるものにしてください",
+        });
+      }
+    });
 
   const update = async () => {
     const result = credentialSchema.safeParse({ new_email: newEmail });
     if (!result.success) {
-      const newEmailError = result.error.formErrors.fieldErrors["new_email"]?.[0] || "";
+      const newEmailError =
+        result.error.formErrors.fieldErrors["new_email"]?.[0] || "";
       setErrors({ new_email: newEmailError });
       return;
     }
     await dispatch(fetchAsyncUpdateLoginUserEmail(newEmail));
-  }
-  
+  };
+
   return (
     <>
       <StyledTextField
@@ -91,7 +96,7 @@ const Email: FC<Props> = React.memo(({ loginUserEmail, loginStatus }) => {
         disabled={loginStatus}
         onChange={handleInputChange}
         inputProps={{
-          maxLength: 30
+          maxLength: 30,
         }}
         error={Boolean(errors.new_email)}
         helperText={errors.new_email}

@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react';
-import { useDispatch } from "react-redux";
-import { Button, Fab, Grid, TextField } from "@mui/material";
-import { styled } from '@mui/system';
 import SaveIcon from "@mui/icons-material/Save";
-import { AppDispatch } from '@/store/store';
-import { fetchAsyncUpdateUserGroup } from '@/slices/userSlice';
-import { USER_GROUP } from '@/types/UserGroupType';
+import { Button, Fab, Grid, TextField } from "@mui/material";
+import { styled } from "@mui/system";
+import React, { FC, useState } from "react";
+import { useDispatch } from "react-redux";
+import { fetchAsyncUpdateUserGroup } from "@/slices/userSlice";
+import { AppDispatch } from "@/store/store";
+import { USER_GROUP } from "@/types/UserGroupType";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputLabel-root": {
@@ -14,17 +14,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInput-root": {
     marginBottom: theme.spacing(2),
   },
-  width: '300px',
+  width: "300px",
 }));
 
 const UpdateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
+  "&:disabled": {
+    backgroundColor: "#ccc !important",
+    cursor: "not-allowed",
   },
   margin: theme.spacing(2),
 }));
@@ -32,10 +32,9 @@ const UpdateButton = styled(Button)(({ theme }) => ({
 interface Props {
   userGroup: USER_GROUP;
   loginStatus: boolean;
-}  
+}
 
 const UserGroup: FC<Props> = React.memo(({ userGroup, loginStatus }) => {
-
   const dispatch = useDispatch<AppDispatch>();
   const [newUserGroup, setNewUserGroup] = useState("");
 
@@ -46,9 +45,11 @@ const UserGroup: FC<Props> = React.memo(({ userGroup, loginStatus }) => {
   };
 
   const update = async () => {
-    await dispatch(fetchAsyncUpdateUserGroup({ id: userGroup.ID, userGroup: newUserGroup }));
-  }
-  
+    await dispatch(
+      fetchAsyncUpdateUserGroup({ id: userGroup.ID, userGroup: newUserGroup }),
+    );
+  };
+
   return (
     <>
       <StyledTextField
@@ -59,7 +60,7 @@ const UserGroup: FC<Props> = React.memo(({ userGroup, loginStatus }) => {
         value={userGroup.UserGroup}
         disabled={true}
         inputProps={{
-          style: { overflow: 'auto' }
+          style: { overflow: "auto" },
         }}
       />
       <br />
@@ -72,7 +73,7 @@ const UserGroup: FC<Props> = React.memo(({ userGroup, loginStatus }) => {
         value={newUserGroup}
         onChange={handleInputChange}
         inputProps={{
-          maxLength: 30
+          maxLength: 30,
         }}
       />
       <Grid>

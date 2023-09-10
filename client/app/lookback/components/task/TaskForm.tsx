@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs';
-import jaLocale from 'dayjs/locale/ja';
-import { styled } from '@mui/system';
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import SaveIcon from "@mui/icons-material/Save";
 import {
   TextField,
   InputLabel,
@@ -13,14 +11,18 @@ import {
   Button,
   Fab,
   SelectChangeEvent,
-  Grid
+  Grid,
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import AddIcon from "@mui/icons-material/Add";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { styled } from "@mui/system";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import jaLocale from "dayjs/locale/ja";
+import React, { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
+import EditCategoryModal from "./categoryModal/EditCategoryModal";
+import NewCategoryModal from "./categoryModal/NewCategoryModal";
 import {
   fetchAsyncCreateTask,
   fetchAsyncUpdateTask,
@@ -30,62 +32,60 @@ import {
   editTask,
   selectTask,
   fetchAsyncDeleteTask,
+  initialState,
 } from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
-import { initialState } from "@/slices/taskSlice";
-import NewCategoryModal from "./categoryModal/NewCategoryModal";
-import EditCategoryModal from "./categoryModal/EditCategoryModal";
 import { CATEGORY } from "@/types/CategoryType";
 
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  width: '90%',
+  width: "90%",
   minWidth: 240,
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
-  width: '90%',
+  width: "90%",
   minWidth: 240,
 }));
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  width: '90%',
+  width: "90%",
   minWidth: 240,
 }));
 
 const StyledCategoryFormControl = styled(FormControl)(({ theme }) => ({
-  width: '45%',
+  width: "45%",
   minWidth: 240,
 }));
 
 const TaskSaveButton = styled(Button)(({ theme }) => ({
   marginRight: theme.spacing(1),
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
+  "&:disabled": {
+    backgroundColor: "#ccc !important",
+    cursor: "not-allowed",
   },
 }));
 
 const TaskDeleteButton = styled(Button)(({ theme }) => ({
   marginRight: theme.spacing(2),
-  backgroundColor: '#f6685e !important',
-  '&:hover': {
-    backgroundColor: '#aa2e25 !important',
+  backgroundColor: "#f6685e !important",
+  "&:hover": {
+    backgroundColor: "#aa2e25 !important",
   },
 }));
 
 const StyledFab = styled(Fab)(({ theme }) => ({
   marginLeft: theme.spacing(2),
-  backgroundColor: '#4dabf5 !important',
-  '&:hover': {
-    backgroundColor: '#1769aa !important',
+  backgroundColor: "#4dabf5 !important",
+  "&:hover": {
+    backgroundColor: "#1769aa !important",
   },
-  '&:disabled': {
-    backgroundColor: '#ccc !important',
-    cursor: 'not-allowed'
+  "&:disabled": {
+    backgroundColor: "#ccc !important",
+    cursor: "not-allowed",
   },
 }));
 
@@ -95,17 +95,22 @@ const TaskForm: React.FC = () => {
   const users = useSelector(selectUsers);
   const categories = useSelector(selectCategory);
   const editedTask = useSelector(selectEditedTask);
-  
+
   const [newCategoryOpen, setNewCategoryOpen] = useState(false);
   const [editCategoryOpen, setEditCategoryOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CATEGORY>({ ID: 0, Category: '' });
+  const [selectedCategory, setSelectedCategory] = useState<CATEGORY>({
+    ID: 0,
+    Category: "",
+  });
 
   useEffect(() => {
-    const selectedCategoryObj = categories.find((cat) => cat.ID === editedTask.Category);
+    const selectedCategoryObj = categories.find(
+      (cat) => cat.ID === editedTask.Category,
+    );
     if (selectedCategoryObj) {
       setSelectedCategory(selectedCategoryObj);
     }
-  }, [editedTask.Category, categories]);  
+  }, [editedTask.Category, categories]);
 
   const handleNewCategoryOpen = () => {
     setNewCategoryOpen(true);
@@ -147,7 +152,7 @@ const TaskForm: React.FC = () => {
     const name = e.target.name;
     dispatch(editTask({ ...editedTask, [name]: value }));
   };
-  
+
   const handleSelectDateChange = (date: any) => {
     if (date.$d instanceof Date && !isNaN(date.$d.getTime())) {
       dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
@@ -155,28 +160,29 @@ const TaskForm: React.FC = () => {
       dispatch(editTask({ ...editedTask, StartDate: "" }));
     }
   };
-  
-  let userOptions = [{ ID: 0, Name: '' }, ...users].map((user) => (
-    <MenuItem key={user.ID} value={user.ID} style={{ minHeight: '36px'}}>
+
+  const userOptions = [{ ID: 0, Name: "" }, ...users].map((user) => (
+    <MenuItem key={user.ID} value={user.ID} style={{ minHeight: "36px" }}>
       {user.Name}
     </MenuItem>
   ));
-  let categoryOptions = [{ ID: 0, Category: '' }, ...categories].map((cat) => (
-    <MenuItem key={cat.ID} value={cat.ID} style={{ minHeight: '36px'}}>
-      {cat.Category}
-    </MenuItem>
-  ));
+  const categoryOptions = [{ ID: 0, Category: "" }, ...categories].map(
+    (cat) => (
+      <MenuItem key={cat.ID} value={cat.ID} style={{ minHeight: "36px" }}>
+        {cat.Category}
+      </MenuItem>
+    ),
+  );
   return (
-    <Grid
-      container
-      direction="column"
-      style={{ minHeight: "80vh" }}
-    >
+    <Grid container direction="column" style={{ minHeight: "80vh" }}>
       <h2 className="toScroll">{editedTask.ID ? "Update Task" : "New Task"}</h2>
       <form>
         <Grid container spacing={5}>
           <Grid item xs={12} md={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={jaLocale.name}>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              adapterLocale={jaLocale.name}
+            >
               <StyledDatePicker
                 label="Start Date"
                 value={dayjs(editedTask.StartDate)}
@@ -200,19 +206,19 @@ const TaskForm: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-          <StyledTextField
-            InputLabelProps={{
-              shrink: true,
-            }}
-            label="Task"
-            type="text"
-            name="Task"
-            value={editedTask.Task}
-            onChange={handleInputChange}
-            inputProps={{
-              maxLength: 30
-            }}
-          />
+            <StyledTextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              label="Task"
+              type="text"
+              name="Task"
+              value={editedTask.Task}
+              onChange={handleInputChange}
+              inputProps={{
+                maxLength: 30,
+              }}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <StyledTextField
@@ -225,7 +231,7 @@ const TaskForm: React.FC = () => {
               value={editedTask.Description}
               onChange={handleInputChange}
               inputProps={{
-                maxLength: 30
+                maxLength: 30,
               }}
             />
           </Grid>
@@ -257,11 +263,7 @@ const TaskForm: React.FC = () => {
             </StyledFormControl>
           </Grid>
           <Grid item xs={12}>
-            <Grid
-              container
-              direction="row"
-              justifyContent="center"
-            >
+            <Grid container direction="row" justifyContent="center">
               <StyledCategoryFormControl>
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -276,7 +278,11 @@ const TaskForm: React.FC = () => {
               <StyledFab
                 size="small"
                 color="primary"
-                onClick={editedTask.Category ? handleEditCategoryOpen : handleNewCategoryOpen }
+                onClick={
+                  editedTask.Category
+                    ? handleEditCategoryOpen
+                    : handleNewCategoryOpen
+                }
               >
                 {editedTask.Category ? <EditOutlinedIcon /> : <AddIcon />}
               </StyledFab>
@@ -284,11 +290,7 @@ const TaskForm: React.FC = () => {
           </Grid>
 
           <Grid item xs={12}>
-            <Grid
-              container
-              direction="row"
-              justifyContent="center"
-            >
+            <Grid container direction="row" justifyContent="center">
               <TaskSaveButton
                 variant="contained"
                 color="primary"
@@ -303,7 +305,7 @@ const TaskForm: React.FC = () => {
               >
                 {editedTask.ID !== 0 ? "Update" : "Save"}
               </TaskSaveButton>
-              {editedTask.ID !== 0 ?
+              {editedTask.ID !== 0 ? (
                 <TaskDeleteButton
                   variant="contained"
                   color="error"
@@ -317,9 +319,9 @@ const TaskForm: React.FC = () => {
                 >
                   DELETE
                 </TaskDeleteButton>
-                :
+              ) : (
                 ""
-              }
+              )}
               <Button
                 variant="contained"
                 color="inherit"
@@ -336,11 +338,11 @@ const TaskForm: React.FC = () => {
         </Grid>
       </form>
 
-      <NewCategoryModal 
+      <NewCategoryModal
         open={newCategoryOpen}
         onClose={handleNewCategoryClose}
       />
-      <EditCategoryModal 
+      <EditCategoryModal
         open={editCategoryOpen}
         onClose={handleEditCategoryClose}
         originalCategory={selectedCategory}

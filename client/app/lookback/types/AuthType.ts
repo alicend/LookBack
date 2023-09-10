@@ -8,5 +8,3 @@ export interface LOGIN_AUTH {
   email: string;
   password: string;
 }
-
-

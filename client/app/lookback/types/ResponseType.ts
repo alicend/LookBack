@@ -1,11 +1,11 @@
 export interface RESPONSE {
-  error: string,
-  message?: string
+  error: string;
+  message?: string;
 }
 
 export interface PAYLOAD {
-  response: RESPONSE,
-  status: number
+  response: RESPONSE;
+  status: number;
 }
 
 export interface AsyncActionErrorPayload {
@@ -15,4 +15,4 @@ export interface AsyncActionErrorPayload {
     message: string;
     error: string;
   };
-};
+}

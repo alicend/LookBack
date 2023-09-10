@@ -1,11 +1,11 @@
-import { useState, type ReactNode } from 'react';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Grid, Menu } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconMenu } from './IconMenu';
+import { useState, type ReactNode } from "react";
+import { IconMenu } from "./IconMenu";
 
 type Props = {
-  title: string
-}
+  title: string;
+};
 
 export const MainPageHeader = ({ title }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -13,16 +13,15 @@ export const MainPageHeader = ({ title }: Props) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  return(
+  return (
     <>
-      <Grid container >
-        <Grid item xs={4} className="border-b border-gray-400 mb-5">
-        </Grid>
+      <Grid container>
+        <Grid item xs={4} className="border-b border-gray-400 mb-5"></Grid>
         <Grid item xs={4} className="border-b border-gray-400 mb-5">
           <h1>{title}</h1>
         </Grid>
@@ -30,11 +29,11 @@ export const MainPageHeader = ({ title }: Props) => {
           <Grid container justifyContent="end" spacing={1}>
             <button
               className="bg-transparent mb-2 mr-3 border-none outline-none cursor-pointer"
-              aria-controls="menu" 
-              aria-haspopup="true" 
+              aria-controls="menu"
+              aria-haspopup="true"
               onClick={handleClick}
             >
-              <MoreVertIcon/>
+              <MoreVertIcon />
             </button>
             <Menu
               id="menu"

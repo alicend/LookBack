@@ -1,9 +1,9 @@
-import PasswordReset from "@/components/PasswordReset";
-import { AuthPageLayout } from "@/components/layout/AuthPageLayout";
-import { EmailTokenPayload } from "@/types/URLParamType";
 import jwtDecode from "jwt-decode";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import PasswordReset from "@/components/PasswordReset";
+import { AuthPageLayout } from "@/components/layout/AuthPageLayout";
+import { EmailTokenPayload } from "@/types/URLParamType";
 
 const getQueryParams = (param: string) => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -15,7 +15,7 @@ export default function EmailUpdate() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const tokenFromURL = getQueryParams('email');
+    const tokenFromURL = getQueryParams("email");
 
     // tokenが配列または未定義の場合にリダイレクト
     if (!tokenFromURL) {
@@ -41,10 +41,10 @@ export default function EmailUpdate() {
       router.push("/");
     }
   }, []);
-  
+
   return (
     <AuthPageLayout title="Password Reset">
-      <PasswordReset email={email}/>
+      <PasswordReset email={email} />
     </AuthPageLayout>
-  )
+  );
 }

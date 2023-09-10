@@ -13,10 +13,10 @@ export interface USER_RESPONSE {
   users: USER[];
 }
 export interface USER_STATE {
-  status: "" | 'loading' | 'succeeded' | 'failed';
+  status: "" | "loading" | "succeeded" | "failed";
   message: string;
   loginUser: USER;
-};
+}
 
 export interface PASSWORD_RESET {
   email: string;

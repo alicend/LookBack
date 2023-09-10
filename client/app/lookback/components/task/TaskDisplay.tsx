@@ -1,7 +1,19 @@
+import {
+  Button,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editTask, initialState, selectSelectedTask, selectTask } from "@/slices/taskSlice";
-import { Button, Grid, Table, TableBody, TableCell, TableRow } from "@mui/material";
+import {
+  editTask,
+  initialState,
+  selectSelectedTask,
+  selectTask,
+} from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
 
 const TaskDisplay: React.FC = () => {
