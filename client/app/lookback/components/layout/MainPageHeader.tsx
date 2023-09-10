@@ -1,6 +1,6 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Grid, Menu } from "@mui/material";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { IconMenu } from "./IconMenu";
 
 type Props = {

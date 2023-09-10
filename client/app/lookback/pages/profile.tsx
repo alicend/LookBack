@@ -1,4 +1,4 @@
-import { Grid, Paper, Tab, Tabs } from "@mui/material";
+import { Grid, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";

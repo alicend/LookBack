@@ -12,7 +12,7 @@ import {
   Grid,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import React, { ChangeEvent, MouseEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   fetchAsyncUpdateCategory,

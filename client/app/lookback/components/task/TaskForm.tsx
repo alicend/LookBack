@@ -37,22 +37,22 @@ import {
 import { AppDispatch } from "@/store/store";
 import { CATEGORY } from "@/types/CategoryType";
 
-const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
+const StyledDatePicker = styled(DatePicker)(() => ({
   width: "90%",
   minWidth: 240,
 }));
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)(() => ({
   width: "90%",
   minWidth: 240,
 }));
 
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
+const StyledFormControl = styled(FormControl)(() => ({
   width: "90%",
   minWidth: 240,
 }));
 
-const StyledCategoryFormControl = styled(FormControl)(({ theme }) => ({
+const StyledCategoryFormControl = styled(FormControl)(() => ({
   width: "45%",
   minWidth: 240,
 }));

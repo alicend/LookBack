@@ -1,6 +1,6 @@
 import jwtDecode from "jwt-decode";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchAsyncUpdateCompleteLoginUserEmail } from "@/slices/userSlice";
 import { AppDispatch } from "@/store/store";
