@@ -8,7 +8,10 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAsyncUpdateTaskToMoveToCompleted, selectSelectedTask } from "@/slices/taskSlice";
+import {
+  fetchAsyncUpdateTaskToMoveToCompleted,
+  selectSelectedTask,
+} from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
 
 interface CalendarTaskDisplayProps {

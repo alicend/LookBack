@@ -19,7 +19,10 @@ export default function Profile() {
   const [isGuestLogin, setGuestLogin] = useState(false);
   const [tabValue, setTabValue] = useState(0);
 
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleTabChange = (
+    _event: React.ChangeEvent<EventTarget>,
+    newValue: number,
+  ) => {
     setTabValue(newValue);
   };
 

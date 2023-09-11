@@ -16,6 +16,7 @@ import {
 } from "@/slices/taskSlice";
 
 import { AppDispatch } from "@/store/store";
+import { CalendarEventType } from "@/types/CalendarEventType";
 import { READ_TASK } from "@/types/TaskType";
 
 function getModalStyle() {
@@ -37,7 +38,7 @@ export default function LookBack() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
 
-  const handleModalOpen = (event: any) => {
+  const handleModalOpen = (event: CalendarEventType) => {
     const selectedEvent = tasks.find((task) => task.Task === event.title);
     if (selectedEvent) {
       setModalOpen(true);

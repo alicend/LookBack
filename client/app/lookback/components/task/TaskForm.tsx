@@ -16,7 +16,7 @@ import {
 import { styled } from "@mui/system";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import jaLocale from "dayjs/locale/ja";
 import React, { useEffect, useState } from "react";
 
@@ -153,8 +153,9 @@ const TaskForm: React.FC = () => {
     dispatch(editTask({ ...editedTask, [name]: value }));
   };
 
-  const handleSelectDateChange = (date: any) => {
-    if (date.$d instanceof Date && !isNaN(date.$d.getTime())) {
+  const handleSelectDateChange = (value: unknown) => {
+    const date = value as Dayjs;
+    if (date.isValid()) {
       dispatch(editTask({ ...editedTask, StartDate: date.toISOString() }));
     } else {
       dispatch(editTask({ ...editedTask, StartDate: "" }));
