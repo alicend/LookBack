@@ -6,9 +6,12 @@ COPY . .
 RUN apk upgrade --update && \
     apk --no-cache add git gcc musl-dev
 
+RUN go mod tidy
+
 RUN go get github.com/gin-gonic/gin \
     github.com/jinzhu/gorm \
     github.com/jinzhu/gorm/dialects/mysql \
+    github.com/DATA-DOG/go-sqlmock \
     github.com/joho/godotenv \
     github.com/resendlabs/resend-go
 
