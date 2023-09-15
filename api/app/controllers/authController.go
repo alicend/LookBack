@@ -40,7 +40,7 @@ func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 		return
 	}
 
-	err = sendSignUpMail(userPreSignUpInput.Email);
+	err = SendSignUpMail(userPreSignUpInput.Email);
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
 		return
@@ -193,7 +193,7 @@ func respondWithErrAndMsg(c *gin.Context, status int, err string, msg string) {
 	})
 }
 
-func sendSignUpMail(email string) error {
+func SendSignUpMail(email string) error {
 
   client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
 
