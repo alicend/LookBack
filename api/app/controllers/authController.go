@@ -33,14 +33,14 @@ func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 	// メールアドレスが既に使用されていないか確認
 	_, err := models.FindUserByEmail(handler.DB, userPreSignUpInput.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			respondWithError(c, http.StatusBadRequest, err.Error())
-			return
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
 	} else if err == nil {
 		respondWithErrAndMsg(c, http.StatusBadRequest, "", "他のユーザーが使用しているので別のメールアドレスを入力してください")
 		return
 	}
 
-	err = SendSignUpMail(userPreSignUpInput.Email);
+	err = handler.MailSender.SendSignUpMail(userPreSignUpInput.Email);
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
 		return
@@ -193,9 +193,8 @@ func respondWithErrAndMsg(c *gin.Context, status int, err string, msg string) {
 	})
 }
 
-func SendSignUpMail(email string) error {
-
-  client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
+func (p *ProductionMailSender) SendSignUpMail(email string) error {
+	client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
 
 	// URLを生成
 	// トークンを生成
@@ -226,6 +225,7 @@ func SendSignUpMail(email string) error {
         return err
     }
     fmt.Println(sent.Id)
+	log.Printf("メールの送信に成功しました")
 
 	return nil
 }

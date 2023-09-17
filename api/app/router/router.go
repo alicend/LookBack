@@ -16,6 +16,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	handler := controllers.Handler{
 		DB: db,
+		MailSender: &controllers.ProductionMailSender{},
 	}
 	// ルーティング設定
 	api := r.Group("/api")
