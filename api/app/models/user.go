@@ -316,9 +316,6 @@ func (u *User) VerifyPassword(inputPassword string) bool {
 	return u.Password == Encrypt(inputPassword)
 }
 
-// ==================================================================
-// 以下はプライベート関数
-// ==================================================================
 func Encrypt(char string) string {
 	encryptText := fmt.Sprintf("%x", sha256.Sum256([]byte(char)))
 	return encryptText

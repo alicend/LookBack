@@ -358,7 +358,7 @@ func TestUpdateUserPassword(t *testing.T) {
 
 	var updatedUser User
 	db.Where("id = ?", user.ID).First(&updatedUser)
-	assert.Equal(t, encrypt("NewPassword"), updatedUser.Password)
+	assert.Equal(t, Encrypt("NewPassword"), updatedUser.Password)
 
 	// テストデータの削除
 	db.Unscoped().Delete(&user)
@@ -439,7 +439,7 @@ func TestDeleteUserAndRelatedTasks(t *testing.T) {
 
 func TestVerifyPassword(t *testing.T) {
 	user := &User{
-			Password: encrypt("password"),
+			Password: Encrypt("password"),
 	}
 
 	if !user.VerifyPassword("password") {
