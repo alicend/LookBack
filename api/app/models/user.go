@@ -95,7 +95,7 @@ func (user *User) CreateUser(db *gorm.DB) (*User, error) {
 
 	user = &User{
 		Name:        user.Name,
-		Password:    encrypt(user.Password),
+		Password:    Encrypt(user.Password),
 		Email:       user.Email,
 		UserGroupID: user.UserGroupID,
 	}
@@ -244,7 +244,7 @@ func (user *User) UpdateUsername(db *gorm.DB, userID uint) error {
 
 func (user *User) UpdateUserPassword(db *gorm.DB, userID uint) error {
 	result := db.Model(user).Where("id = ?", userID).Updates(User{
-		Password: encrypt(user.Password),
+		Password: Encrypt(user.Password),
 	})
 
 	if result.Error != nil {
@@ -258,7 +258,7 @@ func (user *User) UpdateUserPassword(db *gorm.DB, userID uint) error {
 
 func (user *User) ResetUserPassword(db *gorm.DB) error {
 	result := db.Model(user).Where("email = ?", user.Email).Updates(User{
-		Password: encrypt(user.Password),
+		Password: Encrypt(user.Password),
 	})
 
 	if result.Error != nil {
@@ -313,13 +313,13 @@ func (user *User) DeleteUserAndRelatedTasks(db *gorm.DB, id uint) error {
 }
 
 func (u *User) VerifyPassword(inputPassword string) bool {
-	return u.Password == encrypt(inputPassword)
+	return u.Password == Encrypt(inputPassword)
 }
 
 // ==================================================================
 // 以下はプライベート関数
 // ==================================================================
-func encrypt(char string) string {
+func Encrypt(char string) string {
 	encryptText := fmt.Sprintf("%x", sha256.Sum256([]byte(char)))
 	return encryptText
 }
