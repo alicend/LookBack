@@ -90,7 +90,20 @@ const PasswordReset: React.FC<Props> = React.memo(({ email }) => {
         style={{ minHeight: "80vh", padding: "12px" }}
       >
         <Grid item>
-          <h1>Password Reset{email}</h1>
+          <h1>Password Reset</h1>
+        </Grid>
+        <br />
+        <Grid item>
+          <StyledTextField
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Email"
+            type="text"
+            name="email"
+            value={email}
+            disabled={true}
+          />
         </Grid>
 
         <br />
