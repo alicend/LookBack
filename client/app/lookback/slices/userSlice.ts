@@ -224,7 +224,7 @@ export const fetchAsyncUpdateUserGroup = createAsyncThunk(
   async ({ id, userGroup }: { id: number; userGroup: string }, thunkAPI) => {
     try {
       const res = await axios.put(
-        `${ENDPOINTS}/${id}`,
+        `${ENDPOINTS.USERS}/me/user-group`,
         { userGroup: userGroup },
         COMMON_HTTP_HEADER,
       );
