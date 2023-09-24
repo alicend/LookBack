@@ -364,7 +364,7 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 		return
 	}
 
-	// Clear the cookie named "access_token"
+	// ログインセッションを削除
 	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 	
 	c.JSON(http.StatusOK, gin.H{})

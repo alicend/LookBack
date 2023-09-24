@@ -48,7 +48,7 @@ type UserPasswordResetInput struct {
 }
 
 type UserGroupUpdateInput struct {
-	NewUserGroupID uint `json:"user_group_id" binding:"required,min=1,max=30"`
+	NewUserGroupID uint `json:"user_group_id" binding:"required,min=1"`
 }
 
 type UserResponse struct {
