@@ -60,14 +60,6 @@ func (handler *Handler) GetCurrentUserHandler(c *gin.Context) {
 	})
 }
 
-func (handler *Handler) DeleteUserHandler(c *gin.Context) {
-	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully deleted task",
-	})
-}
-
 func (handler *Handler) SendEmailUpdateEmailHandler(c *gin.Context) {
 	var emailUpdateInput models.EmailUpdateInput
 	if err := c.ShouldBindJSON(&emailUpdateInput); err != nil {
@@ -87,7 +79,7 @@ func (handler *Handler) SendEmailUpdateEmailHandler(c *gin.Context) {
 		return
 	}
 
-	err = sendUpdateEmailMail(emailUpdateInput.NewEmail);
+	err = handler.MailSender.SendUpdateEmailMail(emailUpdateInput.NewEmail);
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
 		return
@@ -234,12 +226,8 @@ func (handler *Handler) SendEmailResetPasswordHandler(c *gin.Context) {
 		}
 	}
 
-// レコードが存在する場合、パスワードリセットの処理を行う
-// ここに該当するコードを追加
-
-
 	// レコードが存在する場合
-	err = sendUpdatePasswordMail(passwordResetInput.Email)
+	err = handler.MailSender.SendUpdatePasswordMail(passwordResetInput.Email)
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
 		return
@@ -382,11 +370,7 @@ func (handler *Handler) DeleteCurrentUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// ==================================================================
-// 以下はプライベート関数
-// ==================================================================
-
-func sendUpdateEmailMail(email string) error {
+func (p *ProductionMailSender)SendUpdateEmailMail(email string) error {
 
 	client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
 
@@ -423,7 +407,7 @@ func sendUpdateEmailMail(email string) error {
 	return nil
 }
 
-func sendUpdatePasswordMail(email string) error {
+func (p *ProductionMailSender)SendUpdatePasswordMail(email string) error {
 
 	client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
 
