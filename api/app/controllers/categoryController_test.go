@@ -30,13 +30,30 @@ func TestCreateCategoryHandler(t *testing.T) {
 		MailSender: mockMailSender,
 	}
 
-	tokenString, _ := utils.GenerateSessionToken(uint(1))
-
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
 	r.POST("/categories", handler.CreateCategoryHandler)
 
 	t.Run("成功", func(t *testing.T) {
+
+		// テストデータの作成
+		userGroup := &models.UserGroup{
+			UserGroup: "Test UserGroup",
+		}
+		if err := db.Create(&userGroup).Error; err != nil {
+			t.Fatalf("failed to create user group: %v", err)
+		}
+
+		user := &models.User{
+			Name:        "Test User",
+			Password:    "testPassword123",
+			Email:       "test@example.com",
+			UserGroupID: userGroup.ID,
+		}
+		if err := db.Create(&user).Error; err != nil {
+			t.Fatalf("failed to create user: %v", err)
+		}
+		tokenString, _ := utils.GenerateSessionToken(uint(user.ID))
 
 		categoryInput := models.CategoryInput{Category: "New Category"}
 		body, _ := json.Marshal(categoryInput)
@@ -55,6 +72,13 @@ func TestCreateCategoryHandler(t *testing.T) {
 			t.Errorf("Error: %v", resp.Body.String())
 		}
 
+		// 後処理: テスト用のデータを削除
+		var latestCategory models.Category
+		db.Order("created_at desc").First(&latestCategory)
+        db.Unscoped().Delete(&latestCategory)
+
+		db.Unscoped().Delete(&user)
+		db.Unscoped().Delete(&userGroup)
 	})
 }
 
@@ -76,6 +100,23 @@ func TestGetCategoryHandler(t *testing.T) {
 	r.GET("/categories", handler.GetCategoryHandler)
 
 	t.Run("成功", func(t *testing.T) {
+
+		// テストデータの作成
+		userGroup := &models.UserGroup{
+			UserGroup: "Test UserGroup",
+		}
+		if err := db.Create(&userGroup).Error; err != nil {
+			t.Fatalf("failed to create user group: %v", err)
+		}
+
+		category := &models.Category{
+			Category:    "Test Category",
+			UserGroupID: userGroup.ID,
+		}
+		if err := db.Create(&category).Error; err != nil {
+			t.Fatalf("failed to create category: %v", err)
+		}
+
 		req, _ := http.NewRequest(http.MethodGet, "/categories", nil)
 		resp := httptest.NewRecorder()
 
@@ -102,10 +143,9 @@ func TestGetCategoryHandler(t *testing.T) {
 			}
 		}
 
-		// 後処理: テスト用のカテゴリーを削除
-		var latestCategory models.Category
-		db.Order("created_at desc").First(&latestCategory)
-        db.Unscoped().Delete(&latestCategory)
+		// 後処理: テスト用のデータを削除
+		db.Unscoped().Delete(&category)
+		db.Unscoped().Delete(&userGroup)
 	})
 }
 
@@ -127,13 +167,25 @@ func TestUpdateCategoryHandler(t *testing.T) {
 	r.PUT("/categories/:id", handler.UpdateCategoryHandler)
 
 	t.Run("成功", func(t *testing.T) {
-		// 前提条件: テスト用のカテゴリーを作成
-		initialCategory := models.Category{Category: "Old Category"}
-		db.Create(&initialCategory)
+		// テストデータの作成
+		userGroup := &models.UserGroup{
+			UserGroup: "Test UserGroup",
+		}
+		if err := db.Create(&userGroup).Error; err != nil {
+			t.Fatalf("failed to create user group: %v", err)
+		}
+
+		category := &models.Category{
+			Category:    "Test Category",
+			UserGroupID: userGroup.ID,
+		}
+		if err := db.Create(&category).Error; err != nil {
+			t.Fatalf("failed to create category: %v", err)
+		}
 
 		categoryInput := models.CategoryInput{Category: "Updated Category"}
 		body, _ := json.Marshal(categoryInput)
-		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/categories/%d", initialCategory.ID), bytes.NewBuffer(body))
+		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/categories/%d", category.ID), bytes.NewBuffer(body))
 		resp := httptest.NewRecorder()
 
 		req.AddCookie(&http.Cookie{
@@ -162,8 +214,9 @@ func TestUpdateCategoryHandler(t *testing.T) {
 			}
 		}
 
-		// 後処理: テスト用のカテゴリーを削除
-		db.Unscoped().Delete(&initialCategory)
+		// 後処理: テスト用のデータを削除
+		db.Unscoped().Delete(&category)
+		db.Unscoped().Delete(&userGroup)
 	})
 }
 
@@ -186,11 +239,23 @@ func TestDeleteCategoryHandler(t *testing.T) {
 	r.DELETE("/categories/:id", handler.DeleteCategoryHandler)
 
 	t.Run("成功", func(t *testing.T) {
-		// 前提条件: テスト用のカテゴリーを作成
-		initialCategory := models.Category{Category: "Test Category"}
-		db.Create(&initialCategory)
+		// テストデータの作成
+		userGroup := &models.UserGroup{
+			UserGroup: "Test UserGroup",
+		}
+		if err := db.Create(&userGroup).Error; err != nil {
+			t.Fatalf("failed to create user group: %v", err)
+		}
 
-		req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("/categories/%d", initialCategory.ID), nil)
+		category := &models.Category{
+			Category:    "Test Category",
+			UserGroupID: userGroup.ID,
+		}
+		if err := db.Create(&category).Error; err != nil {
+			t.Fatalf("failed to create category: %v", err)
+		}
+
+		req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("/categories/%d", category.ID), nil)
 		resp := httptest.NewRecorder()
 
 		req.AddCookie(&http.Cookie{
@@ -211,7 +276,8 @@ func TestDeleteCategoryHandler(t *testing.T) {
 			}
 		}
 
-		// 後処理: もしカテゴリが削除されていない場合には削除する
-		db.Unscoped().Delete(&initialCategory)
+		// 後処理: テスト用のデータを削除
+		db.Unscoped().Delete(&category)
+		db.Unscoped().Delete(&userGroup)
 	})
 }
