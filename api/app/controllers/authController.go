@@ -21,7 +21,7 @@ type UserPreSignUpInput struct {
 }
 type UserInviteInput struct {
 	Email string `json:"email" binding:"required,email"`
-	userGroupID uint `json:"userGroupID" binding:"required,"`
+	UserGroupID uint `json:"userGroupID" binding:"required"`
 }
 
 func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
@@ -274,7 +274,7 @@ func (p *ProductionMailSender) SendInviteMail(userInviteInput UserInviteInput) e
 		log.Printf("EmailToken generation failed: %v", err)
 		return err
 	}
-	userGroupIDToken, err := utils.GenerateUserGroupIDToken(userInviteInput.userGroupID)
+	userGroupIDToken, err := utils.GenerateUserGroupIDToken(userInviteInput.UserGroupID)
 	if err != nil {
 		log.Printf("UserGroupIDToken generation failed: %v", err)
 		return err
