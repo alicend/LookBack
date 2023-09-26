@@ -2,6 +2,7 @@ import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
@@ -58,6 +59,16 @@ export const IconMenu: React.FC = () => {
               <ManageAccountsIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText>Profile Edit</ListItemText>
+          </MenuItem>
+        </Link>
+      )}
+      {lastPath !== "invite" && (
+        <Link href="/invite">
+          <MenuItem>
+            <ListItemIcon>
+              <ContactMailIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Invite to User Group</ListItemText>
           </MenuItem>
         </Link>
       )}

@@ -1,4 +1,4 @@
-import SaveIcon from "@mui/icons-material/Save";
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import { Button, Grid, TextField } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { FC, useState } from "react";
@@ -106,7 +106,7 @@ const Email: FC<Props> = React.memo(({ loginUserEmail, loginStatus }) => {
           variant="contained"
           color="primary"
           size="small"
-          startIcon={<SaveIcon />}
+          startIcon={<EmailRoundedIcon />}
           disabled={isDisabled}
           onClick={update}
         >

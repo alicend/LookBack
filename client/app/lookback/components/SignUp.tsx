@@ -180,6 +180,9 @@ const SignUp: React.FC<Props> = ({ email }) => {
             onChange={handleInputChange}
             error={Boolean(errors.user_group)}
             helperText={errors.user_group}
+            inputProps={{
+              maxLength: 30,
+            }}
           />
         </Grid>
 

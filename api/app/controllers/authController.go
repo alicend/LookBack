@@ -19,6 +19,10 @@ import (
 type UserPreSignUpInput struct {
 	Email string `json:"email" binding:"required,email"`
 }
+type UserInviteInput struct {
+	Email string `json:"email" binding:"required,email"`
+	userGroupID uint `json:"userGroupID" binding:"required,"`
+}
 
 func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 
@@ -41,6 +45,36 @@ func (handler *Handler) SendSignUpEmailHandler(c *gin.Context) {
 	}
 
 	err = handler.MailSender.SendSignUpMail(userPreSignUpInput.Email);
+	if err != nil {
+		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
+		return
+	}
+
+	// 生成したトークンをJSONレスポンスとして返す
+	c.JSON(http.StatusOK, gin.H{})
+}
+
+func (handler *Handler) SendInviteEmailHandler(c *gin.Context) {
+
+	var userInviteInput UserInviteInput
+	if err := c.ShouldBindJSON(&userInviteInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// メールアドレスが既に使用されていないか確認
+	_, err := models.FindUserByEmail(handler.DB, userInviteInput.Email)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	} else if err == nil {
+		respondWithErrAndMsg(c, http.StatusBadRequest, "", "他のユーザーが使用しているので別のメールアドレスを入力してください")
+		return
+	}
+
+	err = handler.MailSender.SendInviteMail(userInviteInput);
 	if err != nil {
 		respondWithErrAndMsg(c, http.StatusInternalServerError, err.Error(), "メールの送信に失敗しました")
 		return
@@ -215,6 +249,48 @@ func (p *ProductionMailSender) SendSignUpMail(email string) error {
     params := &resend.SendEmailRequest{
         From:    "Look Back Calendar <sign-up@lookback-calendar.com>",
         To:      []string{email},
+        Html:    body,
+        Subject: subject,
+    }
+
+    sent, err := client.Emails.Send(params)
+    if err != nil {
+        log.Println(err.Error())
+        return err
+    }
+    fmt.Println(sent.Id)
+	log.Printf("メールの送信に成功しました")
+
+	return nil
+}
+
+func (p *ProductionMailSender) SendInviteMail(userInviteInput UserInviteInput) error {
+	client := resend.NewClient(os.Getenv("RESEND_TOKEN"))
+
+	// URLを生成
+	// トークンを生成
+	emailToken, err := utils.GenerateEmailToken(userInviteInput.Email)
+	if err != nil {
+		log.Printf("EmailToken generation failed: %v", err)
+		return err
+	}
+	userGroupIDToken, err := utils.GenerateUserGroupIDToken(userInviteInput.userGroupID)
+	if err != nil {
+		log.Printf("UserGroupIDToken generation failed: %v", err)
+		return err
+	}
+	registrationURL := fmt.Sprintf("%s/sign-up?&email=%s&user-group-id=%s", os.Getenv("FRONTEND_ORIGIN"), emailToken, userGroupIDToken)
+
+	body := fmt.Sprintf(`
+		<p>ユーザーグループに招待されました。登録を完了するには、以下のリンクにアクセスしてください。</p>
+		<a href="%s">%s</a>
+	`, registrationURL, registrationURL)
+
+	subject := "【Look Back Calendar】登録のお願い"
+
+    params := &resend.SendEmailRequest{
+        From:    "Look Back Calendar <sign-up@lookback-calendar.com>",
+        To:      []string{userInviteInput.Email},
         Html:    body,
         Subject: subject,
     }

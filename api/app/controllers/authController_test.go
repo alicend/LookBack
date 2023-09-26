@@ -22,6 +22,9 @@ import (
 func (m *MockMailSender) SendSignUpMail(email string) error {
 	return m.MockSendSignUpMail(email)
 }
+func (m *MockMailSender) SendInviteMail(userInviteInput UserInviteInput) error {
+	return m.MockSendInviteMail(userInviteInput)
+}
 
 func TestSendSignUpEmailHandler(t *testing.T) {
 	// SQLMock のセットアップ

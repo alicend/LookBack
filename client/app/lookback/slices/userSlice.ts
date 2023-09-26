@@ -32,6 +32,7 @@ const ENDPOINTS = {
   LOGOUT: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/logout`,
   REGISTER: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup`,
   REGISTER_REQUEST: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/signup/request`,
+  INVITE_REQUEST: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/invite/request`,
   USERS: `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/users`,
 };
 
@@ -84,6 +85,22 @@ export const fetchAsyncRegisterRequest = createAsyncThunk(
       const res = await axios.post(
         ENDPOINTS.REGISTER_REQUEST,
         { email: email },
+        COMMON_HTTP_HEADER,
+      );
+      return res.data;
+    } catch (err: any) {
+      return handleHttpError(err, thunkAPI);
+    }
+  },
+);
+
+export const fetchAsyncInviteRequest = createAsyncThunk(
+  "auth/invite/request",
+  async ({email, userGroupID}: {email: string , userGroupID: number}, thunkAPI) => {
+    try {
+      const res = await axios.post(
+        ENDPOINTS.INVITE_REQUEST,
+        { email: email, userGroupID: userGroupID },
         COMMON_HTTP_HEADER,
       );
       return res.data;
@@ -336,6 +353,16 @@ export const userSlice = createSlice({
     );
     builder.addCase(fetchAsyncRegisterRequest.rejected, handleLoginError);
     builder.addCase(fetchAsyncRegisterRequest.pending, handleLoading);
+    builder.addCase(
+      fetchAsyncInviteRequest.fulfilled,
+      (state, action: PayloadAction<USER>) => {
+        state.status = "succeeded";
+        state.loginUser = action.payload;
+        state.message = "メールを送信しました";
+      },
+    );
+    builder.addCase(fetchAsyncInviteRequest.rejected, handleLoginError);
+    builder.addCase(fetchAsyncInviteRequest.pending, handleLoading);
     builder.addCase(
       fetchAsyncRegister.fulfilled,
       (state, action: PayloadAction<USER>) => {

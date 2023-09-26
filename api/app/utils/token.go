@@ -43,6 +43,17 @@ func GenerateEmailToken(email string) (string, error) {
 	return tokenString, err
 }
 
+func GenerateUserGroupIDToken(userGroupID uint) (string, error) {
+	secretKey := os.Getenv("USER_GROUP_ID_SECRET_KEY") // 暗号化、復号化するためのキー
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"user_group_id": userGroupID,
+			"exp":  time.Now().Add(time.Hour * 1).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(secretKey))
+	return tokenString, err
+}
+
 func ParseSessionToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
