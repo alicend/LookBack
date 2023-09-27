@@ -122,6 +122,34 @@ func (handler *Handler) SignUpHandler(c *gin.Context) {
 	})
 }
 
+func (handler *Handler) InviteSignUpHandler(c *gin.Context) {
+	var inviteSignUpInput models.UserInviteSignUpInput
+	if err := c.ShouldBindJSON(&inviteSignUpInput); err != nil {
+		log.Printf("Invalid request body: %v", err)
+		log.Printf("リクエスト内容が正しくありません")
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	newUser := &models.User{
+		Name:        inviteSignUpInput.Name,
+		Password:    inviteSignUpInput.Password,
+		Email:       inviteSignUpInput.Email,
+		UserGroupID: inviteSignUpInput.UserGroup,
+	}
+
+	user, err := newUser.CreateUser(handler.DB)
+	if err != nil {
+		respondWithError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user_id": user.ID,
+		"message": "Successfully created user",
+	})
+}
+
 func (handler *Handler) LoginHandler(c *gin.Context) {
 	var loginInput models.UserLoginInput
 	if err := c.ShouldBind(&loginInput); err != nil {

@@ -29,6 +29,13 @@ type UserSignUpInput struct {
 	UserGroup string `json:"user_group" binding:"required,min=1,max=30"`
 }
 
+type UserInviteSignUpInput struct {
+	Name      string `json:"username" binding:"required,min=1,max=30"`
+	Password  string `json:"password" binding:"required,min=8,max=255"`
+	Email     string `json:"email" binding:"required,email"`
+	UserGroup uint   `json:"user_group" binding:"required"`
+}
+
 type EmailUpdateInput struct {
 	NewEmail string `json:"email" binding:"required,email"`
 }

@@ -5,7 +5,11 @@ import { useDispatch } from "react-redux";
 import { z } from "zod";
 
 import { AppDispatch } from "../store/store";
-import { fetchAsyncLogin, fetchAsyncRegister } from "@/slices/userSlice";
+import {
+  fetchAsyncLogin,
+  fetchAsyncRegister,
+  fetchAsyncInviteRegister,
+} from "@/slices/userSlice";
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#4dabf5 !important",
@@ -44,23 +48,39 @@ const registerCredentialSchema = z.object({
     .min(8, "パスワードは８文字以上にしてください")
     .refine(
       passwordCheck,
-      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください",
+      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"
     ),
   username: z.string(),
   user_group: z.string(),
 });
 
+const inviteRegisterCredentialSchema = z.object({
+  email: z
+    .string()
+    .email("無効なメールアドレスです")
+    .regex(pattern, "無効なメールアドレスです"),
+  password: z
+    .string()
+    .min(8, "パスワードは８文字以上にしてください")
+    .refine(
+      passwordCheck,
+      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"
+    ),
+  username: z.string(),
+});
+
 interface Props {
   email: string;
+  userGroupID: string;
 }
 
-const SignUp: React.FC<Props> = ({ email }) => {
+const SignUp: React.FC<Props> = ({ email, userGroupID }) => {
   const dispatch: AppDispatch = useDispatch();
   const [credential, setCredential] = useState({
     email: email,
     password: "",
     username: "",
-    user_group: "",
+    user_group: userGroupID,
   });
   const [errors, setErrors] = useState({
     username: "",
@@ -68,11 +88,19 @@ const SignUp: React.FC<Props> = ({ email }) => {
     user_group: "",
   });
 
-  const isDisabled =
-    credential.username.length === 0 ||
-    credential.password.length === 0 ||
-    credential.email.length === 0 ||
-    credential.user_group.length === 0;
+  let isDisabled = true;
+  if (userGroupID !== "") {
+    isDisabled =
+      credential.username.length === 0 ||
+      credential.password.length === 0 ||
+      credential.email.length === 0;
+  } else {
+    isDisabled =
+      credential.username.length === 0 ||
+      credential.password.length === 0 ||
+      credential.email.length === 0 ||
+      credential.user_group.length === 0;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -101,6 +129,38 @@ const SignUp: React.FC<Props> = ({ email }) => {
 
     // 登録処理
     const action = await dispatch(fetchAsyncRegister(credential));
+
+    if (fetchAsyncRegister.fulfilled.match(action)) {
+      // 登録成功時、自動的にログインを行う
+      await dispatch(fetchAsyncLogin(credential));
+    }
+  };
+
+  const registerInvite = async () => {
+    // 入力チェック
+    const result = inviteRegisterCredentialSchema.safeParse(credential);
+    if (!result.success) {
+      const usernameError =
+        result.error.formErrors.fieldErrors["username"]?.[0] || "";
+      const passwordError =
+        result.error.formErrors.fieldErrors["password"]?.[0] || "";
+      const userGroupError = "";
+      setErrors({
+        username: usernameError,
+        password: passwordError,
+        user_group: userGroupError,
+      });
+      return;
+    }
+    if (userGroupID !== "") {
+      setCredential({ ...credential, user_group: userGroupID });
+    } else {
+      console.error("userGroupID is null");
+      return;
+    }
+
+    // 登録処理
+    const action = await dispatch(fetchAsyncInviteRegister(credential));
 
     if (fetchAsyncRegister.fulfilled.match(action)) {
       // 登録成功時、自動的にログインを行う
@@ -167,24 +227,29 @@ const SignUp: React.FC<Props> = ({ email }) => {
             }}
           />
         </Grid>
-        <br />
-        <Grid item>
-          <StyledTextField
-            InputLabelProps={{
-              shrink: true,
-            }}
-            label="User Group"
-            type="text"
-            name="user_group"
-            value={credential.user_group}
-            onChange={handleInputChange}
-            error={Boolean(errors.user_group)}
-            helperText={errors.user_group}
-            inputProps={{
-              maxLength: 30,
-            }}
-          />
-        </Grid>
+
+        {userGroupID !== null ? null : (
+          <>
+            <br />
+            <Grid item>
+              <StyledTextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                label="User Group"
+                type="text"
+                name="user_group"
+                value={credential.user_group}
+                onChange={handleInputChange}
+                error={Boolean(errors.user_group)}
+                helperText={errors.user_group}
+                inputProps={{
+                  maxLength: 30,
+                }}
+              />
+            </Grid>
+          </>
+        )}
 
         <Grid item>
           <StyledButton
@@ -192,7 +257,7 @@ const SignUp: React.FC<Props> = ({ email }) => {
             color="primary"
             size="small"
             disabled={isDisabled}
-            onClick={register}
+            onClick={userGroupID !== null ? registerInvite : register}
           >
             Sign Up
           </StyledButton>
