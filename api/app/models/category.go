@@ -10,7 +10,7 @@ import (
 // カテゴリーテーブル定義
 type Category struct {
 	gorm.Model
-	Category   string    `gorm:"size:255;not null" validate:"required,min=1,max=30"`
+	Category    string    `gorm:"size:255;not null" validate:"required,min=1,max=30"`
 	UserGroupID uint      `gorm:"not null"`
 	UserGroup   UserGroup `gorm:"foreignKey:UserGroupID"`
 }
