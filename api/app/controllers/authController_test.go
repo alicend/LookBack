@@ -94,6 +94,75 @@ func TestSendSignUpEmailHandler(t *testing.T) {
 	})
 }
 
+func TestSendInviteEmailHandler(t *testing.T) {
+	// SQLMock のセットアップ
+	sqlDB, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Failed to open sqlmock database: %v", err)
+	}
+	defer sqlDB.Close()
+
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      sqlDB,
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{})
+
+	mockMailSender := &MockMailSender{}
+	handler := &Handler{
+		DB:         gormDB,
+		MailSender: mockMailSender,
+	}
+
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.POST("/invite", handler.SendInviteEmailHandler)
+
+	mock.ExpectQuery("SELECT (.+) FROM (.+) WHERE email = ?").
+		WithArgs("test@example.com").
+		WillReturnError(gorm.ErrRecordNotFound)
+
+	t.Run("成功", func(t *testing.T) {
+		mockMailSender.MockSendInviteMail = func(inviteInput UserInviteInput) error {
+			return nil
+		}
+
+		user := UserInviteInput{Email: "test@example.com", UserGroupID: 1}
+		body, _ := json.Marshal(user)
+		req, _ := http.NewRequest(http.MethodPost, "/invite", bytes.NewBuffer(body))
+		resp := httptest.NewRecorder()
+
+		r.ServeHTTP(resp, req)
+
+		if resp.Code != http.StatusOK {
+			t.Errorf("Expected HTTP 200 OK, got: %v", resp.Code)
+			t.Errorf("Error: %v", resp.Body.String())
+		}
+	})
+
+	mock.ExpectQuery("SELECT (.+) FROM (.+) WHERE email = ?").
+		WithArgs("test@example.com").
+		WillReturnError(gorm.ErrRecordNotFound)
+
+	t.Run("メール送信失敗", func(t *testing.T) {
+		mockMailSender.MockSendInviteMail = func(inviteInput UserInviteInput) error {
+			return errors.New("mail send error")
+		}
+
+		user := UserInviteInput{Email: "test@example.com", UserGroupID: 1}
+		body, _ := json.Marshal(user)
+		req, _ := http.NewRequest(http.MethodPost, "/invite", bytes.NewBuffer(body))
+		resp := httptest.NewRecorder()
+
+		r.ServeHTTP(resp, req)
+
+		if resp.Code != http.StatusInternalServerError {
+			t.Errorf("Expected HTTP 500 Internal Server Error, got: %v", resp.Code)
+			t.Errorf("Error: %v", resp.Body.String())
+		}
+	})
+}
+
+
 func TestSignUpHandler(t *testing.T) {
 	// SQLMock のセットアップ
 	sqlDB, mock, err := sqlmock.New()
@@ -175,6 +244,87 @@ func TestSignUpHandler(t *testing.T) {
 		}
 	})
 }
+
+func TestInviteSignUpHandler(t *testing.T) {
+	// SQLMock のセットアップ
+	sqlDB, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Failed to open sqlmock database: %v", err)
+	}
+	defer sqlDB.Close()
+
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      sqlDB,
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{})
+
+	handler := &Handler{
+		DB: gormDB,
+	}
+
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.POST("/invite_signup", handler.InviteSignUpHandler)
+
+	t.Run("成功", func(t *testing.T) {
+		mock.ExpectQuery("SELECT (.+) FROM (.+) WHERE email = ?").
+			WithArgs("test@example.com").
+			WillReturnError(gorm.ErrRecordNotFound)
+
+		mock.ExpectBegin()
+		mock.ExpectExec("INSERT INTO `users`").
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), "TestUser", sqlmock.AnyArg(), "test@example.com", sqlmock.AnyArg()).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+		mock.ExpectCommit()
+
+		user := models.UserInviteSignUpInput{
+			Name:      "TestUser",
+			Password:  "password",
+			Email:     "test@example.com",
+			UserGroup: 1,
+		}
+		body, _ := json.Marshal(user)
+		req, _ := http.NewRequest(http.MethodPost, "/invite_signup", bytes.NewBuffer(body))
+		resp := httptest.NewRecorder()
+
+		r.ServeHTTP(resp, req)
+
+		if resp.Code != http.StatusOK {
+			t.Errorf("Expected HTTP 200 OK, got: %v", resp.Code)
+			t.Errorf("Error: %v", resp.Body.String())
+		}
+	})
+
+	t.Run("失敗", func(t *testing.T) {
+		mock.ExpectQuery("SELECT (.+) FROM (.+) WHERE email = ?").
+			WithArgs("test@example.com").
+			WillReturnError(gorm.ErrRecordNotFound)
+
+		mock.ExpectBegin()
+		mock.ExpectExec("INSERT INTO `users`").
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), "TestUser", sqlmock.AnyArg(), "test@example.com", sqlmock.AnyArg()).
+			WillReturnError(errors.New("Insert failed"))
+		mock.ExpectCommit()
+
+		user := models.UserInviteSignUpInput{
+			Name:      "TestUser",
+			Password:  "password",
+			Email:     "test@example.com",
+			UserGroup: 1,
+		}
+		body, _ := json.Marshal(user)
+		req, _ := http.NewRequest(http.MethodPost, "/invite_signup", bytes.NewBuffer(body))
+		resp := httptest.NewRecorder()
+
+		r.ServeHTTP(resp, req)
+
+		if resp.Code != http.StatusBadRequest {
+			t.Errorf("Expected HTTP 400 Bad Request, got: %v", resp.Code)
+			t.Errorf("Error: %v", resp.Body.String())
+		}
+	})
+}
+
 
 func TestLoginHandler(t *testing.T) {
 
