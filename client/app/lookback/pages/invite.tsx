@@ -1,14 +1,18 @@
-import { Button, Grid, Tab, Tabs, TextField, styled } from "@mui/material";
-import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
+import { Button, Grid, TextField, styled } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
+import { z } from "zod";
 import { AppDispatch } from "../store/store";
 
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
-import { fetchAsyncGetLoginUser, fetchAsyncInviteRequest, selectLoginUser } from "@/slices/userSlice";
-import { z } from "zod";
+import {
+  fetchAsyncGetLoginUser,
+  fetchAsyncInviteRequest,
+  selectLoginUser,
+} from "@/slices/userSlice";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputLabel-root": {
@@ -48,8 +52,7 @@ export default function Profile() {
   };
 
   const pattern = /^[\u0021-\u007e]+$/u; // 半角英数字記号のみ
-  const credentialSchema = z
-  .object({
+  const credentialSchema = z.object({
     invite_email: z
       .string()
       .email("無効なメールアドレスです")
@@ -64,8 +67,12 @@ export default function Profile() {
       setErrors({ invite_email: inviteEmailError });
       return;
     }
-    await dispatch(fetchAsyncInviteRequest({ email: inviteEmail, userGroupID: loginUser.UserGroupID }));
-
+    await dispatch(
+      fetchAsyncInviteRequest({
+        email: inviteEmail,
+        userGroupID: loginUser.UserGroupID,
+      }),
+    );
   };
 
   useEffect(() => {
@@ -126,7 +133,7 @@ export default function Profile() {
           >
             SEND INVITE MAIL
           </UpdateButton>
-      </Grid>
+        </Grid>
       </Grid>
     </MainPageLayout>
   );

@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 
 import SignUp from "@/components/SignUp";
 import { AuthPageLayout } from "@/components/layout/AuthPageLayout";
-import { EmailTokenPayload, UserGroupIDTokenPayload } from "@/types/URLParamType";
+import {
+  EmailTokenPayload,
+  UserGroupIDTokenPayload,
+} from "@/types/URLParamType";
 
 const getQueryParams = (param: string) => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -46,7 +49,9 @@ const SignUpPage = () => {
 
     try {
       if (userGroupIDTokenFromURL) {
-        const decodedUserGroupIDToken: UserGroupIDTokenPayload = jwtDecode(userGroupIDTokenFromURL);
+        const decodedUserGroupIDToken: UserGroupIDTokenPayload = jwtDecode(
+          userGroupIDTokenFromURL,
+        );
         setUserGroupID(decodedUserGroupIDToken.user_group_id);
       }
     } catch (err) {
@@ -56,7 +61,11 @@ const SignUpPage = () => {
 
   return (
     <AuthPageLayout title="Sign Up">
-      {email ? <SignUp email={email as string} userGroupID={userGroupID} /> : ""}
+      {email ? (
+        <SignUp email={email as string} userGroupID={userGroupID} />
+      ) : (
+        ""
+      )}
     </AuthPageLayout>
   );
 };

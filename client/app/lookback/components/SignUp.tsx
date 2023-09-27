@@ -48,7 +48,7 @@ const registerCredentialSchema = z.object({
     .min(8, "パスワードは８文字以上にしてください")
     .refine(
       passwordCheck,
-      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"
+      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください",
     ),
   username: z.string(),
   user_group: z.string(),
@@ -64,7 +64,7 @@ const inviteRegisterCredentialSchema = z.object({
     .min(8, "パスワードは８文字以上にしてください")
     .refine(
       passwordCheck,
-      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"
+      "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください",
     ),
   username: z.string(),
 });

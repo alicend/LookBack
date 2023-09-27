@@ -1,4 +1,4 @@
-import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
 import { Button, Grid, TextField } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { FC, useState } from "react";

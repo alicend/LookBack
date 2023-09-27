@@ -97,7 +97,10 @@ export const fetchAsyncRegisterRequest = createAsyncThunk(
 
 export const fetchAsyncInviteRequest = createAsyncThunk(
   "auth/invite/request",
-  async ({email, userGroupID}: {email: string , userGroupID: number}, thunkAPI) => {
+  async (
+    { email, userGroupID }: { email: string; userGroupID: number },
+    thunkAPI,
+  ) => {
     try {
       const res = await axios.post(
         ENDPOINTS.INVITE_REQUEST,
@@ -132,7 +135,7 @@ export const fetchAsyncInviteRegister = createAsyncThunk(
   "auth/invite/register",
   async (auth: SIGN_UP_AUTH, thunkAPI) => {
     try {
-      console.log(auth)
+      console.log(auth);
       const res = await axios.post(
         ENDPOINTS.INVITE_REGISTER,
         auth,
