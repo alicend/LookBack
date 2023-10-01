@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}' && next lint --fix",
-    "test": "jest --env=jsdom --verbose"
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -54,14 +54,5 @@
     "jest-css-modules": "^2.1.0",
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.0.3"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "<rootDir>/.next/",
-      "<rootDir>/node_modules/"
-    ],
-    "moduleNameMapper": {
-      "\\.(css)$": "<rootDir>/node_modules/jest-css-modules"
-    }
   }
 }
