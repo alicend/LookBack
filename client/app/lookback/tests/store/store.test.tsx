@@ -1,4 +1,4 @@
-import { store, RootState } from "./../../store/store";
+import { store, RootState } from "../../store/store";
 import { configureStore } from "@reduxjs/toolkit";
 import taskReducer from "@/slices/taskSlice";
 import userReducer from "@/slices/userSlice";
