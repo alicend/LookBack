@@ -197,6 +197,7 @@ const Auth: React.FC = () => {
 
         <Grid item>
           <StyledButton
+            data-testid="auth-button"
             variant="contained"
             color="primary"
             size="small"
