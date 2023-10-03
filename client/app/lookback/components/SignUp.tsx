@@ -253,6 +253,7 @@ const SignUp: React.FC<Props> = ({ email, userGroupID }) => {
 
         <Grid item>
           <StyledButton
+            data-testid="signup-button"
             variant="contained"
             color="primary"
             size="small"
