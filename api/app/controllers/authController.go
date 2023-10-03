@@ -146,7 +146,6 @@ func (handler *Handler) InviteSignUpHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"user_id": user.ID,
-		"message": "Successfully created user",
 	})
 }
 
@@ -189,9 +188,7 @@ func (handler *Handler) LoginHandler(c *gin.Context) {
 	// ゲストログインでないことをクッキーに登録
 	c.SetCookie(constant.GUEST_LOGIN, "false", constant.COOKIE_MAX_AGE, "/", os.Getenv("FRONTEND_DOMAIN"), false, false)
 
-	c.JSON(http.StatusOK, gin.H{
-		"user": user,
-	})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 func (handler *Handler) GuestLoginHandler(c *gin.Context) {	
@@ -232,9 +229,7 @@ func (handler *Handler) LogoutHandler(c *gin.Context) {
 	c.SetCookie(constant.JWT_TOKEN_NAME, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 	c.SetCookie(constant.GUEST_LOGIN, "", -1, "/", os.Getenv("FRONTEND_DOMAIN"), false, true)
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully logged out",
-	})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 
