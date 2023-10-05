@@ -58,7 +58,6 @@ export const fetchAsyncLogin = createAsyncThunk(
   async (auth: LOGIN_AUTH, thunkAPI) => {
     try {
       const res = await axios.post(ENDPOINTS.LOGIN, auth, COMMON_HTTP_HEADER);
-      await console.log(res);
       await router.push("/task-board");
       return res.data;
     } catch (err: any) {
