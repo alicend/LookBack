@@ -136,7 +136,6 @@ export const fetchAsyncInviteRegister = createAsyncThunk(
   "auth/invite/register",
   async (auth: SIGN_UP_AUTH, thunkAPI) => {
     try {
-      console.log(auth);
       const res = await axios.post(
         ENDPOINTS.INVITE_REGISTER,
         auth,
