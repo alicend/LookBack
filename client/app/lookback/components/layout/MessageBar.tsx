@@ -50,8 +50,6 @@ export const MessageBar: React.FC = () => {
   }, [userGroupStatus]);
 
   useEffect(() => {
-    console.log(userStatus);
-    console.log(userMessage);
     if (userStatus === "succeeded" || userStatus === "failed") {
       setSeverity(userStatus === "failed" ? "error" : "success");
       setSnackbarMessage(userMessage);
