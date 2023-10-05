@@ -9,7 +9,7 @@ import axios from "axios";
 // axiosのモック化
 jest.mock("axios");
 
-describe("<SignUp />", () => {
+describe("<Auth />", () => {
   test("renders the Auth component", () => {
     render(
       <Provider store={store}>
