@@ -1,26 +1,29 @@
-import React from 'react';
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { store } from "@/store/store";
 import CalenderModal from "@/components/calendar/CalenderModal";
 
-describe("CalenderModal", () => {
-
+describe("<CalenderModal />", () => {
   const mockModalStyle: React.CSSProperties = {
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
   };
 
   test("renders the modal with CalendarTaskDisplay component", () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={createTheme()}>
-          <CalenderModal open={true} onClose={jest.fn()} modalStyle={mockModalStyle} />
+          <CalenderModal
+            open={true}
+            onClose={jest.fn()}
+            modalStyle={mockModalStyle}
+          />
         </ThemeProvider>
-      </Provider>
+      </Provider>,
     );
 
     // レンダリングしていることを確認
@@ -31,12 +34,15 @@ describe("CalenderModal", () => {
     const result = render(
       <Provider store={store}>
         <ThemeProvider theme={createTheme()}>
-          <CalenderModal open={false} onClose={jest.fn()} modalStyle={mockModalStyle} />
+          <CalenderModal
+            open={false}
+            onClose={jest.fn()}
+            modalStyle={mockModalStyle}
+          />
         </ThemeProvider>
-      </Provider>
+      </Provider>,
     );
 
     expect(result.container.innerHTML).toBe("");
   });
-
 });

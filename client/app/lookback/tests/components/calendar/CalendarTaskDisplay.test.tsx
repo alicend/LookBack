@@ -9,7 +9,8 @@ describe("<CalendarTaskDisplay />", () => {
   const onCloseMock = jest.fn();
 
   beforeEach(() => {
-    store.dispatch(selectTask({
+    store.dispatch(
+      selectTask({
         ID: 1,
         Task: "Test task",
         Description: "Test description",
@@ -24,9 +25,9 @@ describe("<CalendarTaskDisplay />", () => {
         Creator: 2,
         CreatorUserName: "CreatorUserName",
         CreatedAt: "2023-10-02",
-        UpdatedAt: "2023-10-03"
-      }));
-    
+        UpdatedAt: "2023-10-03",
+      }),
+    );
   });
 
   test("renders task details correctly", () => {
@@ -46,7 +47,8 @@ describe("<CalendarTaskDisplay />", () => {
     expect(screen.getByText("CategoryName")).toBeInTheDocument();
     expect(screen.getByText("2023-10-02")).toBeInTheDocument();
     expect(screen.getByText("2023-10-03")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /To Task Board/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /To Task Board/ }),
+    ).toBeInTheDocument();
   });
-
 });
