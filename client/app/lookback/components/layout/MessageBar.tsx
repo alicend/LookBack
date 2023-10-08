@@ -60,7 +60,11 @@ export const MessageBar: React.FC = () => {
   }, [userStatus]);
 
   return (
-    <Snackbar open={snackbarOpen} autoHideDuration={6000}>
+    <Snackbar
+      data-testid="message-bar"
+      open={snackbarOpen}
+      autoHideDuration={6000}
+    >
       <Alert onClose={handleSnackbarClose} severity={severity}>
         {snackbarMessage}
       </Alert>

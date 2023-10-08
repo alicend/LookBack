@@ -28,6 +28,7 @@ export const MainPageHeader = ({ title }: Props) => {
         <Grid item xs={4} className="border-b border-gray-400 mb-5">
           <Grid container justifyContent="end" spacing={1}>
             <button
+              data-testid="menu-button"
               className="bg-transparent mb-2 mr-3 border-none outline-none cursor-pointer"
               aria-controls="menu"
               aria-haspopup="true"

@@ -345,6 +345,12 @@ export const userSlice = createSlice({
     setLoginUser: (state, action) => {
       state.loginUser = action.payload;
     },
+    editUserStatus(state, action: PayloadAction<"" | "loading" | "succeeded" | "failed">) {
+      state.status = action.payload;
+    },
+    editUserMessage(state, action: PayloadAction<string>) {
+      state.message = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -513,6 +519,7 @@ export const userSlice = createSlice({
   },
 });
 
+export const { setLoginUser, editUserStatus, editUserMessage } = userSlice.actions;
 export const selectLoginUser = (state: RootState) => state.user.loginUser;
 export const selectUserStatus = (state: RootState) => state.user.status;
 export const selectUserMessage = (state: RootState) => state.user.message;

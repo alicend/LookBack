@@ -313,6 +313,12 @@ export const taskSlice = createSlice({
     selectTask(state, action: PayloadAction<READ_TASK>) {
       state.selectedTask = action.payload;
     },
+    editTaskStatus(state, action: PayloadAction<"" | "loading" | "succeeded" | "failed">) {
+      state.status = action.payload;
+    },
+    editTaskMessage(state, action: PayloadAction<string>) {
+      state.message = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -482,7 +488,7 @@ export const taskSlice = createSlice({
   },
 });
 
-export const { editTask, selectTask } = taskSlice.actions;
+export const { editTask, selectTask, editTaskStatus, editTaskMessage } = taskSlice.actions;
 export const selectSelectedTask = (state: RootState) => state.task.selectedTask;
 export const selectEditedTask = (state: RootState) => state.task.editedTask;
 export const selectTasks = (state: RootState) => state.task.tasks;

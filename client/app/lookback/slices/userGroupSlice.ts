@@ -81,7 +81,6 @@ const initialState: USER_GROUP_STATE = {
 };
 
 const handleError = (state: any, action: any) => {
-  console.log(action);
   const payload = action.payload as PAYLOAD;
   if (payload.status === 401) {
     router.push("/");
@@ -113,6 +112,12 @@ export const userGroupSlice = createSlice({
   reducers: {
     setUserGroup: (state, action) => {
       state.userGroups = action.payload;
+    },
+    editUserGroupStatus(state, action: PayloadAction<"" | "loading" | "succeeded" | "failed">) {
+      state.status = action.payload;
+    },
+    editUserGroupMessage(state, action: PayloadAction<string>) {
+      state.message = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -149,6 +154,7 @@ export const userGroupSlice = createSlice({
   },
 });
 
+export const { setUserGroup, editUserGroupStatus, editUserGroupMessage } = userGroupSlice.actions;
 export const selectUserGroup = (state: RootState) => state.userGroup.userGroups;
 export const selectUserGroupStatus = (state: RootState) =>
   state.userGroup.status;
