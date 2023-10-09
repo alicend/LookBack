@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { store } from "../../../store/store";
+import { store } from "@/store/store";
 import Email from "@/components/profile/Email";
 import { fetchAsyncUpdateLoginUserEmail } from "@/slices/userSlice";
 
@@ -13,7 +13,7 @@ describe("<Email />", () => {
     render(
       <Provider store={store}>
         <Email loginUserEmail={loginUserEmail} loginStatus={false} />
-      </Provider>,
+      </Provider>
     );
   });
 
@@ -52,8 +52,8 @@ describe("<Email />", () => {
 
     expect(
       screen.getByText(
-        "新しいメールアドレスは現在のメールアドレスと異なるものにしてください",
-      ),
+        "新しいメールアドレスは現在のメールアドレスと異なるものにしてください"
+      )
     ).toBeInTheDocument();
   });
 });

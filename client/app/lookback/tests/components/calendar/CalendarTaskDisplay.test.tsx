@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { store } from "../../../store/store";
+import { store } from "@/store/store";
 import CalendarTaskDisplay from "@/components/calendar/CalendarTaskDisplay";
 import { selectTask } from "@/slices/taskSlice";
 
@@ -26,7 +26,7 @@ describe("<CalendarTaskDisplay />", () => {
         CreatorUserName: "CreatorUserName",
         CreatedAt: "2023-10-02",
         UpdatedAt: "2023-10-03",
-      }),
+      })
     );
   });
 
@@ -34,7 +34,7 @@ describe("<CalendarTaskDisplay />", () => {
     render(
       <Provider store={store}>
         <CalendarTaskDisplay onClose={onCloseMock} />
-      </Provider>,
+      </Provider>
     );
 
     expect(screen.getByText("Task details")).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("<CalendarTaskDisplay />", () => {
     expect(screen.getByText("2023-10-02")).toBeInTheDocument();
     expect(screen.getByText("2023-10-03")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /To Task Board/ }),
+      screen.getByRole("button", { name: /To Task Board/ })
     ).toBeInTheDocument();
   });
 });

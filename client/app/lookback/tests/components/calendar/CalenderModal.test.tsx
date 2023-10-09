@@ -26,7 +26,6 @@ describe("<CalenderModal />", () => {
       </Provider>,
     );
 
-    // レンダリングしていることを確認
     expect(screen.getByText("Task details")).toBeInTheDocument();
   });
 

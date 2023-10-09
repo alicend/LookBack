@@ -3,7 +3,7 @@ import { render, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
 import { RenderResult } from "@testing-library/react";
-import { store } from "../../../store/store";
+import { store } from "@/store/store";
 import UserGroup from "@/components/profile/UserGroup";
 import { USER_GROUP } from "@/types/UserGroupType";
 
@@ -20,7 +20,7 @@ describe("<UserGroup />", () => {
     const rendered = render(
       <Provider store={store}>
         <UserGroup userGroup={testUserGroup} loginStatus={false} />
-      </Provider>,
+      </Provider>
     );
     getByLabelText = rendered.getByLabelText;
     getByText = rendered.getByText;

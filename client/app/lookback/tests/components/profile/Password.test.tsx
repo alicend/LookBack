@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { store } from "../../../store/store";
+import { store } from "@/store/store";
 import Password from "@/components/profile/Password";
 
 const currentPassword = "Password123";
@@ -16,7 +16,7 @@ describe("<Password />", () => {
     render(
       <Provider store={store}>
         <Password loginStatus={false} />
-      </Provider>,
+      </Provider>
     );
   });
 
@@ -48,7 +48,7 @@ describe("<Password />", () => {
     fireEvent.click(screen.getByText("UPDATE"));
 
     expect(
-      screen.getByText("パスワードは８文字以上にしてください"),
+      screen.getByText("パスワードは８文字以上にしてください")
     ).toBeInTheDocument();
   });
 
@@ -63,8 +63,8 @@ describe("<Password />", () => {
 
     expect(
       screen.getByText(
-        "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください",
-      ),
+        "パスワードには少なくとも１つ以上の半角英字と半角数字を含めてください"
+      )
     ).toBeInTheDocument();
   });
 
@@ -79,8 +79,8 @@ describe("<Password />", () => {
 
     expect(
       screen.getByText(
-        "新しいパスワードは現在のパスワードと異なるものにしてください",
-      ),
+        "新しいパスワードは現在のパスワードと異なるものにしてください"
+      )
     ).toBeInTheDocument();
   });
 });

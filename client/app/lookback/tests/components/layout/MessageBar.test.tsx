@@ -1,7 +1,7 @@
 import { render, screen, act } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { store } from "../../../store/store";
+import { store } from "@/store/store";
 import { MessageBar } from "@/components/layout/MessageBar";
 import { editTaskStatus, editTaskMessage } from "@/slices/taskSlice";
 import { editUserStatus, editUserMessage } from "@/slices/userSlice";
@@ -15,7 +15,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editTaskStatus("succeeded"));
@@ -30,7 +30,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editTaskStatus("failed"));
@@ -45,7 +45,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editTaskStatus("loading"));
@@ -59,7 +59,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editUserStatus("succeeded"));
@@ -74,7 +74,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editUserStatus("failed"));
@@ -89,7 +89,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editUserStatus("loading"));
@@ -103,7 +103,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editUserGroupStatus("succeeded"));
@@ -118,7 +118,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editUserGroupStatus("failed"));
@@ -133,7 +133,7 @@ describe("<MessageBar />", () => {
     render(
       <Provider store={store}>
         <MessageBar />
-      </Provider>,
+      </Provider>
     );
     act(() => {
       store.dispatch(editUserGroupStatus("loading"));
@@ -141,7 +141,7 @@ describe("<MessageBar />", () => {
     });
 
     expect(
-      screen.queryByText("loading fetch UserGroup"),
+      screen.queryByText("loading fetch UserGroup")
     ).not.toBeInTheDocument();
   });
 });

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { store } from "../../../store/store";
+import { store } from "@/store/store";
 import Delete from "@/components/profile/Delete";
 
 const mockUserGroup = {
@@ -19,7 +19,7 @@ describe("<Delete />", () => {
           userGroup={mockUserGroup}
           loginStatus={false}
         />
-      </Provider>,
+      </Provider>
     );
   });
 
@@ -32,8 +32,8 @@ describe("<Delete />", () => {
     fireEvent.click(screen.getByText("USER DELETE"));
     expect(
       screen.getByText(
-        /ユーザー「TestUser」に関連するタスクも削除されますが本当に削除してよろしいですか？/,
-      ),
+        /ユーザー「TestUser」に関連するタスクも削除されますが本当に削除してよろしいですか？/
+      )
     ).toBeInTheDocument();
   });
 
@@ -41,8 +41,8 @@ describe("<Delete />", () => {
     fireEvent.click(screen.getByText("USER GROUP DELETE"));
     expect(
       screen.getByText(
-        /ユーザーグループ「Test Group」に所属するユーザーも削除されますが本当に削除してよろしいですか？/,
-      ),
+        /ユーザーグループ「Test Group」に所属するユーザーも削除されますが本当に削除してよろしいですか？/
+      )
     ).toBeInTheDocument();
   });
 });
