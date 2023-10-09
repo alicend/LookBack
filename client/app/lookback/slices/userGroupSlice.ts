@@ -113,7 +113,10 @@ export const userGroupSlice = createSlice({
     setUserGroup: (state, action) => {
       state.userGroups = action.payload;
     },
-    editUserGroupStatus(state, action: PayloadAction<"" | "loading" | "succeeded" | "failed">) {
+    editUserGroupStatus(
+      state,
+      action: PayloadAction<"" | "loading" | "succeeded" | "failed">,
+    ) {
       state.status = action.payload;
     },
     editUserGroupMessage(state, action: PayloadAction<string>) {
@@ -154,7 +157,8 @@ export const userGroupSlice = createSlice({
   },
 });
 
-export const { setUserGroup, editUserGroupStatus, editUserGroupMessage } = userGroupSlice.actions;
+export const { setUserGroup, editUserGroupStatus, editUserGroupMessage } =
+  userGroupSlice.actions;
 export const selectUserGroup = (state: RootState) => state.userGroup.userGroups;
 export const selectUserGroupStatus = (state: RootState) =>
   state.userGroup.status;
