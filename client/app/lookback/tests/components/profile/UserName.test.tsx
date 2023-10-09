@@ -12,7 +12,7 @@ describe("<UserName />", () => {
     const { getByLabelText } = render(
       <Provider store={store}>
         <UserName loginUserName={testUserName} loginStatus={false} />
-      </Provider>
+      </Provider>,
     );
 
     expect(getByLabelText("Current Username")).toHaveValue(testUserName);
@@ -22,7 +22,7 @@ describe("<UserName />", () => {
     const { getByLabelText } = render(
       <Provider store={store}>
         <UserName loginUserName={testUserName} loginStatus={false} />
-      </Provider>
+      </Provider>,
     );
 
     const newUsernameInput = getByLabelText("New Username");
@@ -34,7 +34,7 @@ describe("<UserName />", () => {
     const { getByLabelText, getByText, findByText } = render(
       <Provider store={store}>
         <UserName loginUserName={testUserName} loginStatus={false} />
-      </Provider>
+      </Provider>,
     );
 
     const newUsernameInput = getByLabelText("New Username");
@@ -44,7 +44,7 @@ describe("<UserName />", () => {
     fireEvent.click(updateButton);
 
     const errorMessage = await findByText(
-      "新しいユーザー名は現在のユーザー名と異なるものにしてください"
+      "新しいユーザー名は現在のユーザー名と異なるものにしてください",
     );
     expect(errorMessage).toBeInTheDocument();
   });
@@ -53,7 +53,7 @@ describe("<UserName />", () => {
     const { getByLabelText, getByText } = render(
       <Provider store={store}>
         <UserName loginUserName={testUserName} loginStatus={false} />
-      </Provider>
+      </Provider>,
     );
 
     const newUsernameInput = getByLabelText("New Username");

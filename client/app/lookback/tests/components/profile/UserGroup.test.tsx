@@ -20,7 +20,7 @@ describe("<UserGroup />", () => {
     const rendered = render(
       <Provider store={store}>
         <UserGroup userGroup={testUserGroup} loginStatus={false} />
-      </Provider>
+      </Provider>,
     );
     getByLabelText = rendered.getByLabelText;
     getByText = rendered.getByText;

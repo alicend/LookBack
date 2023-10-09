@@ -13,7 +13,7 @@ describe("<Email />", () => {
     render(
       <Provider store={store}>
         <Email loginUserEmail={loginUserEmail} loginStatus={false} />
-      </Provider>
+      </Provider>,
     );
   });
 
@@ -52,8 +52,8 @@ describe("<Email />", () => {
 
     expect(
       screen.getByText(
-        "新しいメールアドレスは現在のメールアドレスと異なるものにしてください"
-      )
+        "新しいメールアドレスは現在のメールアドレスと異なるものにしてください",
+      ),
     ).toBeInTheDocument();
   });
 });
