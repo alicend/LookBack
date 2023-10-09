@@ -42,5 +42,4 @@ describe("<MainPageLayout />", () => {
 
     expect(screen.getByText(dummyChildText)).toBeInTheDocument();
   });
-
 });
