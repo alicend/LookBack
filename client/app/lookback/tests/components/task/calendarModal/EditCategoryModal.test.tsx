@@ -8,29 +8,29 @@ import { store } from "@/store/store";
 import EditCategoryModal from "@/components/task/categoryModal/EditCategoryModal";
 
 const testCategory = {
-    ID: 1,
-    Category: "Test Category",
+  ID: 1,
+  Category: "Test Category",
 };
 
 describe("<EditCategoryModal />", () => {
-    let getByLabelText: RenderResult["getByLabelText"];
-    let getByText: RenderResult["getByText"];
+  let getByLabelText: RenderResult["getByLabelText"];
+  let getByText: RenderResult["getByText"];
 
   beforeEach(() => {
     const renderResult = render(
-        <Provider store={store}>
-          <ThemeProvider theme={createTheme()}>
-            <EditCategoryModal
-              open={true}
-              onClose={() => {}}
-              originalCategory={testCategory}
-            />
-          </ThemeProvider>
-        </Provider>
-      );
+      <Provider store={store}>
+        <ThemeProvider theme={createTheme()}>
+          <EditCategoryModal
+            open={true}
+            onClose={() => {}}
+            originalCategory={testCategory}
+          />
+        </ThemeProvider>
+      </Provider>,
+    );
 
-      getByLabelText = renderResult.getByLabelText;
-      getByText = renderResult.getByText;
+    getByLabelText = renderResult.getByLabelText;
+    getByText = renderResult.getByText;
   });
 
   test("renders EditCategoryModal component correctly", () => {
