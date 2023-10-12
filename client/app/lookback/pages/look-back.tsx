@@ -11,7 +11,7 @@ import { CustomToolbar } from "@/components/calendar/CustomToolbar";
 import { MainPageLayout } from "@/components/layout/MainPageLayout";
 import {
   selectTasks,
-  selectTask,
+  editSelectedTask,
   fetchAsyncGetLookBackTasks,
 } from "@/slices/taskSlice";
 
@@ -42,7 +42,7 @@ export default function LookBack() {
     const selectedEvent = tasks.find((task) => task.Task === event.title);
     if (selectedEvent) {
       setModalOpen(true);
-      dispatch(selectTask(selectedEvent));
+      dispatch(editSelectedTask(selectedEvent));
     }
   };
 

@@ -11,7 +11,7 @@ import {
 import { styled } from "@mui/system";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { editTask, initialState, selectTask } from "@/slices/taskSlice";
+import { editTask, initialState, editSelectedTask } from "@/slices/taskSlice";
 import { fetchAsyncDeleteUserGroup } from "@/slices/userGroupSlice";
 import { fetchAsyncDeleteLoginUser } from "@/slices/userSlice";
 import { AppDispatch } from "@/store/store";
@@ -48,7 +48,7 @@ const Delete: React.FC<Props> = React.memo(
       if (shouldDelete) {
         dispatch(fetchAsyncDeleteLoginUser());
         dispatch(editTask(initialState.editedTask));
-        dispatch(selectTask(initialState.selectedTask));
+        dispatch(editSelectedTask(initialState.selectedTask));
       }
     };
 

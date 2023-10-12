@@ -3,14 +3,14 @@ import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
 import { store } from "@/store/store";
 import CalendarTaskDisplay from "@/components/calendar/CalendarTaskDisplay";
-import { selectTask } from "@/slices/taskSlice";
+import { editSelectedTask } from "@/slices/taskSlice";
 
 describe("<CalendarTaskDisplay />", () => {
   const onCloseMock = jest.fn();
 
   beforeEach(() => {
     store.dispatch(
-      selectTask({
+      editSelectedTask({
         ID: 1,
         Task: "Test task",
         Description: "Test description",

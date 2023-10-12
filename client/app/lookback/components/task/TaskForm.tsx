@@ -30,7 +30,7 @@ import {
   selectEditedTask,
   selectCategory,
   editTask,
-  selectTask,
+  editSelectedTask,
   fetchAsyncDeleteTask,
   initialState,
 } from "@/slices/taskSlice";
@@ -315,7 +315,7 @@ const TaskForm: React.FC = () => {
                   onClick={() => {
                     dispatch(fetchAsyncDeleteTask(editedTask.ID));
                     dispatch(editTask(initialState.editedTask));
-                    dispatch(selectTask(initialState.selectedTask));
+                    dispatch(editSelectedTask(initialState.selectedTask));
                   }}
                 >
                   DELETE
@@ -329,7 +329,7 @@ const TaskForm: React.FC = () => {
                 size="small"
                 onClick={() => {
                   dispatch(editTask(initialState.editedTask));
-                  dispatch(selectTask(initialState.selectedTask));
+                  dispatch(editSelectedTask(initialState.selectedTask));
                 }}
               >
                 Cancel

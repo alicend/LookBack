@@ -13,7 +13,7 @@ import {
   selectEditedTask,
   editTask,
   initialState,
-  selectTask,
+  editSelectedTask,
   selectSelectedTask,
 } from "@/slices/taskSlice";
 
@@ -35,7 +35,7 @@ export default function TaskBoard() {
 
   useEffect(() => {
     dispatch(editTask(initialState.editedTask));
-    dispatch(selectTask(initialState.selectedTask));
+    dispatch(editSelectedTask(initialState.selectedTask));
   }, []);
 
   return (

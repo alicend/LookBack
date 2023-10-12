@@ -12,7 +12,7 @@ import {
   editTask,
   initialState,
   selectSelectedTask,
-  selectTask,
+  editSelectedTask,
 } from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
 
@@ -63,7 +63,7 @@ const TaskDisplay: React.FC = () => {
         size="small"
         onClick={() => {
           dispatch(editTask(initialState.editedTask));
-          dispatch(selectTask(initialState.selectedTask));
+          dispatch(editSelectedTask(initialState.selectedTask));
         }}
       >
         Cancel

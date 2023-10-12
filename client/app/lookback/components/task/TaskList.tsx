@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectTasks,
   editTask,
-  selectTask,
+  editSelectedTask,
   initialState,
 } from "@/slices/taskSlice";
 import { AppDispatch } from "@/store/store";
@@ -129,7 +129,7 @@ const TaskList: React.FC = () => {
               Estimate: 1,
             }),
           );
-          dispatch(selectTask(initialState.selectedTask));
+          dispatch(editSelectedTask(initialState.selectedTask));
         }}
       >
         Add new
@@ -184,7 +184,7 @@ const TaskList: React.FC = () => {
                             className="break-words"
                             key={`${rowIndex}+${colIndex}`}
                             onClick={() => {
-                              dispatch(selectTask(row));
+                              dispatch(editSelectedTask(row));
                               dispatch(editTask(initialState.editedTask));
                             }}
                           >
@@ -251,7 +251,7 @@ const TaskList: React.FC = () => {
                             className="break-words"
                             key={`${rowIndex}+${colIndex}`}
                             onClick={() => {
-                              dispatch(selectTask(row));
+                              dispatch(editSelectedTask(row));
                               dispatch(editTask(initialState.editedTask));
                             }}
                           >
