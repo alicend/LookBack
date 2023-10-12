@@ -10,15 +10,15 @@ import { editTask } from "@/slices/taskSlice";
 describe("<TaskForm />", () => {
   beforeEach(() => {
     store.dispatch(
-        editTask({
-            ID: 0,
-            Task: "",
-            Description: "",
-            StartDate: dayjs().toISOString(),
-            Responsible: 0,
-            Status: 1,
-            Category: 0,
-            Estimate: 1,
+      editTask({
+        ID: 0,
+        Task: "",
+        Description: "",
+        StartDate: dayjs().toISOString(),
+        Responsible: 0,
+        Status: 1,
+        Category: 0,
+        Estimate: 1,
       }),
     );
   });
@@ -41,36 +41,41 @@ describe("<TaskForm />", () => {
     expect(getByText("Cancel")).toBeInTheDocument();
   });
 
-  test('allows user to fill the form', async () => {
+  test("allows user to fill the form", async () => {
     const { getByLabelText, getByText } = render(
-        <Provider store={store}>
-          <TaskForm />
-        </Provider>,
-      );
-  
-    fireEvent.change(getByLabelText('Estimate [days]'), { target: { value: '1' } });
-    fireEvent.change(getByLabelText('Task'), { target: { value: 'New Task 1' } });
-    fireEvent.change(getByLabelText('Description'), { target: { value: 'Description for new task 1' } });
-  });
-  
+      <Provider store={store}>
+        <TaskForm />
+      </Provider>,
+    );
 
-  test('handles save button clicks', () => {
+    fireEvent.change(getByLabelText("Estimate [days]"), {
+      target: { value: "1" },
+    });
+    fireEvent.change(getByLabelText("Task"), {
+      target: { value: "New Task 1" },
+    });
+    fireEvent.change(getByLabelText("Description"), {
+      target: { value: "Description for new task 1" },
+    });
+  });
+
+  test("handles save button clicks", () => {
     const { getByText } = render(
-        <Provider store={store}>
-          <TaskForm />
-        </Provider>,
-      );
-  
-    fireEvent.click(getByText('Save'));
+      <Provider store={store}>
+        <TaskForm />
+      </Provider>,
+    );
+
+    fireEvent.click(getByText("Save"));
   });
 
-  test('handles cancel button clicks', () => {
+  test("handles cancel button clicks", () => {
     const { getByText, queryByText } = render(
-        <Provider store={store}>
-          <TaskForm />
-        </Provider>,
-      );
-  
-    fireEvent.click(getByText('Cancel'));
+      <Provider store={store}>
+        <TaskForm />
+      </Provider>,
+    );
+
+    fireEvent.click(getByText("Cancel"));
   });
 });
