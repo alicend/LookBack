@@ -36,7 +36,7 @@ const UpdateButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
-export default function Profile() {
+export default function InvitePage() {
   const dispatch: AppDispatch = useDispatch();
   const loginUser = useSelector(selectLoginUser);
   const [isGuestLogin, setGuestLogin] = useState(false);

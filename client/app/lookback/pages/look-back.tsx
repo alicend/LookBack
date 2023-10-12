@@ -32,7 +32,7 @@ function getModalStyle() {
 
 const localizer = momentLocalizer(moment);
 
-export default function LookBack() {
+export default function LookBackPage() {
   const dispatch: AppDispatch = useDispatch();
   const tasks = useSelector(selectTasks);
   const [modalOpen, setModalOpen] = useState(false);

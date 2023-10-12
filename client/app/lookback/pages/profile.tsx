@@ -13,7 +13,7 @@ import UserGroup from "@/components/profile/UserGroup";
 import UserName from "@/components/profile/UserName";
 import { fetchAsyncGetLoginUser, selectLoginUser } from "@/slices/userSlice";
 
-export default function Profile() {
+export default function ProfilePage() {
   const dispatch: AppDispatch = useDispatch();
   const loginUser = useSelector(selectLoginUser);
   const [isGuestLogin, setGuestLogin] = useState(false);

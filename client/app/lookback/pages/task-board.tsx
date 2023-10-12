@@ -19,7 +19,7 @@ import {
 
 import { AppDispatch } from "@/store/store";
 
-export default function TaskBoard() {
+export default function TaskBoardPage() {
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
   const selectedTask = useSelector(selectSelectedTask);
