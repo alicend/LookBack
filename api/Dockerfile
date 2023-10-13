@@ -20,8 +20,7 @@ RUN go mod tidy
 RUN go get -u github.com/cosmtrek/air && \
     go build -o /go/bin/air github.com/cosmtrek/air
 
-RUN go get github.com/go-delve/delve/cmd/dlv@latest && \
-    go build -o /go/bin/dlv github.com/go-delve/delve/cmd/dlv
+RUN go install github.com/go-delve/delve/cmd/dlv@v1.21.0
 
 RUN go get -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
