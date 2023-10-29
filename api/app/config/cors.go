@@ -2,8 +2,9 @@ package config
 
 import (
 	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-  "github.com/gin-contrib/cors"
 )
 
 func CorsSetting(r *gin.Engine) {
@@ -12,6 +13,7 @@ func CorsSetting(r *gin.Engine) {
 		// アクセスを許可したいアクセス元
 		AllowOrigins: []string{
 			"http://localhost:3000",
+			"https://lookback-calendar.com:3000",
 		},
 		// アクセスを許可したいHTTPメソッド
 		AllowMethods: []string{
