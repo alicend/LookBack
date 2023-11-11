@@ -1,4 +1,4 @@
-FROM nginx:1.18
+FROM --platform=linux/x86_64 nginx:1.18
 RUN apt-get update && \
     apt-get install -y apt-utils \
                        locales && \
@@ -6,6 +6,6 @@ RUN apt-get update && \
     locale-gen ja_JP.UTF-8
 ENV LANG ja_JP.UTF-8
 ENV LC_TIME C
-COPY ./prd/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ./prd/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./conf.d/default.conf /etc/nginx/conf.d/default.conf
 CMD /usr/sbin/nginx -g 'daemon off;' -c /etc/nginx/nginx.conf
