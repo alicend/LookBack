@@ -20,6 +20,12 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	}
 	// ルーティング設定
 	api := r.Group("/api")
+	api.GET("/health_check", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "UP",
+		})
+	})
+
 	auth := api.Group("/auth")
 	{
 		auth.POST("/signup/request", handler.SendSignUpEmailHandler)
@@ -77,3 +83,4 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	return r
 }
+
